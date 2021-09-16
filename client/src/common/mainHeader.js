@@ -2,8 +2,9 @@ import React, { useState } from 'react';
 import {Container, Row,Col , ToggleButtonGroup, ToggleButton, Button, Form, FormControl} from 'react-bootstrap';
 import { Typeahead } from 'react-bootstrap-typeahead';
 import * as Icon from 'react-bootstrap-icons';
-import CustomerSideBar from '../customer/customerSideBar.js';
+import Navbar from '../styling/Navbar.js';
 import CartCheckoutModal from './cartCheckoutModal.js';
+import { Link} from 'react-router-dom';
 
 const MainHeader = props => {
     let locationName = 'San Jose';
@@ -14,14 +15,12 @@ return (
 <Container fluid className="my-3"
 >
   <Row>
-  <Col xs={ 12 } md={ 2 }>
-  <CustomerSideBar/>
+  <Col xs={3} md={1}>
+   <Navbar/>
   </Col>
-  {/* <Col>
-        { props.children }
-  </Col> */}
-    <Col xs={4} md={2}><h3>Uber Eats</h3></Col>
-    <Col xs={4} md={2}>
+    <Col className="mt-3" xs={4} md={2}>
+    <Link to = "/restaurantSearch" style={{ textDecoration: 'none', color: 'black' }} > <h3 >Uber Eats</h3> </Link></Col>
+    <Col className="mt-3" xs={4} md={2}>
     <ToggleButtonGroup type="radio" name="options" defaultValue={1}
     // value={value} onChange={handleChange}
     >
@@ -33,8 +32,8 @@ return (
       </ToggleButton>
     </ToggleButtonGroup>
     </Col>
-    <Col xs={4} md={2}><Button variant="outline-dark"><Icon.GeoAltFill/> <font size= '2'> {locationName}</font></Button></Col>
-    <Col xs={12} md={3}>
+    <Col className="mt-3" xs={4} md={2}><Button variant="outline-dark"><Icon.GeoAltFill/> <font size= '2'> {locationName}</font></Button></Col>
+    <Col className="mt-3" xs={12} md={3}>
     <Typeahead id="id123"
     onChange={(selected) => {
         // this.setState({selected});
@@ -43,7 +42,7 @@ return (
         selected={[]}
             />
     </Col>
-    <Col xs={4} md={1}>
+    <Col className="mt-3" xs={4} md={2}>
     <Button variant="dark" onClick={() => setModalShow(true)} ><Icon.CartPlus/>
      <font size= '2'> Cart</font>
     </Button>

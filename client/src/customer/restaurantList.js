@@ -14,8 +14,8 @@ const RestaurantList = () => {
         (restaurant, index) => {
         
         return ( 
-            <Col xs={6} md={3} className="mb-4">
-                <Link to = "/restaurantDetails"> 
+            <Col xs={12} md={3} className="mb-4">
+                <Link to = "/restaurantDetails" style={{ textDecoration: 'none', color: 'black' }}> 
                 <Card  border="dark" >
                         <Card.Img variant="top" src="holder.js/100px160" />
                         <Card.Header>Header</Card.Header>

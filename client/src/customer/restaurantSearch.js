@@ -1,25 +1,19 @@
 import '../styling/customer/restaurantSearch.css';
-import {Container, Row,Col , Form, FormControl} from 'react-bootstrap';
+import {Container, Row,Col , Form} from 'react-bootstrap';
 import { Typeahead } from 'react-bootstrap-typeahead';
 import * as Icon from 'react-bootstrap-icons';
-import CustomerSideBar from './customerSideBar.js';
 import RestaurantList from './restaurantList.js';
 import React, { useState } from 'react';
-import CartCheckoutModal from '../common/cartCheckoutModal.js';
+import MainHeader from '../common/mainHeader';
 
 const RestaurantSearch = props =>{
 
-// const onClickCustomerSideBarHandler = () =>{
-//   return (
-//     <CustomerSideBar/>
-//   );
-// }
-// <Button onClick= {onClickCustomerSideBarHandler} variant="dark"><Icon.ListTask/>     </Button>
 return (
-
+<>
+<MainHeader/>
 <Container fluid className="mt-5">
 <Row>
-<Col xs={2} md={2}>
+<Col xs={12} md={2}>
     <Row > 
         <Col><h4 style = {{
              'textAlign':  'left'
@@ -64,13 +58,13 @@ return (
     </Row>
 
 </Col>
-<Col xs={10} md={10}>
+<Col xs={12} md={10}>
   <RestaurantList/>
 </Col>
 </Row>
 
 </Container>
-
+</>
 
 );
 
