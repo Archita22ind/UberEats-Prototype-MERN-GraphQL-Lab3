@@ -1,17 +1,36 @@
-import {Button} from 'react-bootstrap';
-import { Link} from 'react-router-dom';
+import { Button } from "react-bootstrap";
+import { Link } from "react-router-dom";
+import { Container, Row, Col } from "react-bootstrap";
+import Image from "react-bootstrap/Image";
+import Background from "../images/uberEats_homepage.jpeg"
 
-const HomePage = props => {
-
-
-return (
-    <div>
-     <Link to = "/restaurantSignUp">  <Button variant="dark">Restaurant SignUp</Button> </Link>
-     <Link to = "/customerSignUp"> <Button variant="dark">Customer SignUp</Button> </Link>
-    </div>
-);
-
-
-}
+const HomePage = (props) => {
+  return (
+    <div style= {{backgroundColor : 'lightgrey'}}>
+    <Container fluid className="mt-5"  >
+      <Row>
+        <Col xs={12} md={5}></Col>
+        <Col  md={7}>
+          <Link to="/restaurantLogin">
+            {" "}
+            <Button variant="dark">Restaurant Login</Button>{" "}
+          </Link>
+          <Link to="/customerSignUp">
+            {" "}
+            <Button variant="dark">Customer Login</Button>{" "}
+          </Link>
+        </Col>
+      </Row>
+      <Row>
+      <Col>
+      <Image src={Background} />
+      </Col>
+      </Row>
+      <Row style= {{backgroundColor : 'grey'}}></Row>
+    </Container>
+     </div>  
+  
+  );
+};
 
 export default HomePage;

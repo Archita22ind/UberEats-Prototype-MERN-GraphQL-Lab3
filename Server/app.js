@@ -2,14 +2,14 @@ const express = require("express");
 const cors = require("cors");
 const multer = require("multer");
 const path = require("path");
-const con = require("./dbConnection");
+const con = require("./Controller/Common/dbConnection");
+const restaurantSignUpInfo = require("./Services/Restaurant/restaurantSignUpInfo");
 
 const app = express();
 app.use(express.json());
 app.use(cors());
 
 app.use("/", express.static(path.join(__dirname, "/images")));
-
 
 
 const storage = multer.diskStorage({
@@ -22,6 +22,8 @@ const storage = multer.diskStorage({
 });
 
 var upload = multer({ storage: storage });
+
+app.post("/restaurantSignUpInfo", restaurantSignUpInfo);
 
 
 
@@ -47,7 +49,7 @@ app.post("/updateProfileInfo", upload.single("file"), function (req, res, err) {
 
 
 app.get("/apiImage", (req, res) => {
-  const id = 8;
+  const id =10;
 
   let sqlSelect = "SELECT  * FROM  CustomerDetails1 where CustomerID = ?";
 
@@ -71,6 +73,42 @@ app.get("/apiImage", (req, res) => {
 });
 
 //end of testing of images part
+
+
+// app.post("/restaurantSignUpInfo", upload.single("file"), function (req, res, err) {
+
+//   console.log(req.body);
+  
+//   if (err instanceof multer.MulterError) {
+//     return res.status(500).json(err);
+//   }
+
+//   let sql =
+//     "INSERT INTO  RestaurantDetails (RestaurantName,Passwordvalue,Address,City,State,ZipCode,Country,ContactNumber,EmailID) VALUES (?,?,?,?,?,?,?,?,?)";
+
+//     con.query(
+//       sql,
+//       [
+//         req.body.restaurantName,
+//         req.body.password,
+//         req.body.address,
+//         req.body.city,
+//         req.body.state,
+//         req.body.zipCode,
+//         req.body.country,
+//         req.body.contactNumber,
+//         req.body.emailId,
+//       ],
+//       (err, result) => {
+//         if (err) throw err;
+//         console.log("1 record for restaurant details inserted");
+//       }
+//     );
+
+//   return res.status(200).send(req);
+// });
+
+
 
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, console.log(`Server started on port ${PORT}`));

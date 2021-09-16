@@ -1,4 +1,6 @@
-const app = require("../Common/app");
-const restaurantSignUpInfo = require("../../Services/Restaurant/restaurantSignUp");
+const app = require("../../app");
 
-app.post("/restaurantSignUpInfo", upload.single("file"), restaurantSignUpInfo);
+const restaurantSignUpInfo = require("../../Services/Restaurant/restaurantSignUpInfo");
+
+console.log('Architas', app);
+
