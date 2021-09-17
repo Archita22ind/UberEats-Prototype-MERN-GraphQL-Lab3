@@ -1,18 +1,10 @@
 import { useState, useEffect } from "react";
-import {
-  Button,
-  Row,
-  Col,
-  Form,
-  Container,
-  Card,
-  FloatingLabel,
-} from "react-bootstrap";
+import { Button, Row, Col, Form, Container, Card} from "react-bootstrap";
 import Image from "react-bootstrap/Image";
-import { Link } from "react-router-dom";
+import { Link} from 'react-router-dom';
 import Background from "../images/restaurantSignUp.jpeg";
 
-const RestaurantLogin = (props) => {
+const CustomerLogin = (props) => {
   const [userEmail, setUserEmail] = useState("");
   const [userPassword, setUserPassword] = useState("");
 
@@ -29,9 +21,9 @@ const RestaurantLogin = (props) => {
   const onSubmitHandler = async (event) => {
     event.preventDefault();
     try {
-      const response = await fetch("http://10.0.0.8:8080/restaurantLoginInfo", {
+      const response = await fetch("http://10.0.0.8:8080/customerSignIn", {
         method: "POST",
-        headers: {
+        header: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
@@ -39,15 +31,13 @@ const RestaurantLogin = (props) => {
           password: userPassword,
         }),
       });
-
       const data = await response.json();
-
-      if (data.successFlag === false)
-        alert("Incorrect Password! Please try again.");
+      console.log(data);
     } catch (error) {
       console.log(error);
     }
   };
+
 
   return (
     <Container>
@@ -60,7 +50,7 @@ const RestaurantLogin = (props) => {
           <p></p>
           <Card>
             <Row>
-              <h1 style={{ backgroundColor: "grey" }}>Restaurant Login</h1>
+              <h1 style={{ backgroundColor: "grey" }}>Customer Login</h1>
             </Row>
             <Form onSubmit={onSubmitHandler}>
               <Row className="mb-3">
@@ -95,17 +85,18 @@ const RestaurantLogin = (props) => {
           <p></p>
 
           <Card fuild className="mt=5">
-            <Form.Label>New User?</Form.Label>
-            <Link to="/restaurantSignUp">
+              <Form.Label>New User?</Form.Label>
+              <Link to = "/customerSignUp"> 
               <Button variant="dark" type="submit">
                 SignUp
               </Button>
-            </Link>
+              </Link>
           </Card>
         </Col>
       </Row>
     </Container>
   );
+
 };
 
-export default RestaurantLogin;
+export default CustomerLogin;

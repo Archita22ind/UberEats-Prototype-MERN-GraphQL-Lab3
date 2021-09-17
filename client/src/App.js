@@ -3,6 +3,8 @@ import RestaurantDetails from "./restaurant/restaurantDetails";
 import ProfileInfo from "./customer/profileInfo";
 import RestaurantSignUp from "./restaurant/restaurantsignUp";
 import RestaurantLogin from "./restaurant/restaurantLogin";
+import CustomerLogin from "./customer/customerLogin";
+import CustomerSignUp from "./customer/customerSignUp";
 import HomePage from "./common/homePage";
 
 import logo from "./logo.svg";
@@ -33,10 +35,11 @@ function App() {
         <Switch>
           <Route path="/restaurantDetails" component={RestaurantDetails} />
           <Route path="/profileInfo" component={ProfileInfo} />
-          {/* <Route path="/customerSignUp" component={SignUp} /> */}
+          <Route path="/customerLogin" component={CustomerLogin} />
           <Route path="/restaurantSearch" component={RestaurantSearch} />
           <Route path="/restaurantSignUp" component={RestaurantSignUp} />
           <Route path="/restaurantLogin" component={RestaurantLogin} />
+          <Route path="/customerSignUp" component={CustomerSignUp} />
           <Route component={HomePage} />
         </Switch>
       </Router>

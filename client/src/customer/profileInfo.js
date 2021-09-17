@@ -6,10 +6,14 @@ const ProfileInfo = props => {
 
     const [customerDetails ,setCustomerDetails] = useState({});
     
-    console.log(customerDetails);
+
+    // console.log("Testing Archita's Claim", setCustomerDetails);
+    console.log("Printing state" , customerDetails);
+
     const onChangeHandler = (event) =>{
         event.preventDefault();
         event.stopPropagation();
+
         setCustomerDetails((prevState)=>{
            return  {
             ...prevState,
@@ -72,7 +76,7 @@ const ProfileInfo = props => {
 
 
     const getCustomerProfileInfo = async () => {
-
+        console.log("archita is called");
         const response = await fetch ('http://10.0.0.8:8080/apiImage', {
             method: 'GET',
             headers: { 'Content-Type': 'application/json, charset= UTF-8',
@@ -91,7 +95,7 @@ const ProfileInfo = props => {
     }
 
     useEffect (()=> {
-        getCustomerProfileInfo();
+        getCustomerProfileInfo(); //3rd party effects 
     },[]
     );
 

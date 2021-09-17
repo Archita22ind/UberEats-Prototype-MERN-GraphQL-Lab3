@@ -4,13 +4,13 @@ const multer = require("multer");
 const path = require("path");
 const con = require("./Controller/Common/dbConnection");
 const restaurantSignUpInfo = require("./Services/Restaurant/restaurantSignUpInfo");
+const restaurantLoginInfo = require("./Services/Restaurant/restaurantLoginInfo");
 
 const app = express();
 app.use(express.json());
 app.use(cors());
 
 app.use("/", express.static(path.join(__dirname, "/images")));
-
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -23,9 +23,28 @@ const storage = multer.diskStorage({
 
 var upload = multer({ storage: storage });
 
+app.post("/restaurantLoginInfo", restaurantLoginInfo);
+
+// app.post("/restaurantLoginInfo", function (req, res) {
+//   console.log(req.body);
+  
+//   let sqlSelect = `SELECT PasswordValue from RestaurantDetails where EmailID = ?`;
+
+//   con.query(sqlSelect, [req.body.emailId], (err, result) => {
+
+
+//     if (err) throw err;
+
+//     if (result[3].PasswordValue === req.body.password) {
+//       console.log("Login Successfull!");
+//       res.send({
+//         restaurantId: result[3].RestaurantID,
+//       });
+//     }
+//   });
+// });
+
 app.post("/restaurantSignUpInfo", restaurantSignUpInfo);
-
-
 
 //testing of images part
 app.post("/updateProfileInfo", upload.single("file"), function (req, res, err) {
@@ -46,10 +65,8 @@ app.post("/updateProfileInfo", upload.single("file"), function (req, res, err) {
   return res.status(200).send(req.file.filename);
 });
 
-
-
 app.get("/apiImage", (req, res) => {
-  const id =10;
+  const id = 10;
 
   let sqlSelect = "SELECT  * FROM  CustomerDetails1 where CustomerID = ?";
 
@@ -74,11 +91,10 @@ app.get("/apiImage", (req, res) => {
 
 //end of testing of images part
 
-
 // app.post("/restaurantSignUpInfo", upload.single("file"), function (req, res, err) {
 
 //   console.log(req.body);
-  
+
 //   if (err instanceof multer.MulterError) {
 //     return res.status(500).json(err);
 //   }
@@ -107,8 +123,6 @@ app.get("/apiImage", (req, res) => {
 
 //   return res.status(200).send(req);
 // });
-
-
 
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, console.log(`Server started on port ${PORT}`));

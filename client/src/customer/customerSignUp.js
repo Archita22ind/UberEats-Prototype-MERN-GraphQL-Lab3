@@ -1,79 +1,42 @@
 import { useState, useEffect } from "react";
-import {
-  Button,
-  Row,
-  Col,
-  Form,
-  Container,
-  FormControl,
-} from "react-bootstrap";
+import { Button, Row, Col, Form, Container } from "react-bootstrap";
 import Image from "react-bootstrap/Image";
-import Background from "../images/restaurantSignUp.jpeg";
-import countryList from "react-select-country-list";
+import Background from "../images/restaurantSignUp.jpeg"
 
-const RestaurantSignUp = (props) => {
-  let countryArray = ["..."];
-  countryArray.push(...countryList().getLabels());
-
-  const options = countryArray.map((item) => {
-    return (
-      <option key={item} value={item}>
-        {item}
-      </option>
-    );
-  });
-
-  const [restaurantDetails, setRestaurantDetails] = useState({});
-  // let passwordOkay ;
-  // let checkPassword;
-  // const re = new RegExp("^(?=.)(?=.*[a-z])(?=.*[A-Z]).{8,32}$");
-  console.log(restaurantDetails);
+const CustomerSignUp = (props) => {
+  const [customerDetails, setCustomerDetails] = useState({});
 
   const onChangeHandler = (event) => {
     event.preventDefault();
 
-    // if(event.target.name === 'password')
-    // {
-    //     checkPassword=  event.target.value;
-    //     passwordOkay = re.test(checkPassword)
-    // }
-
-    // ensures I always get the latest state
-    setRestaurantDetails((prevState) => {
+    setCustomerDetails((prevState) => {
       return {
         ...prevState,
         [event.target.name]: event.target.value,
       };
     });
 
-    // setRestaurantDetails({
-    //   ...restaurantDetails,
-    //   [event.target.name]: event.target.value
-    // });
   };
 
   const onSubmitHandler = async (event) => {
     event.preventDefault();
 
-    // if(!passwordOkay)
-    // return alert('Weak Password! Try a new one!');
-
     try {
       const response = await fetch(
-        "http://10.0.0.8:8080/restaurantSignUpInfo",
+        "http://10.0.0.8:8080/customerSignUpInfo",
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            ...restaurantDetails,
+            ...customerDetails,
           }),
         }
       );
 
       const data = await response.json();
-      // enter you logic when the fetch is successful
+
       console.log(data);
     } catch (error) {
       console.log(error);
@@ -84,22 +47,30 @@ const RestaurantSignUp = (props) => {
     <Container>
       <Row className="m-3">
         <Col style={{ backgroundColor: "grey" }}>
-          <h1>Uber Eats for Restaurants</h1>
+          <h1>Uber Eats for Customers</h1>
         </Col>
       </Row>
       <Row>
         <Col md={6}>
-          <Image src={Background} />
-        </Col>
+        <Image src={Background} />
+         </Col>
         <Col md={6}>
           <Form onSubmit={onSubmitHandler}>
             <Row className="mb-3">
-              <Form.Group as={Col} controlId="formGridRestaurantName">
-                <Form.Label>Restaurant Name</Form.Label>
+            <Form.Group as={Col} controlId="formGridFirstName">
+                <Form.Label>First Name</Form.Label>
                 <Form.Control
-                  required
-                  name="restaurantName"
-                  placeholder="Enter name"
+                  name="firstName"
+                  placeholder="Enter first name"
+                  onChange={onChangeHandler}
+                />
+              </Form.Group>
+
+              <Form.Group as={Col} controlId="formGridLastName">
+                <Form.Label>Last Name</Form.Label>
+                <Form.Control
+                  name="lastName"
+                  placeholder="Enter last name"
                   onChange={onChangeHandler}
                 />
               </Form.Group>
@@ -109,44 +80,32 @@ const RestaurantSignUp = (props) => {
               <Form.Group as={Col} controlId="formGridEmail">
                 <Form.Label>Email</Form.Label>
                 <Form.Control
-                  required
                   name="emailId"
                   type="email"
                   placeholder="Enter email"
                   onChange={onChangeHandler}
                 />
-                <Form.Text id="passwordHelpBlock" muted>
-                  Valid format : user@xxxx.com
-                </Form.Text>
               </Form.Group>
 
               <Form.Group as={Col} controlId="formGridPassword">
-                <Form.Label htmlFor="inputPassword5">Password</Form.Label>
+                <Form.Label>Password</Form.Label>
                 <Form.Control
-                  required
                   name="password"
                   type="password"
                   placeholder="Password"
-                  id="inputPassword5"
-                  aria-describedby="passwordHelpBlock"
                   onChange={onChangeHandler}
                 />
-                <Form.Text id="passwordHelpBlock" muted>
-                  Your password must be 8-20 characters long and must not
-                  contain spaces or special characters
-                </Form.Text>
               </Form.Group>
             </Row>
 
-            <Form.Group className="mb-3" controlId="formGridAddress">
+            {/* <Form.Group className="mb-3" controlId="formGridAddress">
               <Form.Label>Address</Form.Label>
               <Form.Control
-                required
                 name="address"
                 placeholder="1234 Main St"
                 onChange={onChangeHandler}
               />
-            </Form.Group>
+            </Form.Group> */}
 
             {/* <Form.Group className="mb-3" controlId="formGridAddress2">
     <Form.Label>Address 2</Form.Label>
@@ -156,34 +115,42 @@ const RestaurantSignUp = (props) => {
             <Row className="mb-4">
               <Form.Group as={Col} controlId="formGridCity">
                 <Form.Label>City</Form.Label>
-                <Form.Control required name="city" onChange={onChangeHandler} />
+                <Form.Control name="city" onChange={onChangeHandler} />
               </Form.Group>
 
-              <Form.Group required as={Col} controlId="formGridState">
+              <Form.Group as={Col} controlId="formGridState">
                 <Form.Label>State</Form.Label>
-                <Form.Control
-                  required
+                <Form.Select
                   name="state"
                   onChange={onChangeHandler}
-                />
-              </Form.Group>
-
-              <Form.Group required as={Col} controlId="formGridCountry">
-                <Form.Label>Country</Form.Label>
-                <Form.Control as="select" onChange={onChangeHandler} custom>
-                  ..
-                  {options}
-                </Form.Control>
+                >
+                  <option>Choose..</option>
+                  <option value="AK">Alaska</option>
+                  <option value="AL">Alabama</option>
+                  <option value="AR">Arkansas</option>
+                  <option value="AZ">Arizona</option>
+                  <option value="CA">California</option>
+                  <option value="CO">Colorado</option>
+                </Form.Select>
               </Form.Group>
 
               <Form.Group as={Col} controlId="formGridZip">
-                <Form.Label>Zip</Form.Label>
-                <Form.Control
-                  required
-                  name="zipCode"
+                <Form.Label>Country</Form.Label>
+                <Form.Select
+                  name="country"
                   onChange={onChangeHandler}
-                />
+                >
+                  <option>Choose..</option>
+                  <option value="IN">India</option>
+                  <option value="US">United States</option>
+                  <option value="AU">Australia</option>
+                </Form.Select>
               </Form.Group>
+
+              {/* <Form.Group as={Col} controlId="formGridZip">
+                <Form.Label>Zip</Form.Label>
+                <Form.Control name="zipCode" onChange={onChangeHandler} />
+              </Form.Group> */}
             </Row>
             <Row>
               <Form.Group
@@ -193,7 +160,6 @@ const RestaurantSignUp = (props) => {
               >
                 <Form.Label>Contact Number</Form.Label>
                 <Form.Control
-                  required
                   name="contactNumber"
                   placeholder="+1 ()"
                   onChange={onChangeHandler}
@@ -213,4 +179,4 @@ const RestaurantSignUp = (props) => {
   );
 };
 
-export default RestaurantSignUp;
+export default CustomerSignUp;
