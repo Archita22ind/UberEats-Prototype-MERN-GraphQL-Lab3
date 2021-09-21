@@ -1,13 +1,7 @@
 import { useState, useEffect } from "react";
-import {
-  Button,
-  Row,
-  Col,
-  Form,
-  Container,
-  FormControl,
-} from "react-bootstrap";
+import { Button, Row, Col, Form, Container } from "react-bootstrap";
 import Image from "react-bootstrap/Image";
+import { Link } from "react-router-dom";
 import Background from "../images/restaurantSignUp.jpeg";
 import countryList from "react-select-country-list";
 
@@ -27,7 +21,6 @@ const RestaurantSignUp = (props) => {
   // let passwordOkay ;
   // let checkPassword;
   // const re = new RegExp("^(?=.)(?=.*[a-z])(?=.*[A-Z]).{8,32}$");
-  console.log(restaurantDetails);
 
   const onChangeHandler = (event) => {
     event.preventDefault();
@@ -81,17 +74,19 @@ const RestaurantSignUp = (props) => {
   };
 
   return (
-    <Container>
-      <Row className="m-3">
-        <Col style={{ backgroundColor: "grey" }}>
-          <h1>Uber Eats for Restaurants</h1>
-        </Col>
+    <Container
+      style={{
+        backgroundColor: "lightgrey",
+      }}
+    >
+      <Row className="m-3" style={{ backgroundColor: "grey" }}>
+        <h1>Uber Eats for Restaurants</h1>
       </Row>
       <Row>
-        <Col md={6}>
-          <Image src={Background} />
+        <Col xs={12} md={6}>
+          <Image src={Background} height="75%" width="92%" />
         </Col>
-        <Col md={6}>
+        <Col xs={12} md={6}>
           <Form onSubmit={onSubmitHandler}>
             <Row className="mb-3">
               <Form.Group as={Col} controlId="formGridRestaurantName">
@@ -132,8 +127,8 @@ const RestaurantSignUp = (props) => {
                   onChange={onChangeHandler}
                 />
                 <Form.Text id="passwordHelpBlock" muted>
-                  Your password must be 8-20 characters long and must not
-                  contain spaces or special characters
+                  Password must be 8-20 characters long and not contain
+                  spaces/special characters
                 </Form.Text>
               </Form.Group>
             </Row>
@@ -168,14 +163,6 @@ const RestaurantSignUp = (props) => {
                 />
               </Form.Group>
 
-              <Form.Group required as={Col} controlId="formGridCountry">
-                <Form.Label>Country</Form.Label>
-                <Form.Control as="select" onChange={onChangeHandler} custom>
-                  ..
-                  {options}
-                </Form.Control>
-              </Form.Group>
-
               <Form.Group as={Col} controlId="formGridZip">
                 <Form.Label>Zip</Form.Label>
                 <Form.Control
@@ -186,6 +173,19 @@ const RestaurantSignUp = (props) => {
               </Form.Group>
             </Row>
             <Row>
+              <Form.Group required as={Col} controlId="formGridCountry">
+                <Form.Label>Country</Form.Label>
+                <Form.Control
+                  name="country"
+                  as="select"
+                  onChange={onChangeHandler}
+                  custom
+                >
+                  ...
+                  {options}
+                </Form.Control>
+              </Form.Group>
+
               <Form.Group
                 as={Col}
                 className="mb-2"
@@ -200,10 +200,11 @@ const RestaurantSignUp = (props) => {
                 />
               </Form.Group>
             </Row>
-
-            <Button variant="dark" type="submit">
-              Sign Up
-            </Button>
+            <Link to="/restaurantDetails">
+              <Button variant="dark" type="submit">
+                Sign Up
+              </Button>
+            </Link>
           </Form>
         </Col>
         {/* 

@@ -5,6 +5,12 @@ const path = require("path");
 const con = require("./Controller/Common/dbConnection");
 const restaurantSignUpInfo = require("./Services/Restaurant/restaurantSignUpInfo");
 const restaurantLoginInfo = require("./Services/Restaurant/restaurantLoginInfo");
+const restaurantDetailsInfo = require("./Services/Restaurant/restaurantDetailsInfo");
+const restaurantDetailsInfoUpdate = require("./Services/Restaurant/restaurantDetailsInfoUpdate");
+const customerSignUpInfo = require("./Services/Customer/customerSignUpInfo");
+const addFoodDishes = require("./Services/Restaurant/addFoodDishes");
+const editFoodDishes = require("./Services/Restaurant/editFoodDishes");
+const foodItemsDisplay = require("./Services/Restaurant/foodItemsDisplay");
 
 const app = express();
 app.use(express.json());
@@ -17,6 +23,7 @@ const storage = multer.diskStorage({
     cb(null, "images");
   },
   filename: function (req, file, cb) {
+    // console.log("File name : ", file);
     cb(null, Date.now() + "-" + file.originalname);
   },
 });
@@ -25,26 +32,21 @@ var upload = multer({ storage: storage });
 
 app.post("/restaurantLoginInfo", restaurantLoginInfo);
 
-// app.post("/restaurantLoginInfo", function (req, res) {
-//   console.log(req.body);
-  
-//   let sqlSelect = `SELECT PasswordValue from RestaurantDetails where EmailID = ?`;
-
-//   con.query(sqlSelect, [req.body.emailId], (err, result) => {
-
-
-//     if (err) throw err;
-
-//     if (result[3].PasswordValue === req.body.password) {
-//       console.log("Login Successfull!");
-//       res.send({
-//         restaurantId: result[3].RestaurantID,
-//       });
-//     }
-//   });
-// });
-
 app.post("/restaurantSignUpInfo", restaurantSignUpInfo);
+app.post("/customerSignUpInfo", customerSignUpInfo);
+
+app.post("/addFoodItems", upload.single("file"), addFoodDishes);
+app.post("/editFoodItems", upload.single("file"), editFoodDishes);
+
+app.get("/foodItemsDisplay", upload.single("file"), foodItemsDisplay);
+
+app.get("/restaurantDetailsInfo", upload.single("file"), restaurantDetailsInfo);
+
+app.post(
+  "/restaurantDetailsInfoUpdate",
+  upload.single("file"),
+  restaurantDetailsInfoUpdate
+);
 
 //testing of images part
 app.post("/updateProfileInfo", upload.single("file"), function (req, res, err) {

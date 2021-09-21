@@ -1,64 +1,72 @@
 import React, { useState, useEffect } from "react";
 import { Container, Row, Form, Col, Modal, Button } from "react-bootstrap";
 
-const AddDishModal = (props) => {
-  let onClickValue = props.show;
-  let onHideValue = props.onHide;
+const EditDishModal = (props) => {
+  let onShowVal = props.dishItem.show;
+
+  console.log("I am in edit modal", onShowVal);
 
   let restaurantId = 1;
-  const [addDishValues, setAddDishValues] = useState({});
 
   const onChangeHandler = (event) => {
     event.preventDefault();
 
-    setAddDishValues((prevState) => {
-      return {
-        ...prevState,
+    props.setRenderedList((prevState) => {
+      const newListOfDishes = [...prevState];
+      newListOfDishes[props.keyValue] = {
+        ...newListOfDishes[props.keyValue],
         [event.target.name]: event.target.value,
       };
+      return newListOfDishes;
     });
   };
 
   const onImageChangeHandler = (event) => {
     if (event.target.files && event.target.files[0]) {
-      setAddDishValues((prevState) => {
-        return {
-          ...prevState,
+      props.setRenderedList((prevState) => {
+        const newListOfDishes = [...prevState];
+        newListOfDishes[props.keyValue] = {
+          ...newListOfDishes,
           imagePreview: URL.createObjectURL(event.target.files[0]),
           [event.target.name]: event.target.files[0],
         };
+        return newListOfDishes;
       });
     }
   };
 
   const viewImageHandler = () => {
-    if (addDishValues.imagePreview) {
+    if (props.dishItem.image) {
       return (
         <Form.Control
           name="imagePreview"
           type="image"
-          src={addDishValues.imagePreview}
+          src={props.dishItem.image}
         />
       );
     }
   };
+  console.log(props.dishItem.image);
 
   const submitDishesHandler = async (event) => {
     event.preventDefault();
-
+    console.log("I am here");
     const formData = new FormData();
-    formData.append("restaurantId", restaurantId);
-    formData.append("file", addDishValues.image);
-    formData.append("dishName", addDishValues.dishName);
-    formData.append("price", addDishValues.price);
-    formData.append("description", addDishValues.description);
-    formData.append("mainIngredients", addDishValues.mainIngredients);
-    formData.append("dishType", addDishValues.dishType);
-    formData.append("dishCategory", addDishValues.dishCategory);
-    formData.append("cuisine", addDishValues.cuisine);
+    formData.append("restaurantId", 1);
+    formData.append("foodId", props.dishItem.foodId);
+    formData.append("file", props.dishItem.image);
+    formData.append("dishName", props.dishItem.dishName);
+    formData.append("price", props.dishItem.price);
+    formData.append("description", props.dishItem.description);
+    formData.append("mainIngredients", props.dishItem.mainIngredients);
+    formData.append("dishType", props.dishItem.dishType);
+    formData.append("dishCategory", props.dishItem.dishCategory);
+    formData.append("cuisine", props.dishItem.cuisine);
+
+    console.log("Printing formData", formData);
 
     try {
-      const response = await fetch("http://10.0.0.8:8080/addFoodItems", {
+      const response = await fetch("http://10.0.0.8:8080/editFoodItems", {
         method: "POST",
         body: formData,
       });
@@ -73,9 +81,11 @@ const AddDishModal = (props) => {
 
   return (
     <Modal
-      show={onClickValue}
-      onHide={onHideValue}
+      show={onShowVal}
+      onHide={props.onHide}
+      autoFocus="true"
       aria-labelledby="contained-modal-title-vcenter"
+      backdrop="static"
     >
       <Form onSubmit={submitDishesHandler}>
         <Modal.Header closeButton>
@@ -85,18 +95,18 @@ const AddDishModal = (props) => {
                 <Form.Group as={Col} controlId="formGridDishName">
                   <Form.Label>Add Dish Name</Form.Label>
                   <Form.Control
-                    required
                     name="dishName"
-                    placeholder="Enter dish name"
+                    placeholder="Dish Name"
+                    defaultValue={props.dishItem.dishName}
                     onChange={onChangeHandler}
                   />
                 </Form.Group>
                 <Form.Group as={Col} controlId="formGridPrice">
                   <Form.Label>Price</Form.Label>
                   <Form.Control
-                    required
                     name="price"
-                    placeholder="Enter price"
+                    placeholder="$$"
+                    defaultValue={props.dishItem.price}
                     onChange={onChangeHandler}
                   />
                 </Form.Group>
@@ -109,7 +119,6 @@ const AddDishModal = (props) => {
           <Container>
             <Row>
               <Form.Group controlId="formGridImage" xs={12} md={12}>
-                {/* <Form.Label>Profile Image</Form.Label> */}
                 {viewImageHandler()}
                 <Form.Control
                   name="image"
@@ -125,9 +134,9 @@ const AddDishModal = (props) => {
               <Form.Group xs={12} md={12} controlId="formGridDishDescription">
                 {/* <Form.Label>Description</Form.Label> */}
                 <Form.Control
-                  required
                   name="description"
                   placeholder="Enter dish description"
+                  defaultValue={props.dishItem.description}
                   onChange={onChangeHandler}
                 />
               </Form.Group>
@@ -136,9 +145,9 @@ const AddDishModal = (props) => {
             <Row>
               <Form.Group controlId="formGridMainIngredients">
                 <Form.Control
-                  required
                   name="mainIngredients"
                   placeholder="Enter main ingredients"
+                  defaultValue={props.dishItem.mainIngredients}
                   onChange={onChangeHandler}
                 />
               </Form.Group>
@@ -147,11 +156,9 @@ const AddDishModal = (props) => {
             <Row>
               <Col xs={12} md={6}>
                 <Form.Group xs={12} md={12} controlId="formGridDishType">
-                  {/* <Form.Label>Description</Form.Label> */}
-
                   <Form.Select
-                    required
                     name="dishType"
+                    defaultValue={props.dishItem.dishType}
                     onChange={onChangeHandler}
                   >
                     <option>Select dish type</option>
@@ -164,8 +171,8 @@ const AddDishModal = (props) => {
               <Col xs={6} md={6}>
                 <Form.Group xs={12} md={12} controlId="formGridCategoryType">
                   <Form.Select
-                    required
                     name="dishCategory"
+                    defaultValue={props.dishItem.dishCategory}
                     onChange={onChangeHandler}
                   >
                     <option>Select dish Category</option>
@@ -181,7 +188,11 @@ const AddDishModal = (props) => {
             </Row>
             <Row>
               <Form.Group xs={12} md={12} controlId="formGridCuisine">
-                <Form.Select required name="cuisine" onChange={onChangeHandler}>
+                <Form.Select
+                  name="cuisine"
+                  defaultValue={props.dishItem.cuisine}
+                  onChange={onChangeHandler}
+                >
                   <option>Select Cuisine</option>
                   <option value="Indian">Indian</option>
                   <option value="American">American</option>
@@ -198,7 +209,7 @@ const AddDishModal = (props) => {
           </Container>
         </Modal.Body>
         <Modal.Footer>
-          <Button onClick={props.onHide} type="submit" variant="dark">
+          <Button type="submit" variant="dark" onClick={props.onHide}>
             Save
           </Button>
         </Modal.Footer>
@@ -206,4 +217,5 @@ const AddDishModal = (props) => {
     </Modal>
   );
 };
-export default AddDishModal;
+
+export default EditDishModal;

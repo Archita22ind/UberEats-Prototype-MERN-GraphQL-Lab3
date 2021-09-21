@@ -1,9 +1,22 @@
 import { useState, useEffect } from "react";
 import { Button, Row, Col, Form, Container } from "react-bootstrap";
 import Image from "react-bootstrap/Image";
-import Background from "../images/restaurantSignUp.jpeg"
+import Background from "../images/restaurantSignUp.jpeg";
+import countryList from "react-select-country-list";
+import { Link } from "react-router-dom";
 
 const CustomerSignUp = (props) => {
+  let countryArray = ["..."];
+  countryArray.push(...countryList().getLabels());
+
+  const options = countryArray.map((item) => {
+    return (
+      <option key={item} value={item}>
+        {item}
+      </option>
+    );
+  });
+
   const [customerDetails, setCustomerDetails] = useState({});
 
   const onChangeHandler = (event) => {
@@ -15,25 +28,21 @@ const CustomerSignUp = (props) => {
         [event.target.name]: event.target.value,
       };
     });
-
   };
 
   const onSubmitHandler = async (event) => {
     event.preventDefault();
 
     try {
-      const response = await fetch(
-        "http://10.0.0.8:8080/customerSignUpInfo",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            ...customerDetails,
-          }),
-        }
-      );
+      const response = await fetch("http://10.0.0.8:8080/customerSignUpInfo", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          ...customerDetails,
+        }),
+      });
 
       const data = await response.json();
 
@@ -44,22 +53,26 @@ const CustomerSignUp = (props) => {
   };
 
   return (
-    <Container>
-      <Row className="m-3">
-        <Col style={{ backgroundColor: "grey" }}>
-          <h1>Uber Eats for Customers</h1>
-        </Col>
+    <Container
+      style={{
+        backgroundColor: "lightgrey",
+      }}
+    >
+      <Row className="m-3" style={{ backgroundColor: "grey" }}>
+        <h1>Uber Eats for Customers</h1>
       </Row>
+
       <Row>
-        <Col md={6}>
-        <Image src={Background} />
-         </Col>
-        <Col md={6}>
+        <Col xs={12} md={6}>
+          <Image src={Background} height="75%" width="92%" />
+        </Col>
+        <Col xs={12} md={6}>
           <Form onSubmit={onSubmitHandler}>
             <Row className="mb-3">
-            <Form.Group as={Col} controlId="formGridFirstName">
+              <Form.Group as={Col} controlId="formGridFirstName">
                 <Form.Label>First Name</Form.Label>
                 <Form.Control
+                  required
                   name="firstName"
                   placeholder="Enter first name"
                   onChange={onChangeHandler}
@@ -69,6 +82,7 @@ const CustomerSignUp = (props) => {
               <Form.Group as={Col} controlId="formGridLastName">
                 <Form.Label>Last Name</Form.Label>
                 <Form.Control
+                  required
                   name="lastName"
                   placeholder="Enter last name"
                   onChange={onChangeHandler}
@@ -80,77 +94,61 @@ const CustomerSignUp = (props) => {
               <Form.Group as={Col} controlId="formGridEmail">
                 <Form.Label>Email</Form.Label>
                 <Form.Control
+                  required
                   name="emailId"
                   type="email"
                   placeholder="Enter email"
                   onChange={onChangeHandler}
                 />
+                <Form.Text id="passwordHelpBlock" muted>
+                  Valid format : user@xxxx.com
+                </Form.Text>
               </Form.Group>
 
               <Form.Group as={Col} controlId="formGridPassword">
                 <Form.Label>Password</Form.Label>
                 <Form.Control
+                  required
                   name="password"
                   type="password"
                   placeholder="Password"
                   onChange={onChangeHandler}
                 />
+                <Form.Text id="passwordHelpBlock" muted>
+                  Password must be 8-20 characters long and not contain
+                  spaces/special characters
+                </Form.Text>
               </Form.Group>
             </Row>
-
-            {/* <Form.Group className="mb-3" controlId="formGridAddress">
-              <Form.Label>Address</Form.Label>
-              <Form.Control
-                name="address"
-                placeholder="1234 Main St"
-                onChange={onChangeHandler}
-              />
-            </Form.Group> */}
-
-            {/* <Form.Group className="mb-3" controlId="formGridAddress2">
-    <Form.Label>Address 2</Form.Label>
-    <Form.Control placeholder="Apartment, studio, or floor" />
-  </Form.Group> */}
 
             <Row className="mb-4">
               <Form.Group as={Col} controlId="formGridCity">
                 <Form.Label>City</Form.Label>
-                <Form.Control name="city" onChange={onChangeHandler} />
+                <Form.Control required name="city" onChange={onChangeHandler} />
               </Form.Group>
 
               <Form.Group as={Col} controlId="formGridState">
                 <Form.Label>State</Form.Label>
-                <Form.Select
+                <Form.Control
+                  required
                   name="state"
                   onChange={onChangeHandler}
-                >
-                  <option>Choose..</option>
-                  <option value="AK">Alaska</option>
-                  <option value="AL">Alabama</option>
-                  <option value="AR">Arkansas</option>
-                  <option value="AZ">Arizona</option>
-                  <option value="CA">California</option>
-                  <option value="CO">Colorado</option>
-                </Form.Select>
+                />
               </Form.Group>
 
               <Form.Group as={Col} controlId="formGridZip">
                 <Form.Label>Country</Form.Label>
-                <Form.Select
+                <Form.Control
+                  required
                   name="country"
+                  as="select"
                   onChange={onChangeHandler}
+                  custome
                 >
-                  <option>Choose..</option>
-                  <option value="IN">India</option>
-                  <option value="US">United States</option>
-                  <option value="AU">Australia</option>
-                </Form.Select>
+                  ...
+                  {options}
+                </Form.Control>
               </Form.Group>
-
-              {/* <Form.Group as={Col} controlId="formGridZip">
-                <Form.Label>Zip</Form.Label>
-                <Form.Control name="zipCode" onChange={onChangeHandler} />
-              </Form.Group> */}
             </Row>
             <Row>
               <Form.Group
@@ -166,14 +164,13 @@ const CustomerSignUp = (props) => {
                 />
               </Form.Group>
             </Row>
-
-            <Button variant="dark" type="submit">
-              Sign Up
-            </Button>
+            <Link to="/restaurantSearch">
+              <Button variant="dark" type="submit">
+                Sign Up
+              </Button>
+            </Link>
           </Form>
         </Col>
-        {/* 
-        <Col md={3}></Col> */}
       </Row>
     </Container>
   );

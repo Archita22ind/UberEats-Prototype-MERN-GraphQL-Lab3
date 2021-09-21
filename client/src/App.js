@@ -34,6 +34,7 @@ function App() {
       <Router>
         <Switch>
           <Route path="/restaurantDetails" component={RestaurantDetails} />
+          {/* <Route path="/restaurantDetailsNew" component={RestaurantDetailsNew} /> */}
           <Route path="/profileInfo" component={ProfileInfo} />
           <Route path="/customerLogin" component={CustomerLogin} />
           <Route path="/restaurantSearch" component={RestaurantSearch} />
