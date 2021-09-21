@@ -19,10 +19,10 @@ const RestaurantDetails = (props) => {
     imageUrl = profilePicture.imagePreview;
   }
 
-  console.log(
-    "3 printing state variable after updated on edit modal",
-    renderedList
-  );
+  // console.log(
+  //   "3 printing state variable after updated on edit modal",
+  //   renderedList
+  // );
 
   const getRestaurantProfileInfo = async () => {
     const response = await fetch("http://10.0.0.8:8080/restaurantDetailsInfo", {
@@ -76,7 +76,7 @@ const RestaurantDetails = (props) => {
       data.map((dataRow) => {
         return {
           ...dataRow,
-          image: "http://10.0.0.8:8080/" + dataRow.image,
+          imagePreview: "http://10.0.0.8:8080/" + dataRow.image,
           show: false,
         };
       })
@@ -84,6 +84,7 @@ const RestaurantDetails = (props) => {
   };
 
   const showEditHandler = (key, showFlag) => {
+    console.log("Ohh nooo I am in edit button handler");
     setRenderedList((prevSate) => {
       const newarry = [...prevSate];
       newarry[key].show = showFlag;
@@ -103,7 +104,7 @@ const RestaurantDetails = (props) => {
           return (
             <Col xs={12} md={3} className="my-2">
               <Card>
-                <Card.Img variant="top" src={item.image} />
+                <Card.Img variant="top" src={item.imagePreview} />
                 <Card.Header>{item.dishName}</Card.Header>
                 <Card.Body style={{ height: "80px" }}>
                   <Card.Text>{item.description}</Card.Text>

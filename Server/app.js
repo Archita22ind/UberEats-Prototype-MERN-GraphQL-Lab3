@@ -8,6 +8,8 @@ const restaurantLoginInfo = require("./Services/Restaurant/restaurantLoginInfo")
 const restaurantDetailsInfo = require("./Services/Restaurant/restaurantDetailsInfo");
 const restaurantDetailsInfoUpdate = require("./Services/Restaurant/restaurantDetailsInfoUpdate");
 const customerSignUpInfo = require("./Services/Customer/customerSignUpInfo");
+const updateProfileInfo = require("./Services/Customer/updateProfileInfo");
+const getProfileInfo = require("./Services/Customer/getProfileInfo");
 const addFoodDishes = require("./Services/Restaurant/addFoodDishes");
 const editFoodDishes = require("./Services/Restaurant/editFoodDishes");
 const foodItemsDisplay = require("./Services/Restaurant/foodItemsDisplay");
@@ -23,7 +25,7 @@ const storage = multer.diskStorage({
     cb(null, "images");
   },
   filename: function (req, file, cb) {
-    // console.log("File name : ", file);
+    console.log("File name : ", file);
     cb(null, Date.now() + "-" + file.originalname);
   },
 });
@@ -47,25 +49,11 @@ app.post(
   upload.single("file"),
   restaurantDetailsInfoUpdate
 );
+app.get("/getProfileInfo", upload.single("file"), getProfileInfo);
+
+app.post("/updateProfileInfo", upload.single("file"), updateProfileInfo);
 
 //testing of images part
-app.post("/updateProfileInfo", upload.single("file"), function (req, res, err) {
-  console.log(req.file);
-  console.log("Archi", req.body);
-
-  if (err instanceof multer.MulterError) {
-    return res.status(500).json(err);
-  }
-  let sql =
-    "INSERT INTO CustomerDetails1 (EmailID, ProfilePicture) VALUES (?,?)";
-
-  con.query(sql, [req.body.email, req.file.filename], (err, result) => {
-    if (err) throw err;
-    console.log("1 record inserted for new customer");
-  });
-
-  return res.status(200).send(req.file.filename);
-});
 
 app.get("/apiImage", (req, res) => {
   const id = 10;

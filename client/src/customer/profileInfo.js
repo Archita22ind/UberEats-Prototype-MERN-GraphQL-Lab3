@@ -1,26 +1,24 @@
 import { useState, useEffect } from "react";
-import {
-  Button,
-  Row,
-  Col,
-  Form,
-  Figure,
-  Card,
-  Container,
-  Image,
-} from "react-bootstrap";
-import Background from "../images/customerProfile.jpeg";
+import { Button, Row, Col, Form, Card, Container } from "react-bootstrap";
 import Holder from "../images/holder.png";
+import countryList from "react-select-country-list";
 
 const ProfileInfo = (props) => {
-  const [customerDetails, setCustomerDetails] = useState({});
+  let countryArray = ["..."];
+  countryArray.push(...countryList().getLabels());
 
-  // console.log("Testing Archita's Claim", setCustomerDetails);
-  console.log("Printing state", customerDetails);
+  const options = countryArray.map((item) => {
+    return (
+      <option key={item} value={item}>
+        {item}
+      </option>
+    );
+  });
+
+  const [customerDetails, setCustomerDetails] = useState({});
 
   const onChangeHandler = (event) => {
     event.preventDefault();
-    event.stopPropagation();
 
     setCustomerDetails((prevState) => {
       return {
@@ -29,12 +27,6 @@ const ProfileInfo = (props) => {
       };
     });
   };
-
-  // const onSubmitHandler = (event) =>{
-  //     event.preventDefault();
-  //     event.stopPropagation();
-  //     console.log(customerDetails);
-  // };
 
   const onImageChangeHandler = (event) => {
     if (event.target.files && event.target.files[0]) {
@@ -51,21 +43,41 @@ const ProfileInfo = (props) => {
   const viewImageHandler = () => {
     if (customerDetails.imagePreview) {
       return (
-        <Form.Control
-          name="imagePreview"
-          type="image"
-          src={customerDetails.imagePreview}
-        />
+        <Card style={{ width: "21rem" }}>
+          <Card.Img
+            variant="top"
+            src={customerDetails.imagePreview}
+            height="200px"
+          />
+        </Card>
+      );
+    } else {
+      return (
+        <Card style={{ width: "16rem" }}>
+          <Card.Img variant="top" src={Holder} height="200px" />
+        </Card>
       );
     }
   };
 
   const updateProfileInfo = async (event) => {
     event.preventDefault();
-    // event.stopPropagation();
+
     const formData = new FormData();
     formData.append("file", customerDetails.image);
-    formData.append("email", customerDetails.email);
+    formData.append("lastName", customerDetails.lastName);
+    formData.append("firstName", customerDetails.firstName);
+    formData.append("password", customerDetails.password);
+    formData.append("address", customerDetails.address);
+    formData.append("city", customerDetails.city);
+    formData.append("state", customerDetails.state);
+    formData.append("country", customerDetails.country);
+    formData.append("nickname", customerDetails.nickname);
+    formData.append("contactNumber", customerDetails.contactNumber);
+    formData.append("emailId", customerDetails.emailId);
+    formData.append("dateOfBirth", customerDetails.dateOfBirth);
+    formData.append("about", customerDetails.about);
+
     try {
       const response = await fetch("http://10.0.0.8:8080/updateProfileInfo", {
         method: "POST",
@@ -74,7 +86,6 @@ const ProfileInfo = (props) => {
       });
 
       const data = await response.json();
-      // enter you logic when the fetch is successful
       console.log(data);
     } catch (error) {
       console.log(error);
@@ -82,8 +93,7 @@ const ProfileInfo = (props) => {
   };
 
   const getCustomerProfileInfo = async () => {
-    console.log("archita is called");
-    const response = await fetch("http://10.0.0.8:8080/apiImage", {
+    const response = await fetch("http://10.0.0.8:8080/getProfileInfo", {
       method: "GET",
       headers: {
         "Content-Type": "application/json, charset= UTF-8",
@@ -92,90 +102,152 @@ const ProfileInfo = (props) => {
     });
 
     const data = await response.json();
+
     setCustomerDetails((prevState) => {
+      let customerImageObject;
+      if (data.image) {
+        customerImageObject = {
+          imagePreview: "http://10.0.0.8:8080/" + data.image,
+        };
+      } else {
+        customerImageObject = {
+          imagePreview: { Holder },
+        };
+      }
+
       return {
         ...prevState,
-        imagePreview: "http://10.0.0.8:8080/" + data.image,
+        ...customerImageObject,
+        lastName: data.lastName,
+        firstName: data.firstName,
+        password: data.password,
+        address: data.address,
+        city: data.city,
+        state: data.state,
+        country: data.country,
+        nickname: data.nickname,
+        contactNumber: data.contactNumber,
+        emailId: data.emailId,
+        dateOfBirth: data.dateOfBirth,
+        about: data.about,
       };
     });
   };
 
   useEffect(() => {
-    getCustomerProfileInfo(); //3rd party effects
+    getCustomerProfileInfo();
   }, []);
 
   return (
-    <Container
-      fluid
-      className="mt-5"
-      style={{ backgroundImage: `url(${Background}` }}
-    >
-      <Row>
-        <Form onSubmit={updateProfileInfo}>
-          <Col xs={12} md={4}>
-            <Figure>
-              <Figure.Image
-                width={171}
-                height={180}
-                alt="171x180"
-                src="holder.png/171x180"
-              />
-              <Figure.Caption>
-                Nulla vitae elit libero, a pharetra augue mollis interdum.
-              </Figure.Caption>
-            </Figure>
-          </Col>
-          <Col xs={12} md={4}>
-            <Row className="mb-3">
-              <Form.Group as={Col} controlId="formGridImage" xs={12} md={9}>
-                <Form.Label>Profile Image</Form.Label>
+    <Container fluid className="mt-5" style={{ backgroundColor: "grey" }}>
+      <h1>Customer Profile</h1>
+      <Form onSubmit={updateProfileInfo}>
+        <Row>
+          <Col md={1}></Col>
+          <Col xs={12} md={4} fluid className="mt-5">
+            <Form.Group as={Col} controlId="formGridImage" xs={12} md={9}>
+              <Card style={{ width: " 21rem" }}>
                 {viewImageHandler()}
                 <Form.Control
                   name="image"
                   type="file"
                   accept="image/*"
-                  placeholder="Upload Image"
                   onChange={onImageChangeHandler}
                 />
-              </Form.Group>
-            </Row>
+                <Form.Label>Profile Image</Form.Label>
+              </Card>
+            </Form.Group>
 
-            <Row className="mb-3">
-              <Form.Group as={Col} controlId="formGridName">
-                <Form.Label>Name</Form.Label>
+            <Form.Group as={Col} className="mt=3" controlId="formGridAbout">
+              <Form.Label>About</Form.Label>
+              <Form.Control
+                style={{ height: "80px", width: " 340px" }}
+                name="about"
+                value={customerDetails.about}
+                placeholder="About me...."
+                onChange={onChangeHandler}
+              />
+            </Form.Group>
+          </Col>
+
+          <Col xs={12} md={5} fluid className="mt-5">
+            <Row className="mb-1">
+              <Form.Group as={Col} controlId="formGridFirstName">
+                <Form.Label>First Name</Form.Label>
                 <Form.Control
-                  name="customerName"
-                  placeholder="Enter name"
-                  value={customerDetails.customerName}
+                  name="firstName"
+                  placeholder="First Name"
+                  value={customerDetails.firstName}
+                  onChange={onChangeHandler}
+                />
+              </Form.Group>
+
+              <Form.Group as={Col} controlId="formGridLastName">
+                <Form.Label>Last Name</Form.Label>
+                <Form.Control
+                  name="lastName"
+                  placeholder="Last Name"
+                  value={customerDetails.lastName}
                   onChange={onChangeHandler}
                 />
               </Form.Group>
             </Row>
 
-            <Row className="mb-3">
-              <Form.Group as={Col} controlId="formGridEmail">
+            <Row className="mb-1">
+              <Form.Group as={Col} controlId="formGridEmailId">
                 <Form.Label>Email</Form.Label>
                 <Form.Control
-                  name="email"
+                  name="emailId"
                   type="email"
                   placeholder="Enter email"
-                  value={customerDetails.email}
+                  value={customerDetails.emailId}
+                  onChange={onChangeHandler}
+                />
+              </Form.Group>
+
+              <Form.Group as={Col} controlId="formGridContactNumber">
+                <Form.Label>Contact Number</Form.Label>
+                <Form.Control
+                  name="contactNumber"
+                  placeholder="+1()"
+                  value={customerDetails.contactNumber}
+                  onChange={onChangeHandler}
+                />
+              </Form.Group>
+            </Row>
+            <Row className="mb-1">
+              <Form.Group as={Col} controlId="formGridNickname">
+                <Form.Label>Nickname</Form.Label>
+                <Form.Control
+                  name="nickname"
+                  placeholder="Nickname"
+                  value={customerDetails.nickname}
+                  onChange={onChangeHandler}
+                />
+              </Form.Group>
+
+              <Form.Group as={Col} controlId="formGriddob">
+                <Form.Label>Date of birth</Form.Label>
+                <Form.Control
+                  name="dateOfbirth"
+                  type="date"
+                  value={customerDetails.dateOfbirth}
                   onChange={onChangeHandler}
                 />
               </Form.Group>
             </Row>
 
-            <Form.Group className="mb-3" controlId="formGridAddress1">
+            <Form.Group className="mb-1" controlId="formGridAddress">
               <Form.Label>Address</Form.Label>
               <Form.Control
-                name="address1"
+                name="address"
                 placeholder="1234 Main St"
-                value={customerDetails.address1}
+                value={customerDetails.address}
                 onChange={onChangeHandler}
               />
             </Form.Group>
 
-            <Form.Group className="mb-3" controlId="formGridAddress2">
+            {/* <Form.Group className="mb-3" controlId="formGridAddress2">
               <Form.Label>Address 2</Form.Label>
               <Form.Control
                 name="address2"
@@ -183,9 +255,9 @@ const ProfileInfo = (props) => {
                 value={customerDetails.address2}
                 onChange={onChangeHandler}
               />
-            </Form.Group>
+            </Form.Group> */}
 
-            <Row className="mb-3">
+            <Row className="mb-1">
               <Form.Group as={Col} controlId="formGridCity">
                 <Form.Label>City</Form.Label>
                 <Form.Control
@@ -206,17 +278,17 @@ const ProfileInfo = (props) => {
                 />
               </Form.Group>
 
-              <Form.Group as={Col} controlId="formGridState">
+              <Form.Group required as={Col} controlId="formGridCountry">
                 <Form.Label>Country</Form.Label>
-                <Form.Select
-                  defaultValue="Choose..."
+                <Form.Control
                   name="country"
-                  value={customerDetails.country}
+                  as="select"
                   onChange={onChangeHandler}
+                  value={customerDetails.country}
                 >
-                  <option>Choose...</option>
-                  <option>...</option>
-                </Form.Select>
+                  ...
+                  {options}
+                </Form.Control>
               </Form.Group>
 
               <Form.Group as={Col} controlId="formGridZip">
@@ -229,12 +301,12 @@ const ProfileInfo = (props) => {
               </Form.Group>
             </Row>
 
-            <Button variant="primary" type="submit">
+            <Button variant="dark" type="submit">
               Save Changes
             </Button>
           </Col>
-        </Form>
-      </Row>
+        </Row>
+      </Form>
     </Container>
   );
 };

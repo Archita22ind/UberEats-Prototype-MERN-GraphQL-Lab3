@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Container, Row, Form, Col, Modal, Button } from "react-bootstrap";
+import { Link } from "react-router-dom";
 
 const EditDishModal = (props) => {
   let onShowVal = props.dishItem.show;
@@ -10,9 +11,10 @@ const EditDishModal = (props) => {
 
   const onChangeHandler = (event) => {
     event.preventDefault();
+    event.stopPropagation();
 
     props.setRenderedList((prevState) => {
-      const newListOfDishes = [...prevState];
+      let newListOfDishes = [...prevState];
       newListOfDishes[props.keyValue] = {
         ...newListOfDishes[props.keyValue],
         [event.target.name]: event.target.value,
@@ -22,14 +24,18 @@ const EditDishModal = (props) => {
   };
 
   const onImageChangeHandler = (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+
     if (event.target.files && event.target.files[0]) {
       props.setRenderedList((prevState) => {
-        const newListOfDishes = [...prevState];
+        let newListOfDishes = [...prevState];
         newListOfDishes[props.keyValue] = {
-          ...newListOfDishes,
+          ...newListOfDishes[props.keyValue],
           imagePreview: URL.createObjectURL(event.target.files[0]),
           [event.target.name]: event.target.files[0],
         };
+        console.log("I am in Image change Handler", newListOfDishes);
         return newListOfDishes;
       });
     }
@@ -41,16 +47,16 @@ const EditDishModal = (props) => {
         <Form.Control
           name="imagePreview"
           type="image"
-          src={props.dishItem.image}
+          src={props.dishItem.imagePreview}
         />
       );
     }
   };
-  console.log(props.dishItem.image);
+  // console.log(props.dishItem.image);
 
   const submitDishesHandler = async (event) => {
     event.preventDefault();
-    console.log("I am here");
+
     const formData = new FormData();
     formData.append("restaurantId", 1);
     formData.append("foodId", props.dishItem.foodId);
@@ -73,7 +79,7 @@ const EditDishModal = (props) => {
 
       const data = await response.json();
       // enter you logic when the fetch is successful
-      console.log(data);
+      console.log("Data", data);
     } catch (error) {
       console.log(error);
     }
@@ -83,9 +89,9 @@ const EditDishModal = (props) => {
     <Modal
       show={onShowVal}
       onHide={props.onHide}
-      autoFocus="true"
+      // autoFocus="true"
       aria-labelledby="contained-modal-title-vcenter"
-      backdrop="static"
+      // backdrop="static"
     >
       <Form onSubmit={submitDishesHandler}>
         <Modal.Header closeButton>
