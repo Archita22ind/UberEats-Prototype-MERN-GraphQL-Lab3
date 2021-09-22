@@ -66,6 +66,7 @@ const AddDishModal = (props) => {
       const data = await response.json();
       // enter you logic when the fetch is successful
       console.log(data);
+      props.getDishesHandler();
     } catch (error) {
       console.log(error);
     }

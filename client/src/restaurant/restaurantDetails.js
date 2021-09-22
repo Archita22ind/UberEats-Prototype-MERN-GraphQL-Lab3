@@ -1,6 +1,15 @@
 import React, { useState, useEffect } from "react";
-import { Container, Row, Col, Button, Card, Form } from "react-bootstrap";
+import {
+  Container,
+  Row,
+  Col,
+  Button,
+  Card,
+  Form,
+  Modal,
+} from "react-bootstrap";
 import AddDishModal from "./addDishModal.js";
+import CustomerOrders from "./customerOrders";
 import EditDishModal from "./editDishModal.js";
 import Holder from "../images/holder.png";
 import RestaurantEditDetails from "./restaurantEditDetails.js";
@@ -97,6 +106,14 @@ const RestaurantDetails = (props) => {
     }
   };
 
+  const showOrderHandler = (showordersFlag) => {
+    return (
+      <Modal show={showordersFlag}>
+        <Modal.Body>helloa</Modal.Body>
+      </Modal>
+    );
+  };
+
   const displayList = () => {
     return (
       <Row>
@@ -129,8 +146,6 @@ const RestaurantDetails = (props) => {
     );
   };
 
-  console.log("2 printing state variable", renderedList);
-
   useEffect(() => {
     getDishesHandler(); //3rd party effects
   }, []);
@@ -149,7 +164,7 @@ const RestaurantDetails = (props) => {
           <Row>
             <Col>
               {/* <Form.Control src={profilePicture.imagePreview } name ="imagePreview" type="image" width="1000" height="250" /> */}
-              <Card border="dark">
+              <Card>
                 <Card.Img variant="top" src={imageUrl} height="300px" />
 
                 <Card.Body>
@@ -177,7 +192,15 @@ const RestaurantDetails = (props) => {
                 </Card.Body>
 
                 <Row>
-                  <Col md={10}></Col>
+                  <Col md={9}></Col>
+                  <Col>
+                    <Button
+                      variant="dark"
+                      onClick={() => showOrderHandler(true)}
+                    >
+                      Orders
+                    </Button>
+                  </Col>
                   <Col>
                     <Button variant="dark" onClick={() => setModalShow(true)}>
                       Add Dishes
@@ -185,6 +208,7 @@ const RestaurantDetails = (props) => {
                     <AddDishModal
                       show={modalShow}
                       onHide={() => setModalShow(false)}
+                      getDishesHandler={getDishesHandler}
                     />
                   </Col>
                 </Row>

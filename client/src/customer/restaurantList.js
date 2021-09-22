@@ -1,37 +1,88 @@
-import {Row, Col} from 'react-bootstrap';
-import Card from 'react-bootstrap/Card'
-import { Link} from 'react-router-dom';
+import { Row, Col } from "react-bootstrap";
+import Card from "react-bootstrap/Card";
+import { Link } from "react-router-dom";
+import Holder from "../images/holder.png";
+import React, { useState, useEffect } from "react";
 
-const restaurantList = ["Chennai Kings", "Subway", "Mc Donalds", "Chat House", "Chat Corner", "Paradise Biryani", "Jakes", "Five Guys"];
+const RestaurantList = () => {
+  const customer_id = 1;
 
+  const [restuarantList, setRestaurantList] = useState([]);
 
+  let getListOfRestaurants = async () => {
+    const response = await fetch("http://10.0.0.8:8080/getListOfRestaurants", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json, charset= UTF-8",
+        Accept: "application/json, text/html, image/png",
+      },
+    });
 
-const RestaurantList = () => {  
-    
-    return <Row >
-        {restaurantList.map (
-    
-        (restaurant, index) => {
-        
-        return ( 
-            <Col xs={12} md={3} className="mb-4">
-                <Link to = "/restaurantDetails" style={{ textDecoration: 'none', color: 'black' }}> 
-                <Card  border="dark" >
-                        <Card.Img variant="top" src="holder.js/100px160" />
-                        <Card.Header>Header</Card.Header>
-                        <Card.Body>
-                        <Card.Title>{restaurant}</Card.Title>
-                        <Card.Text>
-                        {restaurant}
-                        </Card.Text>
-                        </Card.Body>
-                    </Card>
-                </Link>
-           </Col>   
-    
+    let data = await response.json();
+
+    setRestaurantList(
+      data.map((d) => {
+        return {
+          ...d,
+          imagePreview: "http://10.0.0.8:8080/" + d.ProfilePicture,
+        };
+      })
     );
-    
-    })} </Row>
-}
+  };
+
+  console.log("new list", restuarantList);
+  //   useEffect(() => {
+  //     getListOfRestaurants(); //3rd party effects
+  //   }, [getListOfRestaurants]);
+
+  useEffect(() => {
+    getListOfRestaurants(); //3rd party effects
+  }, []);
+
+  const viewImageHandler = (restaurant) => {
+    if (restaurant.imagePreview) {
+      return (
+        <Card style={{ width: "15rem" }}>
+          <Card.Img
+            variant="top"
+            src={restaurant.imagePreview}
+            height="200px"
+          />
+        </Card>
+      );
+    } else {
+      return (
+        <Card style={{ width: "15rem" }}>
+          <Card.Img variant="top" src={Holder} height="200px" />
+        </Card>
+      );
+    }
+  };
+
+  return (
+    <Row>
+      {restuarantList.map((restaurant, key) => {
+        return (
+          <Col xs={12} md={3} className="mb-4">
+            <Link
+              to="/restaurantDetails"
+              style={{ textDecoration: "none", color: "black" }}
+            >
+              <Card>
+                {viewImageHandler(restaurant)}
+                <Card.Header>{restaurant.RestaurantName}</Card.Header>
+                <font size="1">
+                  <Card.Body>
+                    {restaurant.City}, {restaurant.State}
+                  </Card.Body>
+                </font>
+              </Card>
+            </Link>
+          </Col>
+        );
+      })}{" "}
+    </Row>
+  );
+};
 
 export default RestaurantList;

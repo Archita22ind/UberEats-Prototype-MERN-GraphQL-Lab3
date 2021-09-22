@@ -200,11 +200,10 @@ const RestaurantSignUp = (props) => {
                 />
               </Form.Group>
             </Row>
-            <Link to="/restaurantDetails">
-              <Button variant="dark" type="submit">
-                Sign Up
-              </Button>
-            </Link>
+
+            <Button variant="dark" type="submit">
+              Sign Up
+            </Button>
           </Form>
         </Col>
         {/* 

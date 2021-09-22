@@ -164,11 +164,11 @@ const CustomerSignUp = (props) => {
                 />
               </Form.Group>
             </Row>
-            <Link to="/restaurantSearch">
-              <Button variant="dark" type="submit">
-                Sign Up
-              </Button>
-            </Link>
+            {/* <Link to="/restaurantSearch"> */}
+            <Button variant="dark" type="submit">
+              Sign Up
+            </Button>
+            {/* </Link> */}
           </Form>
         </Col>
       </Row>

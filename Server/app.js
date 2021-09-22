@@ -7,6 +7,7 @@ const restaurantSignUpInfo = require("./Services/Restaurant/restaurantSignUpInfo
 const restaurantLoginInfo = require("./Services/Restaurant/restaurantLoginInfo");
 const restaurantDetailsInfo = require("./Services/Restaurant/restaurantDetailsInfo");
 const restaurantDetailsInfoUpdate = require("./Services/Restaurant/restaurantDetailsInfoUpdate");
+const getListOfRestaurants = require("./Services/Restaurant/getListOfRestaurants");
 const customerSignUpInfo = require("./Services/Customer/customerSignUpInfo");
 const updateProfileInfo = require("./Services/Customer/updateProfileInfo");
 const getProfileInfo = require("./Services/Customer/getProfileInfo");
@@ -53,6 +54,8 @@ app.get("/getProfileInfo", upload.single("file"), getProfileInfo);
 
 app.post("/updateProfileInfo", upload.single("file"), updateProfileInfo);
 
+app.get("/getListOfRestaurants", upload.single("file"), getListOfRestaurants);
+
 //testing of images part
 
 app.get("/apiImage", (req, res) => {
@@ -78,41 +81,6 @@ app.get("/apiImage", (req, res) => {
     }
   });
 });
-
-//end of testing of images part
-
-// app.post("/restaurantSignUpInfo", upload.single("file"), function (req, res, err) {
-
-//   console.log(req.body);
-
-//   if (err instanceof multer.MulterError) {
-//     return res.status(500).json(err);
-//   }
-
-//   let sql =
-//     "INSERT INTO  RestaurantDetails (RestaurantName,Passwordvalue,Address,City,State,ZipCode,Country,ContactNumber,EmailID) VALUES (?,?,?,?,?,?,?,?,?)";
-
-//     con.query(
-//       sql,
-//       [
-//         req.body.restaurantName,
-//         req.body.password,
-//         req.body.address,
-//         req.body.city,
-//         req.body.state,
-//         req.body.zipCode,
-//         req.body.country,
-//         req.body.contactNumber,
-//         req.body.emailId,
-//       ],
-//       (err, result) => {
-//         if (err) throw err;
-//         console.log("1 record for restaurant details inserted");
-//       }
-//     );
-
-//   return res.status(200).send(req);
-// });
 
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, console.log(`Server started on port ${PORT}`));

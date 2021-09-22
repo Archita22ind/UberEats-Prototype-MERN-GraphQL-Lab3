@@ -80,6 +80,7 @@ const EditDishModal = (props) => {
       const data = await response.json();
       // enter you logic when the fetch is successful
       console.log("Data", data);
+      props.onHide();
     } catch (error) {
       console.log(error);
     }
@@ -215,7 +216,7 @@ const EditDishModal = (props) => {
           </Container>
         </Modal.Body>
         <Modal.Footer>
-          <Button type="submit" variant="dark" onClick={props.onHide}>
+          <Button type="submit" variant="dark">
             Save
           </Button>
         </Modal.Footer>
