@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Button, Row, Col, Form, Container } from "react-bootstrap";
+import { Button, Row, Col, Form, Container, Alert } from "react-bootstrap";
 import Image from "react-bootstrap/Image";
 import Background from "../images/restaurantSignUp.jpeg";
 import countryList from "react-select-country-list";
@@ -129,13 +129,15 @@ const CustomerSignUp = (props) => {
 
               <Form.Group as={Col} controlId="formGridState">
                 <Form.Label>State</Form.Label>
-                <Form.Control
-                  required
-                  name="state"
-                  onChange={onChangeHandler}
-                />
+                <Form.Control name="state" onChange={onChangeHandler} />
               </Form.Group>
 
+              <Form.Group as={Col} controlId="formGridZipCode">
+                <Form.Label>Zip Code</Form.Label>
+                <Form.Control name="zipCode" onChange={onChangeHandler} />
+              </Form.Group>
+            </Row>
+            <Row>
               <Form.Group as={Col} controlId="formGridZip">
                 <Form.Label>Country</Form.Label>
                 <Form.Control
@@ -149,8 +151,6 @@ const CustomerSignUp = (props) => {
                   {options}
                 </Form.Control>
               </Form.Group>
-            </Row>
-            <Row>
               <Form.Group
                 as={Col}
                 className="mb-2"
@@ -158,6 +158,7 @@ const CustomerSignUp = (props) => {
               >
                 <Form.Label>Contact Number</Form.Label>
                 <Form.Control
+                  required
                   name="contactNumber"
                   placeholder="+1 ()"
                   onChange={onChangeHandler}

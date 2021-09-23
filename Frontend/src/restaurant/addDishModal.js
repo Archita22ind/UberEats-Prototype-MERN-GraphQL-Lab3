@@ -156,9 +156,11 @@ const AddDishModal = (props) => {
                     onChange={onChangeHandler}
                   >
                     <option>Select dish type</option>
-                    <option value="Veg">Vegetarian</option>
-                    <option value="Non-Veg">Non Vegetarian</option>
+                    <option value="Vegetarian">Vegetarian</option>
+                    <option value="Non-Vegetarian">Non-Vegetarian</option>
                     <option value="Vegan">Vegan</option>
+                    <option value="Halal">Halal</option>
+                    <option value="Gluten-free">Gluten-free</option>
                   </Form.Select>
                 </Form.Group>
               </Col>
@@ -193,6 +195,8 @@ const AddDishModal = (props) => {
                   <option value="Singaporean">Singaporean</option>
                   <option value="Japanese">Japanese</option>
                   <option value="Chinese">Chinese</option>
+                  <option value="Korean">Chinese</option>
+                  <option value="South Indian">South Indian</option>
                 </Form.Select>
               </Form.Group>
             </Row>

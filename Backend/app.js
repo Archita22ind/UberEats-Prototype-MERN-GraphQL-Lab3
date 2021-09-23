@@ -7,6 +7,7 @@ const restaurantSignUpInfo = require("./Services/Restaurant/restaurantSignUpInfo
 const restaurantLoginInfo = require("./Services/Restaurant/restaurantLoginInfo");
 const restaurantDetailsInfo = require("./Services/Restaurant/restaurantDetailsInfo");
 const restaurantDetailsInfoUpdate = require("./Services/Restaurant/restaurantDetailsInfoUpdate");
+const getTypeaheadList = require("./Services/Restaurant/getTypeaheadList");
 const getListOfRestaurants = require("./Services/Restaurant/getListOfRestaurants");
 const customerSignUpInfo = require("./Services/Customer/customerSignUpInfo");
 const updateProfileInfo = require("./Services/Customer/updateProfileInfo");
@@ -54,7 +55,9 @@ app.get("/getProfileInfo", upload.single("file"), getProfileInfo);
 
 app.post("/updateProfileInfo", upload.single("file"), updateProfileInfo);
 
-app.get("/getListOfRestaurants", upload.single("file"), getListOfRestaurants);
+app.post("/getListOfRestaurants", getListOfRestaurants);
+
+app.post("/getTypeaheadList", getTypeaheadList);
 
 //testing of images part
 
