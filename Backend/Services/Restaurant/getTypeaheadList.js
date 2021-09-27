@@ -2,39 +2,57 @@ const con = require("../../Controller/Common/dbConnection");
 
 const getTypeaheadList = (req, res) => {
   console.log(req.body);
-  let listOfTypeahead;
+  let listOfTypeahead = [];
   let selectSql1 = `SELECT * FROM RestaurantDetails where RestaurantName like '%${req.body.input}%'`;
-
+  // console.log(selectSql1);
   con.query(selectSql1, (err, result1) => {
     if (err) throw err;
 
     if (result1) {
-      console.log(result1);
-
-      result1.forEach((element) => {
-        listOfTypeahead = [
-          {
-            [element.RestaurantName]: element.RestaurantID,
-          },
-        ];
+      result1.forEach((v) => {
+        listOfTypeahead.push({
+          name: v.RestaurantName,
+          id: [v.RestaurantID],
+          isRestaurant: true,
+        });
       });
-      console.log("final result", listOfTypeahead);
+
+      // res.send(listOfTypeahead);
+    }
+  });
+  let selectSql2 = `SELECT FoodName , RestaurantID from  FoodItems where FoodName
+   like '%${req.body.input}%'  or CuisineType like '%${req.body.input}%'`;
+
+  con.query(selectSql2, (err, result2) => {
+    if (err) throw err;
+
+    if (result2) {
+      console.log(result2);
+
+      let tempList = [];
+      let tempObject = {};
+
+      result2.forEach((value) => {
+        if (tempObject[value.FoodName]) {
+          tempObject[value.FoodName].push(value.RestaurantID);
+        } else {
+          let restIDsList = [];
+          restIDsList.push(value.RestaurantID);
+          tempObject[value.FoodName] = restIDsList;
+        }
+      });
+      console.log(tempObject);
+
+      Object.keys(tempObject).forEach((keyVal) => {
+        listOfTypeahead.push({
+          name: keyVal,
+          id: tempObject[keyVal],
+          isRestaurant: false,
+        });
+      });
 
       res.send(listOfTypeahead);
     }
-
-    // let selectSql2 = `SELECT FoodName FROM FoodItems where FoodName
-    //  like '%${req.body.input}%' `;
-
-    // con.query(selectSql, (err, result1) => {
-    //   if (err) throw err;
-
-    //   if (result1) {
-    //     console.log(result1);
-
-    //     //   res.send(result1);
-    //   }
-    // });
   });
 };
 

@@ -28,11 +28,6 @@ const RestaurantDetails = (props) => {
     imageUrl = profilePicture.imagePreview;
   }
 
-  // console.log(
-  //   "3 printing state variable after updated on edit modal",
-  //   renderedList
-  // );
-
   const getRestaurantProfileInfo = async () => {
     const response = await fetch("http://10.0.0.8:8080/restaurantDetailsInfo", {
       method: "GET",
@@ -152,7 +147,6 @@ const RestaurantDetails = (props) => {
 
   useEffect(() => {
     getRestaurantProfileInfo();
-    //console.log("I ran faster than API method"); //3rd party effects
   }, []);
 
   return (

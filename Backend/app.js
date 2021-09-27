@@ -15,6 +15,7 @@ const getProfileInfo = require("./Services/Customer/getProfileInfo");
 const addFoodDishes = require("./Services/Restaurant/addFoodDishes");
 const editFoodDishes = require("./Services/Restaurant/editFoodDishes");
 const foodItemsDisplay = require("./Services/Restaurant/foodItemsDisplay");
+const createFavouritesList = require("./Services/Customer/createFavouritesList");
 
 const app = express();
 app.use(express.json());
@@ -58,6 +59,8 @@ app.post("/updateProfileInfo", upload.single("file"), updateProfileInfo);
 app.post("/getListOfRestaurants", getListOfRestaurants);
 
 app.post("/getTypeaheadList", getTypeaheadList);
+
+app.post("/createFavouritesList", createFavouritesList);
 
 //testing of images part
 

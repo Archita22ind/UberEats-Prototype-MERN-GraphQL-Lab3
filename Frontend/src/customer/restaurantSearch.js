@@ -1,24 +1,23 @@
 import "../styling/customer/restaurantSearch.css";
 import { Container, Row, Col, Form } from "react-bootstrap";
-import { Typeahead } from "react-bootstrap-typeahead";
 import * as Icon from "react-bootstrap-icons";
 import RestaurantList from "./restaurantList.js";
 import React, { useState, useEffect } from "react";
-import MainHeader from "../common/mainHeader";
 
 const RestaurantSearch = (props) => {
-  const [foodFilter, setFoodFilter] = useState([]);
-  const [restuarantList, setRestaurantList] = useState([]);
-  const [typeahead, setTypeAhead] = useState("");
-
   const onFilterCheckHandler = (event) => {
-    setFoodFilter((prevState) => {
-      return [...prevState, event.target.name];
+    props.setFoodFilter((prevState) => {
+      return {
+        ...prevState,
+        [event.target.name]: event.target.checked,
+      };
     });
     fetchFilteredRestaurants();
   };
 
   const fetchFilteredRestaurants = async () => {
+    console.log("food", props.foodFilter);
+
     try {
       const response = await fetch(
         "http://10.0.0.8:8080/getListOfRestaurants",
@@ -26,17 +25,20 @@ const RestaurantSearch = (props) => {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            filter: foodFilter,
+            filter: Object.keys(props.foodFilter).filter(
+              (keyValue) => props.foodFilter[keyValue]
+            ),
+            typeaheadValue: props.typeaheadValue[0].id
+              ? props.typeaheadValue[0].id
+              : [],
           }),
-
-          // typeaheadString: JSON.stringify(typeahead),
         }
       );
 
       let data = await response.json();
       console.log(data);
 
-      setRestaurantList(
+      props.setRestaurantList(
         data.map((d) => {
           return {
             ...d,
@@ -51,11 +53,10 @@ const RestaurantSearch = (props) => {
 
   useEffect(() => {
     fetchFilteredRestaurants();
-  }, [foodFilter]);
+  }, [props.foodFilter, props.typeaheadValue]); //TO DO: ADD a react use callback here
 
   return (
     <>
-      <MainHeader />
       <Container fluid className="mt-5">
         <Row>
           <Col xs={12} md={2}>
@@ -140,7 +141,7 @@ const RestaurantSearch = (props) => {
             </Row>
           </Col>
           <Col xs={12} md={10}>
-            <RestaurantList restuarantList={restuarantList} />
+            <RestaurantList restuarantList={props.restuarantList} />
           </Col>
         </Row>
       </Container>

@@ -6,23 +6,19 @@ export const getSessionCookie = () => {
   if (sessionCookie) {
     try {
       return JSON.parse(sessionCookie);
-    }catch (exception) {
+    } catch (exception) {
       Cookies.remove("session");
-      alert (exception);
+      alert(exception);
     }
     return {};
   } else {
-   return {};
+    return {};
   }
 };
 
-
 export const setSessionCookie = (session) => {
   Cookies.remove("session");
-  Cookies.set("session", session, { expires: 1/48 });
+  Cookies.set("session", session, { expires: 1 });
 };
 
-
 export const SessionContext = React.createContext(getSessionCookie());
-
-
