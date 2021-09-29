@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { Button, Row, Col, Form, Container } from "react-bootstrap";
 import Image from "react-bootstrap/Image";
-import { Link } from "react-router-dom";
 import Background from "../images/restaurantSignUp.jpeg";
 import countryList from "react-select-country-list";
 import { setSessionCookie } from "../common/session";

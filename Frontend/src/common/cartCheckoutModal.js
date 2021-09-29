@@ -10,6 +10,7 @@ import {
   Form,
 } from "react-bootstrap";
 import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 
 import { BiPlus } from "react-icons/bi";
 import { BiMinus } from "react-icons/bi";
@@ -125,9 +126,11 @@ const CartCheckoutModal = (props) => {
         <Container>{displaySelectedItems()}</Container>
       </Modal.Body>
       <Modal.Footer>
-        <Button variant="dark" onClick={props.onHide}>
-          Go to checkout : ${props.cartTotal.toFixed(2)}
-        </Button>
+        <Link to="/checkout">
+          <Button variant="dark" onClick={props.onHide}>
+            Go to checkout : ${props.cartTotal.toFixed(2)}
+          </Button>
+        </Link>
       </Modal.Footer>
     </Modal>
   );

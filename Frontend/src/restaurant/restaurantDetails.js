@@ -162,6 +162,44 @@ const RestaurantDetails = (props) => {
     getRestaurantProfileInfo();
   }, []);
 
+  const showEditbutton = () => {
+    if (session.restaurantFlag)
+      return (
+        <Col>
+          <Button onClick={(event) => setIsFormReadOnly(false)} variant="dark">
+            Edit
+            <BsPencilSquare />
+          </Button>
+        </Col>
+      );
+  };
+  const addDishButton = () => {
+    if (session.restaurantFlag)
+      return (
+        <Row>
+          <Col md={9}></Col>
+          <Col>
+            <Button
+              variant="dark"
+              // onClick={() => showOrderHandler(true)}
+            >
+              Orders
+            </Button>
+          </Col>
+          <Col>
+            <Button variant="dark" onClick={() => setModalShow(true)}>
+              Add Dishes
+            </Button>
+            <AddDishModal
+              show={modalShow}
+              onHide={() => setModalShow(false)}
+              getDishesHandler={getDishesHandler}
+            />
+          </Col>
+        </Row>
+      );
+  };
+
   return (
     <Container fluid className="mt-5">
       <Row>
@@ -186,39 +224,11 @@ const RestaurantDetails = (props) => {
                         setProfilePicture={setProfilePicture}
                       />
                     </Col>
-                    <Col>
-                      <Button
-                        onClick={(event) => setIsFormReadOnly(false)}
-                        variant="dark"
-                      >
-                        Edit
-                        <BsPencilSquare />
-                      </Button>
-                    </Col>
+                    {showEditbutton()}
                   </Row>
                 </Card.Body>
 
-                <Row>
-                  <Col md={9}></Col>
-                  <Col>
-                    <Button
-                      variant="dark"
-                      // onClick={() => showOrderHandler(true)}
-                    >
-                      Orders
-                    </Button>
-                  </Col>
-                  <Col>
-                    <Button variant="dark" onClick={() => setModalShow(true)}>
-                      Add Dishes
-                    </Button>
-                    <AddDishModal
-                      show={modalShow}
-                      onHide={() => setModalShow(false)}
-                      getDishesHandler={getDishesHandler}
-                    />
-                  </Col>
-                </Row>
+                {addDishButton()}
               </Card>
             </Col>
           </Row>

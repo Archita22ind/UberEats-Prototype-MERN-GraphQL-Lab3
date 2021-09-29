@@ -1,6 +1,11 @@
 const con = require("../../Controller/Common/dbConnection");
 
 const addOrdertoCart = (req, res) => {
+  if (!req.body.quantity) {
+    res.send("No Dish added as quantity is 0");
+    return;
+  }
+
   let sqlInsert =
     "INSERT INTO OrderDetails (FoodID, RestaurantID, FoodName, Price ,Quantity, CustomerId, Amount, Status) VALUES (?,?,?,?,?,?,?,?)";
 

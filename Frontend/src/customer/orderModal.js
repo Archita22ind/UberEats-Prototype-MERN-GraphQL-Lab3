@@ -2,9 +2,8 @@ import React, { useState, useEffect } from "react";
 import { Container, Row, Form, Col, Modal, Button } from "react-bootstrap";
 
 const OrderModal = (props) => {
-  //   const [orderDetails, setOrderDetails] = useState({});
-  //   const [modalDetails, setModalDetails] = useState({});
   const [quantity, setQuantity] = useState({});
+  let modalHide = props.onHide;
 
   let quantityList = Array.from(Array(100).keys());
 
@@ -49,7 +48,6 @@ const OrderModal = (props) => {
 
   const onSubmitHandler = async (event) => {
     event.preventDefault();
-    onChangeHandler(event);
 
     try {
       const response = await fetch("http://10.0.0.8:8080/addOrdertoCart", {
@@ -60,7 +58,7 @@ const OrderModal = (props) => {
         body: JSON.stringify(quantity),
       });
       const data = await response.json();
-      console.log(data);
+      // console.log(data);
     } catch (error) {
       console.log(error);
     }
@@ -69,7 +67,7 @@ const OrderModal = (props) => {
   return (
     <Modal
       show={props.dishItem.show}
-      onHide={props.onHide}
+      onHide={modalHide}
       aria-labelledby="contained-modal-title-vcenter"
     >
       <Modal.Header closeButton>
@@ -107,7 +105,7 @@ const OrderModal = (props) => {
               </Form.Group>
             </Col>
             <Col md={6}>
-              <Button type="submit" variant="dark">
+              <Button type="submit" variant="dark" onClick={props.onHide}>
                 Add to Order
               </Button>
             </Col>

@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { Container, Row, Form, Col, Modal, Button } from "react-bootstrap";
-import { Link } from "react-router-dom";
 
 const EditDishModal = (props) => {
   let onShowVal = props.dishItem.show;
