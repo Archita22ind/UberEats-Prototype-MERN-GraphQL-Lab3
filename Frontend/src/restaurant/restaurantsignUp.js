@@ -4,8 +4,8 @@ import Image from "react-bootstrap/Image";
 import { Link } from "react-router-dom";
 import Background from "../images/restaurantSignUp.jpeg";
 import countryList from "react-select-country-list";
-import {setSessionCookie} from '../common/session';
-import { useHistory} from "react-router-dom";
+import { setSessionCookie } from "../common/session";
+import { useHistory } from "react-router-dom";
 
 const RestaurantSignUp = (props) => {
   let countryArray = ["..."];
@@ -70,9 +70,13 @@ const RestaurantSignUp = (props) => {
 
       const data = await response.json();
       // enter you logic when the fetch is successful
-      setSessionCookie(JSON.stringify({emailId: restaurantDetails.emailId, restaurantFlag: true}));
-      history.push("/restaurantDetails");
-
+      setSessionCookie(
+        JSON.stringify({
+          primaryID: data.restaurantId,
+          restaurantFlag: true,
+        })
+      );
+      history.push("/customerRestaurantDetails");
     } catch (error) {
       console.log(error);
     }

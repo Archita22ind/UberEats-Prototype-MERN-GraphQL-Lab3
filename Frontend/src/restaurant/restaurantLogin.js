@@ -11,10 +11,13 @@ import {
 import Image from "react-bootstrap/Image";
 import { Link } from "react-router-dom";
 import Background from "../images/restaurantSignUp.jpeg";
+import { setSessionCookie } from "../common/session";
+import { useHistory } from "react-router-dom";
 
 const RestaurantLogin = (props) => {
   const [userEmail, setUserEmail] = useState("");
   const [userPassword, setUserPassword] = useState("");
+  const history = useHistory();
 
   const onEmailChangeHandler = (event) => {
     event.preventDefault();
@@ -41,9 +44,16 @@ const RestaurantLogin = (props) => {
       });
 
       const data = await response.json();
+      setSessionCookie(
+        JSON.stringify({
+          primaryID: data.restaurantId,
+          restaurantFlag: true,
+        })
+      );
 
       if (data.successFlag === false)
         alert("Incorrect Password! Please try again.");
+      history.push("/customerRestaurantDetails");
     } catch (error) {
       console.log(error);
     }

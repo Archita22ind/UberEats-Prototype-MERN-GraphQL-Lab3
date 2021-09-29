@@ -16,6 +16,10 @@ const addFoodDishes = require("./Services/Restaurant/addFoodDishes");
 const editFoodDishes = require("./Services/Restaurant/editFoodDishes");
 const foodItemsDisplay = require("./Services/Restaurant/foodItemsDisplay");
 const createFavouritesList = require("./Services/Customer/createFavouritesList");
+const customerSignIn = require("./Services/Customer/customerSignIn");
+const addOrdertoCart = require("./Services/Restaurant/addOrdertoCart");
+const showCartDetails = require("./Services/Customer/showCartDetails");
+const updateCartOrderDetails = require("./Services/Customer/updateCartOrderDetails");
 
 const app = express();
 app.use(express.json());
@@ -36,6 +40,8 @@ const storage = multer.diskStorage({
 var upload = multer({ storage: storage });
 
 app.post("/restaurantLoginInfo", restaurantLoginInfo);
+
+app.post("/customerSignIn", customerSignIn);
 
 app.post("/restaurantSignUpInfo", restaurantSignUpInfo);
 app.post("/customerSignUpInfo", customerSignUpInfo);
@@ -62,31 +68,11 @@ app.post("/getTypeaheadList", getTypeaheadList);
 
 app.post("/createFavouritesList", createFavouritesList);
 
-//testing of images part
+app.post("/addOrdertoCart", addOrdertoCart);
 
-app.get("/apiImage", (req, res) => {
-  const id = 10;
+app.post("/showCartDetails", showCartDetails);
 
-  let sqlSelect = "SELECT  * FROM  CustomerDetails1 where CustomerID = ?";
-
-  con.query(sqlSelect, [id], (err, result) => {
-    console.log(result);
-
-    if (err) throw err;
-    if (result) {
-      res.send({
-        image: result[0].ProfilePicture,
-        email: result[0].EmailID,
-      });
-
-      console.log(
-        "Records sent are ",
-        result[0].ProfilePicture,
-        result[0].EmailID
-      );
-    }
-  });
-});
+app.post("/updateCartOrderDetails", updateCartOrderDetails);
 
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, console.log(`Server started on port ${PORT}`));

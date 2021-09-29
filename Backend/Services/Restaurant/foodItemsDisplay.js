@@ -7,13 +7,14 @@ const foodItemsDisplay = (req, res, err) => {
   if (err instanceof multer.MulterError) {
     return res.status(500).json(err);
   }
-  let sqlSelect = `SELECT  FoodID,FoodName, Price, Description, FoodType, FoodCategory, MainIngredients, CuisineType, FoodImage from FoodItems where RestaurantID = ?`;
+  let sqlSelect = `SELECT  FoodID,RestaurantID, FoodName, Price, Description, FoodType, FoodCategory, MainIngredients, CuisineType, FoodImage from FoodItems where RestaurantID = ?`;
 
   con.query(sqlSelect, [id], (err, result) => {
     // console.log(result);
     let responseList = result.map((row) => {
       return {
         foodId: row.FoodID,
+        restaurantId: row.RestaurantID,
         dishName: row.FoodName,
         price: row.Price,
         description: row.Description,

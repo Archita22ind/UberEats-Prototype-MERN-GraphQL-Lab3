@@ -11,7 +11,7 @@ const ProtectedRouter = ({ history }) => {
   // const session = useContext(SessionContext);
   const session = getSessionCookie();
   console.log("Session Cookie Value", session);
-  if (session.emailId === undefined) {
+  if (session.primaryID === undefined) {
     console.log("I am in protected Router");
     history.push("/");
     return <div></div>;

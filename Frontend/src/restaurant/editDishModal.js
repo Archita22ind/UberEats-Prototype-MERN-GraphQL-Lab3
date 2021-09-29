@@ -5,8 +5,6 @@ import { Link } from "react-router-dom";
 const EditDishModal = (props) => {
   let onShowVal = props.dishItem.show;
 
-  console.log("I am in edit modal", onShowVal);
-
   let restaurantId = 1;
 
   const onChangeHandler = (event) => {
@@ -98,9 +96,10 @@ const EditDishModal = (props) => {
         <Modal.Header closeButton>
           <Modal.Title id="contained-modal-title-vcenter">
             <Form>
+              <p>Edit dish!</p>
               <Row className="mb-3">
                 <Form.Group as={Col} controlId="formGridDishName">
-                  <Form.Label>Add Dish Name</Form.Label>
+                  <Form.Label>Dish Name</Form.Label>
                   <Form.Control
                     name="dishName"
                     placeholder="Dish Name"

@@ -1,12 +1,15 @@
 import { useState, useEffect } from "react";
-import { Button, Row, Col, Form, Container, Card} from "react-bootstrap";
+import { Button, Row, Col, Form, Container, Card } from "react-bootstrap";
 import Image from "react-bootstrap/Image";
-import { Link} from 'react-router-dom';
+import { Link } from "react-router-dom";
 import Background from "../images/restaurantSignUp.jpeg";
+import { setSessionCookie } from "../common/session";
+import { useHistory } from "react-router-dom";
 
 const CustomerLogin = (props) => {
   const [userEmail, setUserEmail] = useState("");
   const [userPassword, setUserPassword] = useState("");
+  const history = useHistory();
 
   const onEmailChangeHandler = (event) => {
     event.preventDefault();
@@ -23,7 +26,7 @@ const CustomerLogin = (props) => {
     try {
       const response = await fetch("http://10.0.0.8:8080/customerSignIn", {
         method: "POST",
-        header: {
+        headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
@@ -32,12 +35,18 @@ const CustomerLogin = (props) => {
         }),
       });
       const data = await response.json();
-      console.log(data);
+
+      setSessionCookie(
+        JSON.stringify({
+          primaryID: data.customerID,
+          restaurantFlag: false,
+        })
+      );
+      history.push("/restaurantSearch");
     } catch (error) {
       console.log(error);
     }
   };
-
 
   return (
     <Container>
@@ -85,18 +94,17 @@ const CustomerLogin = (props) => {
           <p></p>
 
           <Card fuild className="mt=5">
-              <Form.Label>New User?</Form.Label>
-              <Link to = "/customerSignUp"> 
+            <Form.Label>New User?</Form.Label>
+            <Link to="/customerSignUp">
               <Button variant="dark" type="submit">
                 SignUp
               </Button>
-              </Link>
+            </Link>
           </Card>
         </Col>
       </Row>
     </Container>
   );
-
 };
 
 export default CustomerLogin;

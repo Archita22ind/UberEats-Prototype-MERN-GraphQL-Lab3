@@ -82,9 +82,10 @@ const AddDishModal = (props) => {
         <Modal.Header closeButton>
           <Modal.Title id="contained-modal-title-vcenter">
             <Form>
+              <p>Add dish!</p>
               <Row className="mb-3">
                 <Form.Group as={Col} controlId="formGridDishName">
-                  <Form.Label>Add Dish Name</Form.Label>
+                  <Form.Label>Dish Name</Form.Label>
                   <Form.Control
                     required
                     name="dishName"

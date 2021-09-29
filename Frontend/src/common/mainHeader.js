@@ -17,6 +17,7 @@ import { Link } from "react-router-dom";
 import RestaurantSearch from "../customer/restaurantSearch";
 import RestaurantDetails from "../restaurant/restaurantDetails";
 import { useHistory } from "react-router-dom";
+import { getSessionCookie } from "../common/session";
 
 const MainHeader = (props) => {
   let locationName = "San Jose";
@@ -27,9 +28,32 @@ const MainHeader = (props) => {
   const [valueSelected, setValueSelected] = useState([{}]);
   const [foodFilter, setFoodFilter] = useState({});
   const [restuarantList, setRestaurantList] = useState([]);
+  const [cartDetails, setCartDetails] = useState([]);
+
+  const [cartTotal, setCartTotal] = useState(0.0);
 
   const history = useHistory();
+  const session = getSessionCookie();
 
+  const getCartDetails = async () => {
+    try {
+      const response = await fetch("http://10.0.0.8:8080/showCartDetails", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          customerId: session.primaryID,
+        }),
+      });
+      const data = await response.json();
+      setCartDetails(data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  // console.log("cart details", cartDetails);
   const inputChangeHandler = (input, event) => {
     event.preventDefault();
 
@@ -133,13 +157,24 @@ const MainHeader = (props) => {
             />
           </Col>
           <Col className="mt-3" xs={4} md={2}>
-            <Button variant="dark" onClick={() => setModalShow(true)}>
+            <Button
+              variant="dark"
+              onClick={() => {
+                getCartDetails();
+                setModalShow(true);
+              }}
+            >
               <Icon.CartPlus />
               <font size="2"> Cart</font>
             </Button>
             <CartCheckoutModal
               show={modalShow}
+              cartDetails={cartDetails}
+              setCartDetails={setCartDetails}
               onHide={() => setModalShow(false)}
+              cartTotal={cartTotal}
+              setCartTotal={setCartTotal}
+              restuarantList={restuarantList}
             />
           </Col>
         </Row>

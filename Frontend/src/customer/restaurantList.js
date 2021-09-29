@@ -3,8 +3,10 @@ import Card from "react-bootstrap/Card";
 import { Link } from "react-router-dom";
 import Holder from "../images/holder.png";
 import React, { useState, useEffect } from "react";
-import { BsFillHeartFill } from "react-icons/bs";
-import { BsHeart } from "react-icons/bs";
+// import { BsFillHeartFill } from "react-icons/bs";
+// import { BsHeart } from "react-icons/bs";
+import { FcLikePlaceholder } from "react-icons/fc";
+import { FcLike } from "react-icons/fc";
 
 const RestaurantList = (props) => {
   const customer_id = 1;
@@ -78,16 +80,17 @@ const RestaurantList = (props) => {
                 {/* <Card.Body>{restaurant.About}</Card.Body> */}
                 <Card.Footer>
                   {restaurant.City}, {restaurant.State} {"                  "}
-                  <Button
+                  <ToggleButton
                     // name={restaurant.RestaurantName}
-                    variant={"danger"}
+                    variant={"dark"}
+                    size="sm"
                     onClick={(event) =>
-                      createFavouritesList(restaurant.RestaurantID)
+                      createFavouritesList(restaurant.RestaurantID, false)
                     }
                   >
-                    <BsFillHeartFill />
-                    <BsHeart />
-                  </Button>
+                    {/* <FcLike /> */}
+                    <FcLikePlaceholder />
+                  </ToggleButton>
                 </Card.Footer>
               </font>
             </Card>

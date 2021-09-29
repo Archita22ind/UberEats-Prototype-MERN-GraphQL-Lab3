@@ -4,6 +4,8 @@ import Image from "react-bootstrap/Image";
 import Background from "../images/restaurantSignUp.jpeg";
 import countryList from "react-select-country-list";
 import { Link } from "react-router-dom";
+import { setSessionCookie } from "../common/session";
+import { useHistory } from "react-router-dom";
 
 const CustomerSignUp = (props) => {
   let countryArray = ["..."];
@@ -18,6 +20,7 @@ const CustomerSignUp = (props) => {
   });
 
   const [customerDetails, setCustomerDetails] = useState({});
+  const history = useHistory();
 
   const onChangeHandler = (event) => {
     event.preventDefault();
@@ -45,8 +48,15 @@ const CustomerSignUp = (props) => {
       });
 
       const data = await response.json();
+      setSessionCookie(
+        JSON.stringify({
+          primaryID: data.customerId,
+          restaurantFlag: false,
+        })
+      );
+      history.push("/restaurantSearch");
 
-      console.log(data);
+      // console.log(data);
     } catch (error) {
       console.log(error);
     }

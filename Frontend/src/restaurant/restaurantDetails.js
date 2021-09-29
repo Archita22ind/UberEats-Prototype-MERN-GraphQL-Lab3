@@ -11,9 +11,11 @@ import {
 import AddDishModal from "./addDishModal.js";
 import CustomerOrders from "./customerOrders";
 import EditDishModal from "./editDishModal.js";
+import OrderModal from "../customer/orderModal.js";
 import Holder from "../images/holder.png";
 import RestaurantEditDetails from "./restaurantEditDetails.js";
 import { BsPencilSquare } from "react-icons/bs";
+import { SessionContext, getSessionCookie } from "../common/session";
 
 const RestaurantDetails = (props) => {
   let imageUrl = Holder;
@@ -23,6 +25,9 @@ const RestaurantDetails = (props) => {
   const [restaurantDetails, setRestaurantDetails] = useState({});
   const [isFormReadOnly, setIsFormReadOnly] = useState(true);
   const [renderedList, setRenderedList] = useState([]);
+  const [showOrderModal, setshowOrderModal] = useState(false);
+
+  const session = getSessionCookie();
 
   if (profilePicture.imagePreview) {
     imageUrl = profilePicture.imagePreview;
@@ -74,7 +79,6 @@ const RestaurantDetails = (props) => {
     });
 
     const data = await response.json();
-    console.log("resposne data", data);
 
     setRenderedList(
       data.map((dataRow) => {
@@ -88,25 +92,39 @@ const RestaurantDetails = (props) => {
   };
 
   const showEditHandler = (key, showFlag) => {
-    console.log("Ohh nooo I am in edit button handler");
-    setRenderedList((prevSate) => {
-      const newarry = [...prevSate];
+    setRenderedList((prevState) => {
+      const newarry = [...prevState];
       newarry[key].show = showFlag;
       return newarry;
     });
 
-    if (!showFlag) {
-      console.log("*******Am I called???");
-      getDishesHandler();
+    if (session.restaurantFlag) {
+      if (!showFlag) {
+        getDishesHandler();
+      }
     }
   };
 
-  const showOrderHandler = (showordersFlag) => {
-    return (
-      <Modal show={showordersFlag}>
-        <Modal.Body>helloa</Modal.Body>
-      </Modal>
-    );
+  const renderModal = (key, item) => {
+    if (session.restaurantFlag) {
+      return (
+        <EditDishModal
+          onHide={() => showEditHandler(key, false)}
+          keyValue={key}
+          dishItem={item}
+          setRenderedList={setRenderedList}
+        />
+      );
+    } else {
+      return (
+        <OrderModal
+          onHide={() => showEditHandler(key, false)}
+          keyValue={key}
+          dishItem={item}
+          customerId={session.primaryID}
+        />
+      );
+    }
   };
 
   const displayList = () => {
@@ -115,25 +133,20 @@ const RestaurantDetails = (props) => {
         {renderedList.map((item, key) => {
           return (
             <Col xs={12} md={3} className="my-2">
-              <Card>
-                <Card.Img variant="top" src={item.imagePreview} />
-                <Card.Header>{item.dishName}</Card.Header>
-                <Card.Body style={{ height: "80px" }}>
-                  <Card.Text>{item.description}</Card.Text>
-                  <Card.Text>{item.price}</Card.Text>
-                </Card.Body>
-                <Card.Footer>
-                  <BsPencilSquare
-                    onClick={() => showEditHandler(key, true)}
-                  ></BsPencilSquare>
-                  <EditDishModal
-                    onHide={() => showEditHandler(key, false)}
-                    keyValue={key}
-                    dishItem={item}
-                    setRenderedList={setRenderedList}
-                  />
-                </Card.Footer>
-              </Card>
+              <Button
+                variant="light"
+                onClick={() => showEditHandler(key, true)}
+              >
+                <Card>
+                  <Card.Img variant="top" src={item.imagePreview} />
+                  <Card.Header>{item.dishName}</Card.Header>
+                  <Card.Body style={{ height: "80px" }}>
+                    <Card.Text>{item.description}</Card.Text>
+                    <Card.Text>{item.price}</Card.Text>
+                  </Card.Body>
+                </Card>
+              </Button>
+              {renderModal(key, item)}
             </Col>
           );
         })}
@@ -190,7 +203,7 @@ const RestaurantDetails = (props) => {
                   <Col>
                     <Button
                       variant="dark"
-                      onClick={() => showOrderHandler(true)}
+                      // onClick={() => showOrderHandler(true)}
                     >
                       Orders
                     </Button>
