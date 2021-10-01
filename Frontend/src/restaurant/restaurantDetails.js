@@ -9,16 +9,23 @@ import {
   Modal,
 } from "react-bootstrap";
 import AddDishModal from "./addDishModal.js";
-import CustomerOrders from "./customerOrders";
 import EditDishModal from "./editDishModal.js";
 import OrderModal from "../customer/orderModal.js";
 import Holder from "../images/holder.png";
 import RestaurantEditDetails from "./restaurantEditDetails.js";
 import { BsPencilSquare } from "react-icons/bs";
-import { SessionContext, getSessionCookie } from "../common/session";
+import { getSessionCookie } from "../common/session";
+import { useDispatch, useSelector } from 'react-redux';
+import { reduxConstants } from '../constants/reduxConstants';
+import { useHistory} from "react-router-dom";
+import * as Cookies from "js-cookie";
+import {alertActions} from '../actions/alertActions';
 
 const RestaurantDetails = (props) => {
   let imageUrl = Holder;
+
+  const dispatch = useDispatch(); 
+  const history = useHistory();
 
   const [modalShow, setModalShow] = useState(false);
   const [profilePicture, setProfilePicture] = useState({});
@@ -29,8 +36,18 @@ const RestaurantDetails = (props) => {
 
   const session = getSessionCookie();
 
+  const user = useSelector(state => state.authentication.user);
+
   if (profilePicture.imagePreview) {
     imageUrl = profilePicture.imagePreview;
+  }
+
+
+  const logOutHandler = () => {
+    dispatch({ type: reduxConstants.LOGOUT });
+    dispatch(alertActions.clear());
+    Cookies.remove("session");
+    history.push("/restaurantLogin");
   }
 
   const getRestaurantProfileInfo = async () => {
@@ -235,6 +252,14 @@ const RestaurantDetails = (props) => {
         </Form>
       </Row>
       {displayList()}
+      {
+      user ? (<><h5>You are logged in with email {user}!</h5>
+             <Button variant="dark" onClick={logOutHandler}>
+             LogOut
+           </Button></>)
+       : (<h1>/</h1>)
+      }
+    
     </Container>
   );
 };

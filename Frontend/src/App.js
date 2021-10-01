@@ -6,15 +6,23 @@ import HomePage from "./common/homePage";
 import ProtectedRouter from "./common/protectedRouter";
 import "./styling/App.css";
 import { BrowserRouter as Router, Route, Switch , useHistory } from "react-router-dom";
-import React, { useState , useEffect} from "react";
+import React, {useEffect} from "react";
+import { useDispatch, useSelector } from 'react-redux';
 import { SessionContext, getSessionCookie } from "./common/session";
 import * as Cookies from "js-cookie";
 import Routes from "./common/routes";
 
 function App() {
-    return (
+  const alert = useSelector(state => state.alert);
+  
+  return (
       <div className="App">
+        <div>
+          {alert.message &&
+          <div className={`alert ${alert.type}`}>{alert.message}</div>
+          }
        <Routes/>
+       </div>
       </div>
     );
     

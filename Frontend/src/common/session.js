@@ -21,4 +21,4 @@ export const setSessionCookie = (session) => {
   Cookies.set("session", session, { expires: 1 });
 };
 
-export const SessionContext = React.createContext(getSessionCookie());
+// export const SessionContext = React.createContext(getSessionCookie());

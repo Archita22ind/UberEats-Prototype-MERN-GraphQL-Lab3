@@ -3,14 +3,24 @@ import { Button, Row, Col, Form, Container } from "react-bootstrap";
 import Image from "react-bootstrap/Image";
 import Background from "../images/restaurantSignUp.jpeg";
 import countryList from "react-select-country-list";
-import { setSessionCookie } from "../common/session";
-import { useHistory } from "react-router-dom";
+import {setSessionCookie} from '../common/session';
+import { useHistory} from "react-router-dom";
+import { useDispatch, useSelector } from 'react-redux';
+import {alertActions} from '../actions/alertActions';
+import { reduxConstants } from '../constants/reduxConstants';
+
+
+function request(user) { return { type: reduxConstants.REGISTER_REQUEST, user } }
+function success(user) { return { type: reduxConstants.REGISTER_SUCCESS, user } }
+function failure(error) { return { type: reduxConstants.REGISTER_FAILURE, error } }
+
 
 const RestaurantSignUp = (props) => {
+  const history = useHistory();
+  const dispatch = useDispatch();
+
   let countryArray = ["..."];
   countryArray.push(...countryList().getLabels());
-  const history = useHistory();
-
   const options = countryArray.map((item) => {
     return (
       <option key={item} value={item}>
@@ -50,6 +60,8 @@ const RestaurantSignUp = (props) => {
   const onSubmitHandler = async (event) => {
     event.preventDefault();
 
+    dispatch(request(restaurantDetails));
+
     // if(!passwordOkay)
     // return alert('Weak Password! Try a new one!');
 
@@ -68,15 +80,17 @@ const RestaurantSignUp = (props) => {
       );
 
       const data = await response.json();
-      // enter you logic when the fetch is successful
-      setSessionCookie(
-        JSON.stringify({
-          primaryID: data.restaurantId,
-          restaurantFlag: true,
-        })
-      );
-      history.push("/customerRestaurantDetails");
+   
+      setSessionCookie(JSON.stringify({
+        primaryID: data.restaurantId,
+        restaurantFlag: true,
+      }));
+
+      dispatch(success(restaurantDetails));
+      dispatch(alertActions.success('Registration successful'));
+      history.push("/restaurantDetails");
     } catch (error) {
+      dispatch(failure(error.toString()));
       console.log(error);
     }
   };

@@ -15,24 +15,23 @@ import HomePage from "./homePage";
 import ProtectedRouter from "./protectedRouter";
 
 const Routes = () => {
-  const history = useHistory();
-  const session = getSessionCookie();
+    const history = useHistory();
+    // const session = getSessionCookie();
 
-  return (
-    <SessionContext.Provider value={session}>
-      <Router history={history}>
+    return (
+      // <SessionContext.Provider value={session}>
+        <Router history={history}>
         <Switch>
-          <Route exact path="/" component={HomePage} />
-          <Route path="/restaurantLogin" component={RestaurantLogin} />
-          <Route path="/restaurantSignUp" component={RestaurantSignUp} />
-          <Route path="/customerLogin" component={CustomerLogin} />
-          <Route path="/customerSignUp" component={CustomerSignUp} />
-
-          <Route path="*" component={ProtectedRouter} />
-        </Switch>
-      </Router>
-    </SessionContext.Provider>
-  );
-};
+        <Route exact path="/" component={HomePage} />
+                <Route path="/restaurantLogin" component={RestaurantLogin} />
+                <Route path="/restaurantSignUp" component={RestaurantSignUp} />
+                <Route path="/customerLogin" component={CustomerLogin} />
+                <Route path="/customerSignUp" component={CustomerSignUp} />
+                <Route path="*" component={ProtectedRouter} />
+          </Switch>
+        </Router>
+      // </SessionContext.Provider>
+    );
+  };
 
 export default Routes;

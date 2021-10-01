@@ -19,7 +19,8 @@ const ProtectedRouter = ({ history }) => {
   } else {
     return (
       <>
-        <Route path="/restaurantDetails" component={<RestaurantDetails />} />
+        <Route path="/restaurantDetails" 
+         render={() => <RestaurantDetails />}/>
         <Route
           path="/customerRestaurantDetails"
           render={() => <MainHeader search={false} />}

@@ -5,12 +5,17 @@ import { Link } from 'react-router-dom';
 import { SidebarData } from './SidebarData';
 import './Navbar.css';
 import { IconContext } from 'react-icons';
+import { useDispatch, useSelector } from 'react-redux';
+import { reduxConstants } from '../constants/reduxConstants';
+import * as Cookies from "js-cookie";
+import {alertActions} from '../actions/alertActions';
 
 function Navbar() {
   const [sidebar, setSidebar] = useState(false);
 
   const showSidebar = () => setSidebar(!sidebar);
 
+  const dispatch = useDispatch(); 
   const createOverLayeffect = () => {
 
     if (sidebar){
@@ -19,6 +24,12 @@ function Navbar() {
       <div></div>
     }
 
+  }
+
+  const onClickHandler = (event) => {
+    dispatch({ type: reduxConstants.LOGOUT });
+    dispatch(alertActions.clear());
+    Cookies.remove("session");
   }
 
   return (
@@ -42,7 +53,7 @@ function Navbar() {
                 <li key={index} className={item.cName}>
                   <Link to={item.path} className='link' >
                     {item.icon}
-                    <span>{item.title}</span>
+                    <span onClick={onClickHandler}>{item.title}</span>
                   </Link>
                 </li>
               );

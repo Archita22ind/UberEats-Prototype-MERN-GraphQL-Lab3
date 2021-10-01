@@ -11,13 +11,25 @@ import {
 import Image from "react-bootstrap/Image";
 import { Link } from "react-router-dom";
 import Background from "../images/restaurantSignUp.jpeg";
-import { setSessionCookie } from "../common/session";
-import { useHistory } from "react-router-dom";
+import { useDispatch, useSelector } from 'react-redux';
+import { reduxConstants } from '../constants/reduxConstants';
+import { useHistory} from "react-router-dom";
+import {alertActions} from '../actions/alertActions';
+import {setSessionCookie} from '../common/session';
+
+
+function request(user) { return { type: reduxConstants.LOGIN_REQUEST, user } }
+function success(user) { return { type: reduxConstants.LOGIN_SUCCESS, user } }
+function failure(error) { return { type: reduxConstants.LOGIN_FAILURE, error } }
 
 const RestaurantLogin = (props) => {
+
+  const history = useHistory();
   const [userEmail, setUserEmail] = useState("");
   const [userPassword, setUserPassword] = useState("");
-  const history = useHistory();
+  const loggingIn = useSelector(state => state.authentication.loggingIn);
+
+  const dispatch = useDispatch();
 
   const onEmailChangeHandler = (event) => {
     event.preventDefault();
@@ -31,6 +43,8 @@ const RestaurantLogin = (props) => {
 
   const onSubmitHandler = async (event) => {
     event.preventDefault();
+
+    dispatch(request({ userEmail }));
     try {
       const response = await fetch("http://10.0.0.8:8080/restaurantLoginInfo", {
         method: "POST",
@@ -51,11 +65,19 @@ const RestaurantLogin = (props) => {
         })
       );
 
-      if (data.successFlag === false)
+      if (data.successFlag === false){
         alert("Incorrect Password! Please try again.");
-      history.push("/customerRestaurantDetails");
+      }else {
+        setSessionCookie(JSON.stringify({
+          primaryID: data.restaurantId,
+          restaurantFlag: true,
+        }));
+        dispatch(success(userEmail)); //TODO get from api response
+        dispatch(alertActions.success('Login successful')); 
+        history.push("/restaurantDetails");
+      }
     } catch (error) {
-      console.log(error);
+      dispatch(failure(error.toString()));
     }
   };
 
@@ -98,6 +120,7 @@ const RestaurantLogin = (props) => {
                 </Row>
               </Row>
               <Button variant="dark" type="submit">
+              {loggingIn && <span className="spinner-border spinner-border-sm mr-1"></span>}
                 Sign In
               </Button>
             </Form>
