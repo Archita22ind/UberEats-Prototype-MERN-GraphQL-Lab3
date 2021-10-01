@@ -6,8 +6,21 @@ const addOrdertoCart = (req, res) => {
     return;
   }
 
+  // let sqlInsert1 =
+  //   "INSERT INTO Orders ( RestaurantID, CustomerID, FinalStatus) VALUES (?,?,?)";
+
+  // let array1 = [req.body.restaurantId, req.body.customerId, "New"];
+
+  // con.query(sqlInsert1, array1, (err, result) => {
+  //   if (err) throw err;
+  //   console.log("mera result", result);
+  //   if (result) {
+  //     res.send("Added to cart");
+  //   }
+  //   // });
+
   let sqlInsert =
-    "INSERT INTO OrderDetails (FoodID, RestaurantID, FoodName, Price ,Quantity, CustomerId, Amount, Status) VALUES (?,?,?,?,?,?,?,?)";
+    "INSERT INTO OrderDetails (FoodID, RestaurantID, FoodName, Price ,Quantity, CustomerId, Amount, OrderStatus) VALUES (?,?,?,?,?,?,?,?)";
 
   let array = [
     req.body.foodId,

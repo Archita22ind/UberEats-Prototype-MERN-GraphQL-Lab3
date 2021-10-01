@@ -11,6 +11,7 @@ import {
 } from "react-bootstrap";
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 
 import { BiPlus } from "react-icons/bi";
 import { BiMinus } from "react-icons/bi";
@@ -22,6 +23,7 @@ const CartCheckoutModal = (props) => {
 
   let restaurantName = "Your Cart is empty!!";
   const session = getSessionCookie();
+  const history = useHistory();
 
   if (!session.restaurantFlag && props.cartDetails.length > 0) {
     restaurantName = props.cartDetails[0].RestaurantName;
@@ -59,6 +61,32 @@ const CartCheckoutModal = (props) => {
       console.log(data);
 
       props.setCartDetails(data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const onSubmitHandler = async (event) => {
+    event.preventDefault();
+
+    console.log("print cart total", props.cartTotal);
+    console.log("print cart details", props.cartDetails);
+    try {
+      const response = await fetch("http://10.0.0.8:8080/placeFinalOrder", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON
+          .stringify //kyasend krna h?
+          (),
+      });
+
+      const data = await response.json();
+
+      console.log("Archita");
+
+      history.push("/checkout");
     } catch (error) {
       console.log(error);
     }
@@ -126,11 +154,11 @@ const CartCheckoutModal = (props) => {
         <Container>{displaySelectedItems()}</Container>
       </Modal.Body>
       <Modal.Footer>
-        <Link to="/checkout">
-          <Button variant="dark" onClick={props.onHide}>
+        <Form onSubmit={onSubmitHandler}>
+          <Button variant="dark" type="submit" onClick={props.onHide}>
             Go to checkout : ${props.cartTotal.toFixed(2)}
           </Button>
-        </Link>
+        </Form>
       </Modal.Footer>
     </Modal>
   );

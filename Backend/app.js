@@ -20,6 +20,7 @@ const customerSignIn = require("./Services/Customer/customerSignIn");
 const addOrdertoCart = require("./Services/Restaurant/addOrdertoCart");
 const showCartDetails = require("./Services/Customer/showCartDetails");
 const updateCartOrderDetails = require("./Services/Customer/updateCartOrderDetails");
+const placeFinalOrder = require("./Services/Customer/placeFinalOrder");
 
 const app = express();
 app.use(express.json());
@@ -73,6 +74,8 @@ app.post("/addOrdertoCart", addOrdertoCart);
 app.post("/showCartDetails", showCartDetails);
 
 app.post("/updateCartOrderDetails", updateCartOrderDetails);
+
+app.post("/placeFinalOrder", placeFinalOrder);
 
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, console.log(`Server started on port ${PORT}`));

@@ -9,7 +9,7 @@ import { SessionContext, getSessionCookie } from "./session";
 import RestaurantSignUp from "../restaurant/restaurantsignUp";
 import RestaurantLogin from "../restaurant/restaurantLogin";
 import CustomerLogin from "../customer/customerLogin";
-import Checkout from "../customer/checkout";
+
 import CustomerSignUp from "../customer/customerSignUp";
 import HomePage from "./homePage";
 import ProtectedRouter from "./protectedRouter";
@@ -27,7 +27,7 @@ const Routes = () => {
           <Route path="/restaurantSignUp" component={RestaurantSignUp} />
           <Route path="/customerLogin" component={CustomerLogin} />
           <Route path="/customerSignUp" component={CustomerSignUp} />
-          <Route path="/checkout" component={Checkout} />
+
           <Route path="*" component={ProtectedRouter} />
         </Switch>
       </Router>

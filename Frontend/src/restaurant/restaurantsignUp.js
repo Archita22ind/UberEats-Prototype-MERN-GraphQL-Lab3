@@ -214,8 +214,6 @@ const RestaurantSignUp = (props) => {
             </Button>
           </Form>
         </Col>
-        {/* 
-        <Col md={3}></Col> */}
       </Row>
     </Container>
   );

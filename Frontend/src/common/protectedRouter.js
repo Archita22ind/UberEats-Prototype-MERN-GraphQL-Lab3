@@ -1,9 +1,10 @@
 import RestaurantSearch from "../customer/restaurantSearch";
 import RestaurantDetails from "../restaurant/restaurantDetails";
 import ProfileInfo from "../customer/profileInfo";
+import Orders from "../customer/orders";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import React, { useContext } from "react";
-
+import Checkout from "../customer/checkout";
 import { SessionContext, getSessionCookie } from "./session";
 import MainHeader from "./mainHeader";
 
@@ -28,6 +29,8 @@ const ProtectedRouter = ({ history }) => {
           render={() => <MainHeader search={true} />}
         />
         <Route path="/profileInfo" component={ProfileInfo} />
+        <Route path="/orders" component={Orders} />
+        <Route path="/checkout" component={Checkout} />
       </>
     );
   }

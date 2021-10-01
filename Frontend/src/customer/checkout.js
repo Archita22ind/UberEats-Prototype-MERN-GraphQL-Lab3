@@ -2,6 +2,17 @@ import { Container, Row, Col, Button, Form, Card } from "react-bootstrap";
 import React, { useState, useEffect } from "react";
 
 const Checkout = () => {
+  const [deliveryAddress, setdeliveryAddress] = useState();
+  const address = ["...", "Address1", "Address2"];
+
+  const options = address.map((item) => {
+    return (
+      <option key={item} value={item}>
+        {item}
+      </option>
+    );
+  });
+
   return (
     <Container fluid className="mt-5">
       <Row>
@@ -9,7 +20,29 @@ const Checkout = () => {
           <Card>
             <Card.Header>Your Items</Card.Header>
             <Card.Body></Card.Body>
-            <Card.Footer>Select Delivery Address</Card.Footer>
+            <Card.Footer>
+              <Form.Group as={Col}>
+                <Form.Label>Select from below Delivery Address</Form.Label>
+                <Form.Select
+                  required
+                  name="deliveryAddress"
+                  //   as="select"
+                  //   custom
+                  //   onChange={onChangeHandler}
+                >
+                  {options}
+                </Form.Select>
+              </Form.Group>
+
+              <Form.Group as={Col}>
+                <Form.Label>Add a new Delivery Address</Form.Label>
+                <Form.Control
+                  required
+                  name="deliveryAddressNew"
+                  //   onChange={onChangeHandler}
+                ></Form.Control>
+              </Form.Group>
+            </Card.Footer>
           </Card>
         </Col>
         <Col md={5}>
