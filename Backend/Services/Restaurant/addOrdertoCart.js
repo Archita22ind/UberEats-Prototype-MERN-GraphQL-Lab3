@@ -1,43 +1,85 @@
 const con = require("../../Controller/Common/dbConnection");
 
 const addOrdertoCart = (req, res) => {
+  let mainOrderId;
+  let array3 = [];
+
   if (!req.body.quantity) {
     res.send("No Dish added as quantity is 0");
     return;
   }
+  let sqlInsert3 =
+    "INSERT INTO OrderDetails (OrderId, FoodId, RestaurantID, CustomerId, FoodName, Price ,Quantity, Amount, OrderStatus) VALUES (?,?,?,?,?,?,?,?,?)";
 
-  // let sqlInsert1 =
-  //   "INSERT INTO Orders ( RestaurantID, CustomerID, FinalStatus) VALUES (?,?,?)";
+  let sqlSelect = `SELECT OrderID from Orders where CustomerID = (?) AND FinalStatus= (?)`;
 
-  // let array1 = [req.body.restaurantId, req.body.customerId, "New"];
-
-  // con.query(sqlInsert1, array1, (err, result) => {
-  //   if (err) throw err;
-  //   console.log("mera result", result);
-  //   if (result) {
-  //     res.send("Added to cart");
-  //   }
-  //   // });
-
-  let sqlInsert =
-    "INSERT INTO OrderDetails (FoodID, RestaurantID, FoodName, Price ,Quantity, CustomerId, Amount, OrderStatus) VALUES (?,?,?,?,?,?,?,?)";
-
-  let array = [
-    req.body.foodId,
-    req.body.restaurantId,
-    req.body.foodName,
-    req.body.dishPrice,
-    req.body.quantity,
-    req.body.customerId,
-    req.body.dishPrice * req.body.quantity,
-    "Current",
-  ];
-  con.query(sqlInsert, array, (err, result) => {
+  con.query(sqlSelect, [req.body.customerId, "New"], (err, result) => {
     if (err) throw err;
+    if (result.length > 0) {
+      //means already order exists
+      mainOrderId = result[0].OrderID;
+      array3 = [
+        mainOrderId,
+        req.body.foodId,
+        req.body.restaurantId,
+        req.body.customerId,
+        req.body.foodName,
+        req.body.dishPrice,
+        req.body.quantity,
+        req.body.dishPrice * req.body.quantity,
+        "Current",
+      ];
 
-    if (result) {
-      res.send("Added to cart");
+      con.query(sqlInsert3, array3, (err, result) => {
+        if (err) throw err;
+
+        if (result) {
+          res.send("Added to cart");
+        }
+      });
+    } else {
+      let sqlInsert =
+        "INSERT INTO Orders ( RestaurantID, CustomerID, FinalStatus ) VALUES (?,?,?)";
+
+      con.query(
+        sqlInsert,
+        [req.body.restaurantId, req.body.customerId, "New"],
+        (err, result0) => {
+          if (err) throw err;
+          if (result0) {
+            console.log("insert query ka result", result0.insertId);
+            mainOrderId = result0.insertId;
+            array3 = [
+              mainOrderId,
+              req.body.foodId,
+              req.body.restaurantId,
+              req.body.customerId,
+              req.body.foodName,
+              req.body.dishPrice,
+              req.body.quantity,
+              req.body.dishPrice * req.body.quantity,
+              "Current",
+            ];
+
+            con.query(sqlInsert3, array3, (err, result) => {
+              if (err) throw err;
+
+              if (result) {
+                res.send("Added to cart");
+              }
+            });
+          }
+        }
+      );
     }
+
+    //   con.query(sqlInsert3, array3, (err, result) => {
+    //     if (err) throw err;
+
+    //     if (result) {
+    //       res.send("Added to cart");
+    //     }
+    //   });
   });
 };
 

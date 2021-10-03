@@ -7,10 +7,11 @@ import { FaPowerOff } from "react-icons/fa";
 export const SidebarData = [
   {
     title: "Home",
-    path: "/",
+    path: "/restaurantSearch",
     icon: <AiIcons.AiFillHome />,
     cName: "nav-text",
   },
+
   {
     title: "Profile Info",
     path: "/profileInfo",
@@ -31,7 +32,7 @@ export const SidebarData = [
   },
   {
     title: "Sign Out",
-    path: "/SignOut",
+    path: "/customerLogin",
     icon: <FaPowerOff />,
     cName: "nav-text",
   },

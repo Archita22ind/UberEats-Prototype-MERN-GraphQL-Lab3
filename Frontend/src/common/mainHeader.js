@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
   Container,
   Row,
@@ -6,54 +6,39 @@ import {
   ToggleButtonGroup,
   ToggleButton,
   Button,
-  Form,
-  FormControl,
 } from "react-bootstrap";
 import { Typeahead } from "react-bootstrap-typeahead";
 import * as Icon from "react-bootstrap-icons";
 import Navbar from "../styling/Navbar.js";
-import CartCheckoutModal from "./cartCheckoutModal.js";
 import { Link } from "react-router-dom";
+import useCartCheckoutModal from "./useCartCheckoutModal";
 import RestaurantSearch from "../customer/restaurantSearch";
 import RestaurantDetails from "../restaurant/restaurantDetails";
 import { useHistory } from "react-router-dom";
-import { getSessionCookie } from "../common/session";
+import Favorites from "../customer/favorites.js";
+import Checkout from "../customer/checkout.js";
+import ProfileInfo from "../customer/profileInfo.js";
+import Orders from "../customer/orders.js";
 
 const MainHeader = (props) => {
   let locationName = "San Jose";
-  let showSearchPage = props.search;
+  let showTabs = props.tab;
   const [modalShow, setModalShow] = useState(false);
   // const [typeaheadInput, setTypeaheadInput] = useState("");
   const [typeaheadOutput, setTypeaheadOutput] = useState([]);
   const [valueSelected, setValueSelected] = useState([{}]);
   const [foodFilter, setFoodFilter] = useState({});
-  const [restuarantList, setRestaurantList] = useState([]);
-  const [cartDetails, setCartDetails] = useState([]);
+  const [restaurantList, setRestaurantList] = useState([]);
+  // const [cartDetails, setCartDetails] = useState([]);
 
-  const [cartTotal, setCartTotal] = useState(0.0);
+  // const [cartTotal, setCartTotal] = useState(0.0);
+  let onHide = () => setModalShow(false);
+
+  // Used custom hook
+  const { cartModal, getCartDetails } = useCartCheckoutModal(modalShow, onHide);
 
   const history = useHistory();
-  const session = getSessionCookie();
 
-  const getCartDetails = async () => {
-    try {
-      const response = await fetch("http://10.0.0.8:8080/showCartDetails", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          customerId: session.primaryID,
-        }),
-      });
-      const data = await response.json();
-      setCartDetails(data);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  // console.log("cart details", cartDetails);
   const inputChangeHandler = (input, event) => {
     event.preventDefault();
 
@@ -63,11 +48,10 @@ const MainHeader = (props) => {
 
   const onChangeHandler = (selected) => {
     setValueSelected(selected);
-    console.log("Selected", selected);
     if (selected[0].isRestaurant) {
       history.push("/customerRestaurantDetails");
     } else {
-      if (!showSearchPage) history.push("/restaurantSearch");
+      if (!showTabs) history.push("/restaurantSearch");
     }
   };
 
@@ -82,7 +66,6 @@ const MainHeader = (props) => {
       });
 
       let data = await response.json();
-      console.log("my data", data);
 
       setTypeaheadOutput(() => {
         return data;
@@ -92,18 +75,29 @@ const MainHeader = (props) => {
     }
   };
 
-  const renderPages = (search) => {
-    return search ? (
-      <RestaurantSearch
-        foodFilter={foodFilter}
-        setFoodFilter={setFoodFilter}
-        restuarantList={restuarantList}
-        setRestaurantList={setRestaurantList}
-        typeaheadValue={valueSelected}
-      />
-    ) : (
-      <RestaurantDetails />
-    );
+  const renderPages = (tab) => {
+    console.log("value of tab", tab);
+    if (tab === "restaurantDetails") return <RestaurantDetails />;
+    else if (tab === "restaurantSearch")
+      return (
+        <RestaurantSearch
+          foodFilter={foodFilter}
+          setFoodFilter={setFoodFilter}
+          restaurantList={restaurantList}
+          setRestaurantList={setRestaurantList}
+          typeaheadValue={valueSelected}
+        />
+      );
+    else if (tab === "favorites")
+      return (
+        <Favorites
+          restaurantList={restaurantList}
+          setRestaurantList={setRestaurantList}
+        />
+      );
+    else if (tab === "checkout") return <Checkout />;
+    else if (tab === "profile") return <ProfileInfo />;
+    else if (tab === "orders") return <Orders />;
   };
 
   return (
@@ -167,19 +161,13 @@ const MainHeader = (props) => {
               <Icon.CartPlus />
               <font size="2"> Cart</font>
             </Button>
-            <CartCheckoutModal
-              show={modalShow}
-              cartDetails={cartDetails}
-              setCartDetails={setCartDetails}
-              onHide={() => setModalShow(false)}
-              cartTotal={cartTotal}
-              setCartTotal={setCartTotal}
-              restuarantList={restuarantList}
-            />
+
+            {cartModal()}
           </Col>
         </Row>
       </Container>
-      {renderPages(showSearchPage)}
+
+      {renderPages(showTabs)}
     </>
   );
 };

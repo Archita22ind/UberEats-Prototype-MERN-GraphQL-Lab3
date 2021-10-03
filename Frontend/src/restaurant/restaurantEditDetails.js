@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Container, Row, Col, Button, Form } from "react-bootstrap";
+import React from "react";
+import { Row, Col, Button, Form } from "react-bootstrap";
 
 const RestaurantEditDetails = (props) => {
   const onChangeHandler = (event) => {

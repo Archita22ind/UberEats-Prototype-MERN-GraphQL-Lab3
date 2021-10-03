@@ -1,8 +1,14 @@
 import { Container, Row, Col, Button, Form, Card } from "react-bootstrap";
-import React, { useState, useEffect } from "react";
+import React from "react";
 
 const Orders = () => {
-  return <div>Hi</div>;
+  return (
+    <Container fluid className="mt-5">
+      <Row>
+        <h1>Past Orders</h1>
+      </Row>
+    </Container>
+  );
 };
 
 export default Orders;

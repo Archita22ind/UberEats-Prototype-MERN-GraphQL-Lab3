@@ -20,7 +20,9 @@ const customerSignIn = require("./Services/Customer/customerSignIn");
 const addOrdertoCart = require("./Services/Restaurant/addOrdertoCart");
 const showCartDetails = require("./Services/Customer/showCartDetails");
 const updateCartOrderDetails = require("./Services/Customer/updateCartOrderDetails");
-const placeFinalOrder = require("./Services/Customer/placeFinalOrder");
+const postToCart = require("./Services/Customer/postToCart");
+const getOrderTotal = require("./Services/Customer/getOrderTotal");
+const getFavoriteRestaurants = require("./Services/Customer/getFavoriteRestaurants");
 
 const app = express();
 app.use(express.json());
@@ -64,6 +66,7 @@ app.get("/getProfileInfo", upload.single("file"), getProfileInfo);
 app.post("/updateProfileInfo", upload.single("file"), updateProfileInfo);
 
 app.post("/getListOfRestaurants", getListOfRestaurants);
+app.post("/getFavoriteRestaurants", getFavoriteRestaurants);
 
 app.post("/getTypeaheadList", getTypeaheadList);
 
@@ -75,7 +78,9 @@ app.post("/showCartDetails", showCartDetails);
 
 app.post("/updateCartOrderDetails", updateCartOrderDetails);
 
-app.post("/placeFinalOrder", placeFinalOrder);
+app.post("/postToCart", postToCart);
+
+app.get("/getOrderTotal", getOrderTotal);
 
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, console.log(`Server started on port ${PORT}`));

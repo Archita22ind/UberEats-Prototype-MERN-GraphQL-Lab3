@@ -3,7 +3,8 @@ const app = require("../../app");
 const multer = require("multer");
 
 const restaurantDetailsInfo = (req, res, err) => {
-  let id = 1;
+  // console.log("aya kya h", req.query);
+  let id = req.query.restaurantId;
 
   if (err instanceof multer.MulterError) {
     return res.status(500).json(err);

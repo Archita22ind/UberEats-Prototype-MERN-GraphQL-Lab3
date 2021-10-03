@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-
+import { getSessionCookie } from "../common/session";
 import { Button, Row, Col, Form, Card, Container } from "react-bootstrap";
 import Holder from "../images/holder.png";
 import countryList from "react-select-country-list";
@@ -15,7 +15,7 @@ const ProfileInfo = (props) => {
       </option>
     );
   });
-
+  const session = getSessionCookie();
   const [customerDetails, setCustomerDetails] = useState({});
 
   const onChangeHandler = (event) => {
@@ -97,13 +97,16 @@ const ProfileInfo = (props) => {
   };
 
   const getCustomerProfileInfo = async () => {
-    const response = await fetch("http://10.0.0.8:8080/getProfileInfo", {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json, charset= UTF-8",
-        Accept: "application/json, text/html, image/png",
-      },
-    });
+    const response = await fetch(
+      `http://10.0.0.8:8080/getProfileInfo?customerId=${session.primaryID}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json, charset= UTF-8",
+          Accept: "application/json, text/html, image/png",
+        },
+      }
+    );
 
     const data = await response.json();
 

@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { Container, Row, Form, Col, Modal, Button } from "react-bootstrap";
 
 const EditDishModal = (props) => {
   let onShowVal = props.dishItem.show;
 
-  let restaurantId = 1;
+  // let restaurantId = 1;
 
   const onChangeHandler = (event) => {
     event.preventDefault();

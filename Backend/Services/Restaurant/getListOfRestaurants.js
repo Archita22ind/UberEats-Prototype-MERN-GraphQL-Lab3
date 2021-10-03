@@ -6,11 +6,8 @@ let columnsArray;
 const getListOfRestaurants = (req, res) => {
   let customerId = 1;
 
-  console.log(req.body);
-
   let custSql = `SELECT City from CustomerDetails where CustomerID=?`;
 
-  // console.log(req.body.filter.length);
   if (req.body.filter.length === 0 && req.body.typeaheadValue.length === 0) {
     selectSql = `SELECT RestaurantID, RestaurantName, City, State, Country, DeliveryFlag,PickupFlag, ProfilePicture from RestaurantDetails`;
     columnsArray = [];
@@ -26,7 +23,6 @@ const getListOfRestaurants = (req, res) => {
     selectSql = `SELECT RestaurantID, RestaurantName, City, State, Country, DeliveryFlag,PickupFlag, ProfilePicture from RestaurantDetails where RestaurantID in (SELECT distinct RestaurantID from FoodItems where FoodType in  (?)  and RestaurantID in  (?)) `;
     columnsArray = [];
     columnsArray.push(...req.body.filter, ...req.body.typeaheadValue);
-    console.log("Array of parameres", columnsArray);
   } else if (
     req.body.filter.length === 0 &&
     req.body.typeaheadValue.length > 0
@@ -52,13 +48,37 @@ const getListOfRestaurants = (req, res) => {
       if (err) throw err;
 
       if (resultLast) {
-        orderOfRestaurants = sortListOfRestaurants(
-          resultLast,
-          customerLocation
+        con.query(
+          "SELECT RestaurantID FROM CustomerFavorites where CustomerID = (?)",
+          [customerId],
+          (err, resultFavRest) => {
+            if (err) throw err;
+
+            let restaurantFavIds = resultFavRest.map((restau) => {
+              return restau.RestaurantID;
+            });
+
+            if (resultFavRest) {
+              orderOfRestaurants = sortListOfRestaurants(
+                resultLast.map((restuarant) => {
+                  let isLiked = false;
+
+                  if (restaurantFavIds.includes(restuarant.RestaurantID)) {
+                    isLiked = true;
+                  }
+                  return {
+                    ...restuarant,
+                    isLiked: isLiked,
+                  };
+                }),
+                customerLocation
+              );
+
+              res.send(orderOfRestaurants);
+            }
+          }
         );
       }
-
-      res.send(orderOfRestaurants);
     });
   });
 };

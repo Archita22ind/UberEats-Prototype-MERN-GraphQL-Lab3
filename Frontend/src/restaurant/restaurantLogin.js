@@ -1,33 +1,29 @@
-import { useState, useEffect } from "react";
-import {
-  Button,
-  Row,
-  Col,
-  Form,
-  Container,
-  Card,
-  FloatingLabel,
-} from "react-bootstrap";
+import { useState } from "react";
+import { Button, Row, Col, Form, Container, Card } from "react-bootstrap";
 import Image from "react-bootstrap/Image";
 import { Link } from "react-router-dom";
 import Background from "../images/restaurantSignUp.jpeg";
-import { useDispatch, useSelector } from 'react-redux';
-import { reduxConstants } from '../constants/reduxConstants';
-import { useHistory} from "react-router-dom";
-import {alertActions} from '../actions/alertActions';
-import {setSessionCookie} from '../common/session';
+import { useDispatch, useSelector } from "react-redux";
+import { reduxConstants } from "../constants/reduxConstants";
+import { useHistory } from "react-router-dom";
+import { alertActions } from "../actions/alertActions";
+import { setSessionCookie } from "../common/session";
 
-
-function request(user) { return { type: reduxConstants.LOGIN_REQUEST, user } }
-function success(user) { return { type: reduxConstants.LOGIN_SUCCESS, user } }
-function failure(error) { return { type: reduxConstants.LOGIN_FAILURE, error } }
+function request(user) {
+  return { type: reduxConstants.LOGIN_REQUEST, user };
+}
+function success(user) {
+  return { type: reduxConstants.LOGIN_SUCCESS, user };
+}
+function failure(error) {
+  return { type: reduxConstants.LOGIN_FAILURE, error };
+}
 
 const RestaurantLogin = (props) => {
-
   const history = useHistory();
   const [userEmail, setUserEmail] = useState("");
   const [userPassword, setUserPassword] = useState("");
-  const loggingIn = useSelector(state => state.authentication.loggingIn);
+  const loggingIn = useSelector((state) => state.authentication.loggingIn);
 
   const dispatch = useDispatch();
 
@@ -64,28 +60,20 @@ const RestaurantLogin = (props) => {
           restaurantFlag: true,
         })
       );
-
-      if (data.successFlag === false){
-        alert("Incorrect Password! Please try again.");
-      }else {
-        setSessionCookie(JSON.stringify({
-          primaryID: data.restaurantId,
-          restaurantFlag: true,
-        }));
-        dispatch(success(userEmail)); //TODO get from api response
-        dispatch(alertActions.success('Login successful')); 
-        history.push("/restaurantDetails");
-      }
+      dispatch(success(userEmail)); //TODO get from api response
+      dispatch(alertActions.success("Login Successful !! "));
+      history.push("/restaurantDetails");
     } catch (error) {
       dispatch(failure(error.toString()));
+      dispatch(alertActions.error("Login Failed !!"));
     }
   };
 
   return (
-    <Container>
-      <Row fuild className="mt=10">
+    <Container className="mt-3">
+      <Row>
         <Col md={7}>
-          <Image src={Background} />
+          <Image src={Background} height="75%" width="76%" />
         </Col>
 
         <Col>
@@ -120,7 +108,9 @@ const RestaurantLogin = (props) => {
                 </Row>
               </Row>
               <Button variant="dark" type="submit">
-              {loggingIn && <span className="spinner-border spinner-border-sm mr-1"></span>}
+                {loggingIn && (
+                  <span className="spinner-border spinner-border-sm mr-1"></span>
+                )}
                 Sign In
               </Button>
             </Form>

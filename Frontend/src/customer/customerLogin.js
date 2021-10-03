@@ -5,11 +5,27 @@ import { Link } from "react-router-dom";
 import Background from "../images/restaurantSignUp.jpeg";
 import { setSessionCookie } from "../common/session";
 import { useHistory } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { reduxConstants } from "../constants/reduxConstants";
+import { alertActions } from "../actions/alertActions";
+
+function request(user) {
+  return { type: reduxConstants.LOGIN_REQUEST, user };
+}
+
+function success(user) {
+  return { type: reduxConstants.LOGIN_SUCCESS, user };
+}
+
+function failure(error) {
+  return { type: reduxConstants.LOGIN_FAILURE, error };
+}
 
 const CustomerLogin = (props) => {
   const [userEmail, setUserEmail] = useState("");
   const [userPassword, setUserPassword] = useState("");
   const history = useHistory();
+  const dispatch = useDispatch();
 
   const onEmailChangeHandler = (event) => {
     event.preventDefault();
@@ -23,6 +39,9 @@ const CustomerLogin = (props) => {
 
   const onSubmitHandler = async (event) => {
     event.preventDefault();
+
+    dispatch(request({ userEmail }));
+
     try {
       const response = await fetch("http://10.0.0.8:8080/customerSignIn", {
         method: "POST",
@@ -42,8 +61,12 @@ const CustomerLogin = (props) => {
           restaurantFlag: false,
         })
       );
+      dispatch(success({ userEmail }));
+      dispatch(alertActions.success("Login Successful !!"));
       history.push("/restaurantSearch");
     } catch (error) {
+      dispatch(failure(error.toString()));
+      dispatch(alertActions.error("Login Failed !!"));
       console.log(error);
     }
   };

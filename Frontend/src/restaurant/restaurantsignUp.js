@@ -1,19 +1,23 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Button, Row, Col, Form, Container } from "react-bootstrap";
 import Image from "react-bootstrap/Image";
 import Background from "../images/restaurantSignUp.jpeg";
 import countryList from "react-select-country-list";
-import {setSessionCookie} from '../common/session';
-import { useHistory} from "react-router-dom";
-import { useDispatch, useSelector } from 'react-redux';
-import {alertActions} from '../actions/alertActions';
-import { reduxConstants } from '../constants/reduxConstants';
+import { setSessionCookie } from "../common/session";
+import { useHistory } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { alertActions } from "../actions/alertActions";
+import { reduxConstants } from "../constants/reduxConstants";
 
-
-function request(user) { return { type: reduxConstants.REGISTER_REQUEST, user } }
-function success(user) { return { type: reduxConstants.REGISTER_SUCCESS, user } }
-function failure(error) { return { type: reduxConstants.REGISTER_FAILURE, error } }
-
+function request(user) {
+  return { type: reduxConstants.REGISTER_REQUEST, user };
+}
+function success(user) {
+  return { type: reduxConstants.LOGIN_SUCCESS, user };
+}
+function failure(error) {
+  return { type: reduxConstants.REGISTER_FAILURE, error };
+}
 
 const RestaurantSignUp = (props) => {
   const history = useHistory();
@@ -60,7 +64,7 @@ const RestaurantSignUp = (props) => {
   const onSubmitHandler = async (event) => {
     event.preventDefault();
 
-    dispatch(request(restaurantDetails));
+    dispatch(request(restaurantDetails.emailId));
 
     // if(!passwordOkay)
     // return alert('Weak Password! Try a new one!');
@@ -80,18 +84,23 @@ const RestaurantSignUp = (props) => {
       );
 
       const data = await response.json();
-   
-      setSessionCookie(JSON.stringify({
-        primaryID: data.restaurantId,
-        restaurantFlag: true,
-      }));
 
-      dispatch(success(restaurantDetails));
-      dispatch(alertActions.success('Registration successful'));
+      setSessionCookie(
+        JSON.stringify({
+          primaryID: data.restaurantId,
+          restaurantFlag: true,
+        })
+      );
+
+      dispatch(success(restaurantDetails.emailId));
+      dispatch(alertActions.success("Registration successful"));
       history.push("/restaurantDetails");
     } catch (error) {
+      alert(
+        "User email already exists, try a new one, or login using the existing!!"
+      );
       dispatch(failure(error.toString()));
-      console.log(error);
+      // console.log(error);
     }
   };
 

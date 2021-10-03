@@ -12,10 +12,7 @@ const customerSignIn = (req, res) => {
         customerID: result[0].CustomerID,
       });
     } else {
-      res.send({
-        successFlag: false,
-        customerID: undefined,
-      });
+      res.sendStatus(401);
     }
   });
 };

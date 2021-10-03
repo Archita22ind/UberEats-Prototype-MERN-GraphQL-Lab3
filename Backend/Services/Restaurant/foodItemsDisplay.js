@@ -2,7 +2,7 @@ const con = require("../../Controller/Common/dbConnection");
 const multer = require("multer");
 
 const foodItemsDisplay = (req, res, err) => {
-  let id = 1;
+  let id = req.query.restaurantId;
 
   if (err instanceof multer.MulterError) {
     return res.status(500).json(err);
@@ -10,7 +10,6 @@ const foodItemsDisplay = (req, res, err) => {
   let sqlSelect = `SELECT  FoodID,RestaurantID, FoodName, Price, Description, FoodType, FoodCategory, MainIngredients, CuisineType, FoodImage from FoodItems where RestaurantID = ?`;
 
   con.query(sqlSelect, [id], (err, result) => {
-    // console.log(result);
     let responseList = result.map((row) => {
       return {
         foodId: row.FoodID,

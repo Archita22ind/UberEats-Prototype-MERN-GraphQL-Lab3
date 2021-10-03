@@ -1,8 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Container, Row, Form, Col, Modal, Button } from "react-bootstrap";
 
 const OrderModal = (props) => {
-  const [quantity, setQuantity] = useState({});
+  const [cartDetail, setCartDetail] = useState({});
+  const [buttonDisabled, setbuttonDisabled] = useState(true);
+
   let modalHide = props.onHide;
 
   let quantityList = Array.from(Array(100).keys());
@@ -21,7 +23,7 @@ const OrderModal = (props) => {
   const onChangeHandler = (event) => {
     event.preventDefault();
 
-    setQuantity((prevState) => {
+    setCartDetail((prevState) => {
       return {
         ...prevState,
         foodId: props.dishItem.foodId,
@@ -32,6 +34,7 @@ const OrderModal = (props) => {
         dishPrice: props.dishItem.price,
       };
     });
+    buttonDisplay();
   };
 
   const viewImageHandler = () => {
@@ -55,13 +58,18 @@ const OrderModal = (props) => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(quantity),
+        body: JSON.stringify(cartDetail),
       });
       const data = await response.json();
-      // console.log(data);
+      console.log(data);
     } catch (error) {
       console.log(error);
     }
+  };
+
+  const buttonDisplay = () => {
+    if (cartDetail === 0) setbuttonDisabled(true);
+    else setbuttonDisabled(false);
   };
 
   return (
@@ -105,7 +113,12 @@ const OrderModal = (props) => {
               </Form.Group>
             </Col>
             <Col md={6}>
-              <Button type="submit" variant="dark" onClick={props.onHide}>
+              <Button
+                type="submit"
+                variant="dark"
+                onClick={props.onHide}
+                disabled={buttonDisabled}
+              >
                 Add to Order
               </Button>
             </Col>

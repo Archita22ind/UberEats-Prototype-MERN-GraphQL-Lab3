@@ -1,13 +1,5 @@
 import React, { useState, useEffect } from "react";
-import {
-  Container,
-  Row,
-  Col,
-  Button,
-  Card,
-  Form,
-  Modal,
-} from "react-bootstrap";
+import { Container, Row, Col, Button, Card, Form } from "react-bootstrap";
 import AddDishModal from "./addDishModal.js";
 import EditDishModal from "./editDishModal.js";
 import OrderModal from "../customer/orderModal.js";
@@ -15,16 +7,17 @@ import Holder from "../images/holder.png";
 import RestaurantEditDetails from "./restaurantEditDetails.js";
 import { BsPencilSquare } from "react-icons/bs";
 import { getSessionCookie } from "../common/session";
-import { useDispatch, useSelector } from 'react-redux';
-import { reduxConstants } from '../constants/reduxConstants';
-import { useHistory} from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { reduxConstants } from "../constants/reduxConstants";
+import { useHistory } from "react-router-dom";
 import * as Cookies from "js-cookie";
-import {alertActions} from '../actions/alertActions';
+import { alertActions } from "../actions/alertActions";
+import { useLocation } from "react-router-dom";
 
 const RestaurantDetails = (props) => {
   let imageUrl = Holder;
 
-  const dispatch = useDispatch(); 
+  const dispatch = useDispatch();
   const history = useHistory();
 
   const [modalShow, setModalShow] = useState(false);
@@ -32,32 +25,41 @@ const RestaurantDetails = (props) => {
   const [restaurantDetails, setRestaurantDetails] = useState({});
   const [isFormReadOnly, setIsFormReadOnly] = useState(true);
   const [renderedList, setRenderedList] = useState([]);
-  const [showOrderModal, setshowOrderModal] = useState(false);
-
+  // const [showOrderModal, setshowOrderModal] = useState(false);
+  const location = useLocation();
   const session = getSessionCookie();
+  const user = useSelector((state) => state.authentication.user);
 
-  const user = useSelector(state => state.authentication.user);
+  let restaurantId = -1;
+
+  if (session.restaurantFlag) {
+    restaurantId = session.primaryID;
+  } else {
+    restaurantId = location.state?.restaurantId;
+  }
 
   if (profilePicture.imagePreview) {
     imageUrl = profilePicture.imagePreview;
   }
-
 
   const logOutHandler = () => {
     dispatch({ type: reduxConstants.LOGOUT });
     dispatch(alertActions.clear());
     Cookies.remove("session");
     history.push("/restaurantLogin");
-  }
+  };
 
   const getRestaurantProfileInfo = async () => {
-    const response = await fetch("http://10.0.0.8:8080/restaurantDetailsInfo", {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json, charset= UTF-8",
-        Accept: "application/json, text/html, image/png",
-      },
-    });
+    const response = await fetch(
+      `http://10.0.0.8:8080/restaurantDetailsInfo?restaurantId=${restaurantId}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json, charset= UTF-8",
+          Accept: "application/json, text/html, image/png",
+        },
+      }
+    );
 
     const data = await response.json();
 
@@ -87,13 +89,16 @@ const RestaurantDetails = (props) => {
   };
 
   const getDishesHandler = async (event) => {
-    const response = await fetch("http://10.0.0.8:8080/foodItemsDisplay", {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json, charset= UTF-8",
-        Accept: "application/json, text/html, image/png",
-      },
-    });
+    const response = await fetch(
+      `http://10.0.0.8:8080/foodItemsDisplay?restaurantId=${restaurantId}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json, charset= UTF-8",
+          Accept: "application/json, text/html, image/png",
+        },
+      }
+    );
 
     const data = await response.json();
 
@@ -252,14 +257,16 @@ const RestaurantDetails = (props) => {
         </Form>
       </Row>
       {displayList()}
-      {
-      user ? (<><h5>You are logged in with email {user}!</h5>
-             <Button variant="dark" onClick={logOutHandler}>
-             LogOut
-           </Button></>)
-       : (<h1>/</h1>)
-      }
-    
+      {session.restaurantFlag ? (
+        <>
+          <h5>You are logged in with email {user}!</h5>
+          <Button variant="dark" onClick={logOutHandler}>
+            LogOut
+          </Button>
+        </>
+      ) : (
+        <h1>/</h1>
+      )}
     </Container>
   );
 };

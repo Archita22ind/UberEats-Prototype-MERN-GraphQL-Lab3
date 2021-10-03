@@ -3,9 +3,21 @@ import { Button, Row, Col, Form, Container, Alert } from "react-bootstrap";
 import Image from "react-bootstrap/Image";
 import Background from "../images/restaurantSignUp.jpeg";
 import countryList from "react-select-country-list";
-import { Link } from "react-router-dom";
 import { setSessionCookie } from "../common/session";
 import { useHistory } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { alertActions } from "../actions/alertActions";
+import { reduxConstants } from "../constants/reduxConstants";
+
+function request(user) {
+  return { type: reduxConstants.REGISTER_REQUEST, user };
+}
+function success(user) {
+  return { type: reduxConstants.LOGIN_SUCCESS, user };
+}
+function failure(error) {
+  return { type: reduxConstants.REGISTER_FAILURE, error };
+}
 
 const CustomerSignUp = (props) => {
   let countryArray = ["..."];
@@ -22,6 +34,7 @@ const CustomerSignUp = (props) => {
   const [customerDetails, setCustomerDetails] = useState({});
   const history = useHistory();
 
+  const dispatch = useDispatch();
   const onChangeHandler = (event) => {
     event.preventDefault();
 
@@ -35,6 +48,8 @@ const CustomerSignUp = (props) => {
 
   const onSubmitHandler = async (event) => {
     event.preventDefault();
+
+    dispatch(request(customerDetails.emailId));
 
     try {
       const response = await fetch("http://10.0.0.8:8080/customerSignUpInfo", {
@@ -54,10 +69,14 @@ const CustomerSignUp = (props) => {
           restaurantFlag: false,
         })
       );
+      dispatch(success(customerDetails.emailId));
+      dispatch(alertActions.success("Registration successful"));
       history.push("/restaurantSearch");
-
-      // console.log(data);
     } catch (error) {
+      alert(
+        "User email already exists, try a new one, or login using the existing!!"
+      );
+      dispatch(failure(error.toString()));
       console.log(error);
     }
   };

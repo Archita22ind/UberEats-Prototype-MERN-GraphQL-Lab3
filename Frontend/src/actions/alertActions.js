@@ -1,19 +1,19 @@
-import { alertConstants } from '../constants/alertConstants';
+import { reduxConstants } from "../constants/reduxConstants";
 
 export const alertActions = {
-    success,
-    error,
-    clear
+  success,
+  error,
+  clear,
 };
 
 function success(message) {
-    return { type: alertConstants.SUCCESS, message };
+  return { type: reduxConstants.SUCCESS, message };
 }
 
 function error(message) {
-    return { type: alertConstants.ERROR, message };
+  return { type: reduxConstants.ERROR, message };
 }
 
 function clear() {
-    return { type: alertConstants.CLEAR };
+  return { type: reduxConstants.CLEAR };
 }

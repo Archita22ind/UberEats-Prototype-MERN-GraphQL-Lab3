@@ -4,19 +4,19 @@ const updateCartOrderDetails = (req, res) => {
   console.log("update", req.body);
 
   if (req.body.Quantity === 0) {
-    let sqlDelete = `DELETE FROM OrderDetails WHERE OrderLineId = ?`;
-    con.query(sqlDelete, [req.body.OrderLineId], (err, result) => {
+    let sqlDelete = `DELETE FROM OrderDetails WHERE OrderDetailId = ?`;
+    con.query(sqlDelete, [req.body.OrderDetailId], (err, result) => {
       if (err) throw err;
     });
   } else {
-    let sqlUpdate = `UPDATE OrderDetails SET  Quantity = ? , Amount=?  WHERE  OrderLineId = ? `;
+    let sqlUpdate = `UPDATE OrderDetails SET  Quantity = ? , Amount=?  WHERE  OrderDetailId = ? `;
 
     con.query(
       sqlUpdate,
       [
         req.body.Quantity,
         req.body.Quantity * req.body.Price,
-        req.body.OrderLineId,
+        req.body.OrderDetailId,
       ],
       (err, result) => {
         if (err) throw err;

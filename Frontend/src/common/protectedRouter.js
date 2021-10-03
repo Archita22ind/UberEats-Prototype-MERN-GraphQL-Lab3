@@ -2,6 +2,7 @@ import RestaurantSearch from "../customer/restaurantSearch";
 import RestaurantDetails from "../restaurant/restaurantDetails";
 import ProfileInfo from "../customer/profileInfo";
 import Orders from "../customer/orders";
+import Favorites from "../customer/favorites";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import React, { useContext } from "react";
 import Checkout from "../customer/checkout";
@@ -19,19 +20,29 @@ const ProtectedRouter = ({ history }) => {
   } else {
     return (
       <>
-        <Route path="/restaurantDetails" 
-         render={() => <RestaurantDetails />}/>
+        <Route path="/restaurantDetails" render={() => <RestaurantDetails />} />
         <Route
           path="/customerRestaurantDetails"
-          render={() => <MainHeader search={false} />}
+          render={() => <MainHeader tab={"restaurantDetails"} />}
         />
         <Route
           path="/restaurantSearch"
-          render={() => <MainHeader search={true} />}
+          render={() => <MainHeader tab={"restaurantSearch"} />}
         />
-        <Route path="/profileInfo" component={ProfileInfo} />
-        <Route path="/orders" component={Orders} />
-        <Route path="/checkout" component={Checkout} />
+        <Route
+          path="/favorites"
+          render={() => <MainHeader tab={"favorites"} />}
+        />
+        <Route
+          path="/profileInfo"
+          render={() => <MainHeader tab={"profile"} />}
+        />
+        <Route path="/orders" render={() => <MainHeader tab={"orders"} />} />
+
+        <Route
+          path="/checkout"
+          render={() => <MainHeader tab={"checkout"} />}
+        />
       </>
     );
   }

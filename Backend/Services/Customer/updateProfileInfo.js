@@ -17,18 +17,12 @@ const updateProfileInfo = (req, res, err) => {
         let currentValues = result[0];
         let updateSql;
         let updateImage;
-        // if (req.body.dateOfBirth) {
-        //   updateSql = `UPDATE CustomerDetails SET  LastName = ?, FirstName= ?,PasswordValue=?, AddressLine1=?,AddressLine2=?,City=? ,State =?, Country=?,ZipCode=?, NickName=? , ContactNumber=? ,EmailID=? ,DateOfBirth=?, About=? , ProfilePicture=? WHERE  CustomerID = ?`;
-        // } else {
-        //   updateSql = `UPDATE CustomerDetails SET  LastName = ?, FirstName= ?,PasswordValue=?, AddressLine1=?,AddressLine2=?,City=? ,State =?, Country=?,ZipCode=?, NickName=? , ContactNumber=? ,EmailID=? , About=? , ProfilePicture=? WHERE  CustomerID = ?`;
-        // }
 
         updateSql = `UPDATE CustomerDetails SET  LastName = ?, FirstName= ?,PasswordValue=?, AddressLine1=?,AddressLine2=?,City=? ,State =?, Country=?,ZipCode=?, NickName=? , ContactNumber=? ,EmailID=? ,DateOfBirth=?, About=? , ProfilePicture=? WHERE  CustomerID = ?`;
 
         if (req.file?.filename) updateImage = req.file.filename;
         else updateImage = currentValues.FoodImage;
-        // console.log("date kya a rha h??", req.body.dateOfBirth);
-        // console.log("date db me kya h??", currentValues.DateOfBirth);
+
         let data = [
           req.body.lastName || currentValues.LastName,
           req.body.firstName || currentValues.FirstName,

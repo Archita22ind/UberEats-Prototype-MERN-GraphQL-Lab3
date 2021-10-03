@@ -16,8 +16,6 @@ const RestaurantSearch = (props) => {
   };
 
   const fetchFilteredRestaurants = async () => {
-    console.log("food", props.foodFilter);
-
     try {
       const response = await fetch(
         "http://10.0.0.8:8080/getListOfRestaurants",
@@ -36,7 +34,6 @@ const RestaurantSearch = (props) => {
       );
 
       let data = await response.json();
-      console.log(data);
 
       props.setRestaurantList(
         data.map((d) => {
@@ -141,7 +138,10 @@ const RestaurantSearch = (props) => {
             </Row>
           </Col>
           <Col xs={12} md={10}>
-            <RestaurantList restuarantList={props.restuarantList} />
+            <RestaurantList
+              restaurantList={props.restaurantList}
+              fetchFilteredRestaurants={fetchFilteredRestaurants}
+            />
           </Col>
         </Row>
       </Container>
