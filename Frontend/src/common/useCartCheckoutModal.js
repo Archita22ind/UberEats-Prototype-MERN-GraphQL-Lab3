@@ -60,23 +60,7 @@ const useCartCheckoutModal = (modalShow, onHide) => {
   const onSubmitHandler = async (event) => {
     event.preventDefault();
 
-    // console.log("print cart total", cartTotal);
-    // console.log("print cart details", cartDetails);
-    try {
-      const response = await fetch("http://10.0.0.8:8080/postToCart", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(cartDetails),
-      });
-
-      const data = await response.json();
-
-      history.push("/checkout");
-    } catch (error) {
-      console.log(error);
-    }
+    history.push("/checkout");
   };
 
   const calculateTotal = () => {
@@ -171,6 +155,8 @@ const useCartCheckoutModal = (modalShow, onHide) => {
   return {
     cartModal,
     getCartDetails,
+    displaySelectedItems,
+    restaurantName,
   };
 };
 

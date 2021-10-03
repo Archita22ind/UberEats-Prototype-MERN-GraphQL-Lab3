@@ -2,16 +2,19 @@ const con = require("../../Controller/Common/dbConnection");
 
 const getOrderTotal = (req, res) => {
   let customerId = req.query.customerId;
+  let subTotal = 0;
+  let totalItems = 0;
 
-  let sqlSelect = `SELECT  OrderId, TotalPrice  FROM Orders where CustomerID = (?) AND finalStatus = (?)`;
+  let sqlSelect = `SELECT  * FROM OrderDetails where CustomerID = (?) AND OrderStatus = (?)`;
 
-  con.query(sqlSelect, [customerId, "New"], (err, result) => {
+  con.query(sqlSelect, [customerId, "Current"], (err, result) => {
     if (err) throw err;
     if (result) {
-      res.status(200).send({
-        OrderId: result[0].OrderId,
-        TotalPrice: result[0].TotalPrice,
-      });
+      result.forEach((element) => (subTotal += element.Amount));
+      result.forEach((element) => (totalItems += element.Quantity));
+      // console.log("result", result);
+      // console.log("total", subTotal);
+      res.status(200).send({ subTotal: subTotal, totalItems: totalItems });
     }
   });
 };

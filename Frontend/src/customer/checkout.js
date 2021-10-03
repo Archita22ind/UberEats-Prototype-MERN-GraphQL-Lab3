@@ -1,23 +1,56 @@
-import { Container, Row, Col, Button, Form, Card } from "react-bootstrap";
+import {
+  Container,
+  Row,
+  Col,
+  Button,
+  Form,
+  Card,
+  Modal,
+} from "react-bootstrap";
 import React, { useState, useEffect } from "react";
 import { getSessionCookie } from "../common/session";
+import useCartCheckoutModal from "../common/useCartCheckoutModal";
 
 const Checkout = () => {
-  // const [deliveryAddress, setdeliveryAddress] = useState();
-  const address = ["...", "Address1", "Address2"];
+  const [address, setAddress] = useState("");
+  let deliveryAddress;
   const session = getSessionCookie();
   const [subTotal, setSubTotal] = useState(0);
+  const [show, setShow] = useState(false);
+
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
+
   const [tip, setTip] = useState(0);
   const deliveryFee = 2.5;
   const tax = 3.5;
+  const { getCartDetails, displaySelectedItems, restaurantName } =
+    useCartCheckoutModal();
 
-  const options = address.map((item) => {
-    return (
-      <option key={item} value={item}>
-        {item}
-      </option>
-    );
-  });
+  const getDeliveryAddress = async () => {
+    try {
+      const response = await fetch(
+        `http://10.0.0.8:8080/getDeliveryAddress?customerId=${session.primaryID}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      const data = await response.json();
+
+      // console.log("add ka data", data);
+
+      deliveryAddress =
+        data.addressLine1 + ", " + data.addressLine2 + ", " + data.city;
+
+      // console.log("state address", deliveryAddress);
+      setAddress(deliveryAddress);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const showOrderTotal = async () => {
     try {
@@ -32,7 +65,7 @@ const Checkout = () => {
       );
       const data = await response.json();
       console.log("got this data", data);
-      setSubTotal(data.TotalPrice);
+      setSubTotal(data.subTotal);
     } catch (error) {
       console.log(error);
     }
@@ -42,11 +75,13 @@ const Checkout = () => {
     event.preventDefault();
     let tipValue = event.target.value;
     tipValue = tipValue / 100;
-    console.log("tip value cal", event.target.value, subTotal, tipValue);
+    // console.log("tip value cal", event.target.value, subTotal, tipValue);
     setTip(tipValue * subTotal);
   };
 
-  const onSubmitHandler = async () => {
+  const onSubmitHandler = async (event) => {
+    event.preventDefault();
+
     try {
       const response = await fetch("http://10.0.0.8:8080/bookOrder", {
         method: "POST",
@@ -55,49 +90,111 @@ const Checkout = () => {
         },
         body: JSON.stringify({
           customerId: session.primaryID,
-          total: subTotal + tip + tax + deliveryFee,
+          totalPrice: subTotal + tip + tax + deliveryFee,
         }),
       });
+      setShow(true);
       const data = await response.json();
-      console.log(data);
+      if (data.Message) {
+        showOrderBookedModal(show, handleClose);
+      }
+      setSubTotal(0);
     } catch (error) {
       console.log(error);
     }
   };
 
+  const onChangeHandler = (event) => {
+    event.preventDefault();
+
+    setAddress(event.target.value);
+  };
+
+  const onSumbitHandler = async (event) => {
+    event.preventDefault();
+
+    //API call to add delievry address to order table
+
+    try {
+      const response = await fetch("http://10.0.0.8:8080/addDeliveryAddress", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          customerId: session.primaryID,
+          address: address,
+        }),
+      });
+      const data = await response.json();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const showOrderBookedModal = (show, handleClose) => {
+    console.log("i m called");
+    return (
+      <Modal show={show} onHide={handleClose}>
+        <Modal.Header closeButton></Modal.Header>
+        <Modal.Body>Order Placed successfully! </Modal.Body>
+        <Modal.Footer>
+          <Button variant="dark" onClick={handleClose}>
+            Close
+          </Button>
+        </Modal.Footer>
+      </Modal>
+    );
+  };
   useEffect(() => {
     showOrderTotal();
-  }, [subTotal, tip]);
+  }, [subTotal, tip, showOrderTotal, displaySelectedItems]);
+
+  useEffect(() => {
+    getCartDetails();
+  }, []);
+
+  useEffect(() => {
+    getDeliveryAddress();
+  }, []);
+
   return (
     <Container fluid className="mt-5">
       <Row>
         <Col md={7}>
           <Card>
-            <Card.Header>Your Items</Card.Header>
-            <Card.Body></Card.Body>
-            <Card.Footer>
-              <Form.Group as={Col}>
-                <Form.Label>Select from below Delivery Address</Form.Label>
-                <Form.Select
-                  required
-                  name="deliveryAddress"
-                  //   as="select"
-                  //   custom
-                  //   onChange={onChangeHandler}
-                >
-                  {options}
-                </Form.Select>
-              </Form.Group>
+            <Form onSubmit={onSumbitHandler}>
+              <Card.Header>
+                Your Items
+                <Row>{restaurantName}</Row>
+              </Card.Header>
+              <Card.Body> {displaySelectedItems()} </Card.Body>
+              <Card.Footer>
+                <Form.Group as={Col}>
+                  <Form.Label>Select from below Delivery Address</Form.Label>
+                  <Form.Select
+                    name="deliveryAddress"
+                    as="select"
+                    custom
+                    // onChange={onChangeHandler}
+                  >
+                    <option>..</option>
+                    <option>{address}</option>
+                  </Form.Select>
+                </Form.Group>
 
-              <Form.Group as={Col}>
-                <Form.Label>Add a new Delivery Address</Form.Label>
-                <Form.Control
-                  required
-                  name="deliveryAddressNew"
-                  //   onChange={onChangeHandler}
-                ></Form.Control>
-              </Form.Group>
-            </Card.Footer>
+                <Form.Group as={Col}>
+                  <Form.Label>Add a new Delivery Address</Form.Label>
+                  <Form.Control
+                    name="deliveryAddressNew"
+                    onChange={onChangeHandler}
+                  ></Form.Control>
+                </Form.Group>
+                <Button variant="dark" type="submit">
+                  Confirm Address
+                </Button>
+              </Card.Footer>
+            </Form>
           </Card>
         </Col>
         <Col md={5}>
@@ -106,7 +203,11 @@ const Checkout = () => {
               <Card.Header>
                 <font size="4">
                   <Row className="mt-4">
-                    <Button variant="success" type="submit">
+                    <Button
+                      variant="success"
+                      type="submit"
+                      onClick={handleShow}
+                    >
                       Place Order
                     </Button>
                   </Row>
