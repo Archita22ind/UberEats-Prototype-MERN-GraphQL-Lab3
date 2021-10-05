@@ -1,7 +1,8 @@
 import React from "react";
-import { Row, Col, Button, Form } from "react-bootstrap";
+import { Row, Col, Button, Form, FloatingLabel } from "react-bootstrap";
 
 const RestaurantEditDetails = (props) => {
+  // console.log("printing rest details", props.restaurantDetails);
   const onChangeHandler = (event) => {
     event.preventDefault();
 
@@ -31,6 +32,17 @@ const RestaurantEditDetails = (props) => {
     const formData = new FormData();
     formData.append("about", props.restaurantDetails.about);
     formData.append("file", props.profilePicture.image);
+    formData.append("restaurantId", props.restaurantDetails.restaurantId);
+    formData.append("address", props.restaurantDetails.address);
+    formData.append("city", props.restaurantDetails.city);
+    formData.append("sate", props.restaurantDetails.state);
+    formData.append("emailId", props.restaurantDetails.emailId);
+    formData.append("contactNumber", props.restaurantDetails.contactNumber);
+    formData.append("zipCode", props.restaurantDetails.zipCode);
+    formData.append("openTime", props.restaurantDetails.openTime);
+    formData.append("closeTime", props.restaurantDetails.closeTime);
+    formData.append("deliveryFlag", props.restaurantDetails.deliveryFlag);
+    formData.append("pickupFlag", props.restaurantDetails.pickupFlag);
     console.log("Printing formdata", formData);
 
     try {
@@ -51,21 +63,21 @@ const RestaurantEditDetails = (props) => {
     props.setIsFormReadOnly(true);
   };
 
-  let addressString =
-    props.restaurantDetails.address +
-    "," +
-    props.restaurantDetails.city +
-    "," +
-    props.restaurantDetails.state +
-    "," +
-    props.restaurantDetails.zipCode;
+  // let addressString =
+  //   props.restaurantDetails.address +
+  //   "," +
+  //   props.restaurantDetails.city +
+  //   "," +
+  //   props.restaurantDetails.state +
+  //   "," +
+  //   props.restaurantDetails.zipCode;
 
-  console.log(addressString);
+  // console.log(addressString);
 
   return (
     <Form>
       <Row className="mt-1">
-        <Form.Group as={Col} controlId="formGridRestaurantName">
+        <Form.Group as={Col}>
           <font size="6">
             <Form.Control
               plaintext={props.isFormReadOnly}
@@ -76,7 +88,7 @@ const RestaurantEditDetails = (props) => {
                   ? props.restaurantDetails.restaurantName
                   : "Restaurant Name"
               }
-              // onChange={onChangeHandler}
+              onChange={onChangeHandler}
             />
           </font>
         </Form.Group>
@@ -84,10 +96,11 @@ const RestaurantEditDetails = (props) => {
 
       <Row>
         <font size="2">
-          <Form.Group as={Col} controlId="formGridDescription">
+          <Form.Group as={Col}>
             <Form.Control
               as="textarea"
               style={{ height: "50px" }}
+              // tdstyle={{ whiteSpace: "normal", wordWrap: "break-word" }}
               plaintext={props.isFormReadOnly}
               readOnly={props.isFormReadOnly}
               name="about"
@@ -106,7 +119,7 @@ const RestaurantEditDetails = (props) => {
       <font size="1">
         <Row>
           <Col md={2}>
-            <Form.Group as={Col} controlId="formGridAddress">
+            <Form.Group as={Col}>
               <Form.Control
                 plaintext={props.isFormReadOnly}
                 readOnly={props.isFormReadOnly}
@@ -117,11 +130,12 @@ const RestaurantEditDetails = (props) => {
                     ? props.restaurantDetails.address
                     : "Address"
                 }
+                onChange={onChangeHandler}
               />
             </Form.Group>
           </Col>
-          <Col md={1}>
-            <Form.Group as={Col} controlId="formGridCity">
+          <Col xs="auto">
+            <Form.Group as={Col}>
               <Form.Control
                 plaintext={props.isFormReadOnly}
                 readOnly={props.isFormReadOnly}
@@ -132,11 +146,29 @@ const RestaurantEditDetails = (props) => {
                     ? props.restaurantDetails.city
                     : "City"
                 }
+                onChange={onChangeHandler}
               />
             </Form.Group>
           </Col>
-          <Col md={2}>
-            <Form.Group as={Col} controlId="formGridState">
+          <Col xs="auto">
+            <Form.Group as={Col}>
+              <Form.Control
+                plaintext={props.isFormReadOnly}
+                readOnly={props.isFormReadOnly}
+                name="zipCode"
+                type="text"
+                placeholder={
+                  props.restaurantDetails.zipCode
+                    ? props.restaurantDetails.zipCode
+                    : "zipCode"
+                }
+                onChange={onChangeHandler}
+              />
+            </Form.Group>
+          </Col>
+
+          <Col xs="auto">
+            <Form.Group as={Col}>
               <Form.Control
                 plaintext={props.isFormReadOnly}
                 readOnly={props.isFormReadOnly}
@@ -147,46 +179,147 @@ const RestaurantEditDetails = (props) => {
                     ? props.restaurantDetails.state
                     : "State"
                 }
+                onChange={onChangeHandler}
               />
             </Form.Group>
           </Col>
+          <Col></Col>
         </Row>
 
-        <Form.Group className="mb-3" controlId="formGridEmailId">
-          <Form.Control
-            plaintext={props.isFormReadOnly}
-            readOnly={props.isFormReadOnly}
-            name="emailId"
-            placeholder={
-              props.restaurantDetails.emailId
-                ? props.restaurantDetails.emailId
-                : "Email Id"
-            }
-          />
-        </Form.Group>
-      </font>
-      <Row>
-        <Col md={10}>
-          <Form.Group controlId="formGridImage">
+        <Row>
+          <Col md={2}>
+            <Form.Group className="mb-1">
+              <Form.Control
+                plaintext={props.isFormReadOnly}
+                readOnly={props.isFormReadOnly}
+                name="emailId"
+                placeholder={
+                  props.restaurantDetails.emailId
+                    ? props.restaurantDetails.emailId
+                    : "Email Id"
+                }
+                onChange={onChangeHandler}
+              />
+            </Form.Group>
+          </Col>
+          <Col md={1}>
+            <Form.Group className="mb-1">
+              <Form.Control
+                plaintext={props.isFormReadOnly}
+                readOnly={props.isFormReadOnly}
+                name="contactNumber"
+                placeholder={
+                  props.restaurantDetails.contactNumber
+                    ? props.restaurantDetails.contactNumber
+                    : "Contact Number"
+                }
+                onChange={onChangeHandler}
+              />
+            </Form.Group>
+          </Col>
+          <Col></Col>
+        </Row>
+
+        <Row>
+          <Col>
+            {/* <Form.Group className="mb-1"> */}
+            <Col>
+              <Form.Label>Open Time:</Form.Label>
+            </Col>
+            <Col>
+              <Form.Control
+                plaintext={props.isFormReadOnly}
+                readOnly={props.isFormReadOnly}
+                name="openTime"
+                placeholder={
+                  props.restaurantDetails.openTime
+                    ? props.restaurantDetails.openTime
+                    : "HH:MM"
+                }
+                onChange={onChangeHandler}
+              />
+            </Col>
+            <Col>
+              <Form.Label>Close Time:</Form.Label>
+            </Col>
+            <Col>
+              <Form.Control
+                plaintext={props.isFormReadOnly}
+                readOnly={props.isFormReadOnly}
+                name="closeTime"
+                placeholder={
+                  props.restaurantDetails.closeTime
+                    ? props.restaurantDetails.closeTime
+                    : "HH:MM"
+                }
+                onChange={onChangeHandler}
+              />
+            </Col>
+            {/* </Form.Group> */}
+          </Col>
+
+          {/* <Form.Group className="mb-1"> */}
+          <Col>
+            <Form.Label>Delivery Available</Form.Label>
+          </Col>
+          <Col>
             <Form.Control
-              name="image"
-              hidden={props.isFormReadOnly}
-              type="file"
-              accept="image/*"
-              onChange={onImageChangeHandler}
+              plaintext={props.isFormReadOnly}
+              readOnly={props.isFormReadOnly}
+              name="deliveryFlag"
+              placeholder={
+                props.restaurantDetails.deliveryFlag
+                  ? props.restaurantDetails.deliveryFlag
+                  : "Yes/No"
+              }
+              onChange={onChangeHandler}
             />
-          </Form.Group>
-        </Col>
-        <Col>
-          <Button
-            onClick={onSaveClickHandler}
-            variant="dark"
-            hidden={props.isFormReadOnly}
-          >
-            Save Profile
-          </Button>
-        </Col>
-      </Row>
+          </Col>
+          {/* </Form.Group> */}
+
+          <Col>
+            <Form.Label>Pickup Available: </Form.Label>
+          </Col>
+          <Col>
+            {/* <Form.Group className="mb-1"> */}
+            <Form.Control
+              size="sm"
+              plaintext={props.isFormReadOnly}
+              readOnly={props.isFormReadOnly}
+              name="pickUpFlag"
+              placeholder={
+                props.restaurantDetails.pickupFlag
+                  ? props.restaurantDetails.pickupFlag
+                  : "Yes/No"
+              }
+              onChange={onChangeHandler}
+            />
+            {/* </Form.Group> */}
+          </Col>
+
+          <Col md={10}>
+            <Form.Group controlId="formGridImage">
+              <Form.Control
+                name="image"
+                hidden={props.isFormReadOnly}
+                type="file"
+                accept="image/*"
+                onChange={onImageChangeHandler}
+              />
+            </Form.Group>
+          </Col>
+
+          <Col>
+            <Button
+              onClick={onSaveClickHandler}
+              variant="dark"
+              hidden={props.isFormReadOnly}
+            >
+              Save Profile
+            </Button>
+          </Col>
+        </Row>
+      </font>
     </Form>
   );
 };

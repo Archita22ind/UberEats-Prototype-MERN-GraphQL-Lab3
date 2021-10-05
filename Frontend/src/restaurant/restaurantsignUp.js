@@ -8,6 +8,12 @@ import { useHistory } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { alertActions } from "../actions/alertActions";
 import { reduxConstants } from "../constants/reduxConstants";
+import {
+  formatPhoneNumber,
+  isValidEmail,
+  validatePassword,
+  validateZipcode,
+} from "../common/formValidations";
 
 function request(user) {
   return { type: reduxConstants.REGISTER_REQUEST, user };
@@ -34,40 +40,43 @@ const RestaurantSignUp = (props) => {
   });
 
   const [restaurantDetails, setRestaurantDetails] = useState({});
-  // let passwordOkay ;
-  // let checkPassword;
-  // const re = new RegExp("^(?=.)(?=.*[a-z])(?=.*[A-Z]).{8,32}$");
 
   const onChangeHandler = (event) => {
     event.preventDefault();
 
-    // if(event.target.name === 'password')
-    // {
-    //     checkPassword=  event.target.value;
-    //     passwordOkay = re.test(checkPassword)
-    // }
+    if (event.target.name === "contactNumber") {
+      event.target.value = formatPhoneNumber(event.target.value);
+    }
 
-    // ensures I always get the latest state
     setRestaurantDetails((prevState) => {
       return {
         ...prevState,
         [event.target.name]: event.target.value,
       };
     });
-
-    // setRestaurantDetails({
-    //   ...restaurantDetails,
-    //   [event.target.name]: event.target.value
-    // });
   };
 
   const onSubmitHandler = async (event) => {
     event.preventDefault();
 
-    dispatch(request(restaurantDetails.emailId));
+    if (!isValidEmail(restaurantDetails.emailId)) {
+      alert("Enter a valid format of email id!");
+      return;
+    }
 
-    // if(!passwordOkay)
-    // return alert('Weak Password! Try a new one!');
+    if (!validatePassword(restaurantDetails.password)) {
+      alert(
+        "Password should contain atleast one capital letter and a number and should be of atleast 8 characters!!"
+      );
+      return;
+    }
+
+    if (!validateZipcode(restaurantDetails.zipCode)) {
+      alert("Enter a valid Zip Code!");
+      return;
+    }
+
+    dispatch(request(restaurantDetails.emailId));
 
     try {
       const response = await fetch(
@@ -100,7 +109,6 @@ const RestaurantSignUp = (props) => {
         "User email already exists, try a new one, or login using the existing!!"
       );
       dispatch(failure(error.toString()));
-      // console.log(error);
     }
   };
 
@@ -121,7 +129,7 @@ const RestaurantSignUp = (props) => {
           <Form onSubmit={onSubmitHandler}>
             <Row className="mb-3">
               <Form.Group as={Col} controlId="formGridRestaurantName">
-                <Form.Label>Restaurant Name</Form.Label>
+                <Form.Label>Restaurant Name *</Form.Label>
                 <Form.Control
                   required
                   name="restaurantName"
@@ -133,7 +141,7 @@ const RestaurantSignUp = (props) => {
 
             <Row className="mb-3">
               <Form.Group as={Col} controlId="formGridEmail">
-                <Form.Label>Email</Form.Label>
+                <Form.Label>Email *</Form.Label>
                 <Form.Control
                   required
                   name="emailId"
@@ -147,7 +155,7 @@ const RestaurantSignUp = (props) => {
               </Form.Group>
 
               <Form.Group as={Col} controlId="formGridPassword">
-                <Form.Label htmlFor="inputPassword5">Password</Form.Label>
+                <Form.Label htmlFor="inputPassword5">Password *</Form.Label>
                 <Form.Control
                   required
                   name="password"
@@ -158,14 +166,14 @@ const RestaurantSignUp = (props) => {
                   onChange={onChangeHandler}
                 />
                 <Form.Text id="passwordHelpBlock" muted>
-                  Password must be 8-20 characters long and not contain
-                  spaces/special characters
+                  Password must be 8 or more characters and should contain not
+                  contain any spaces
                 </Form.Text>
               </Form.Group>
             </Row>
 
             <Form.Group className="mb-3" controlId="formGridAddress">
-              <Form.Label>Address</Form.Label>
+              <Form.Label>Address *</Form.Label>
               <Form.Control
                 required
                 name="address"
@@ -174,19 +182,14 @@ const RestaurantSignUp = (props) => {
               />
             </Form.Group>
 
-            {/* <Form.Group className="mb-3" controlId="formGridAddress2">
-    <Form.Label>Address 2</Form.Label>
-    <Form.Control placeholder="Apartment, studio, or floor" />
-  </Form.Group> */}
-
             <Row className="mb-4">
               <Form.Group as={Col} controlId="formGridCity">
-                <Form.Label>City</Form.Label>
+                <Form.Label>City *</Form.Label>
                 <Form.Control required name="city" onChange={onChangeHandler} />
               </Form.Group>
 
-              <Form.Group required as={Col} controlId="formGridState">
-                <Form.Label>State</Form.Label>
+              <Form.Group as={Col} controlId="formGridState">
+                <Form.Label>State *</Form.Label>
                 <Form.Control
                   required
                   name="state"
@@ -195,7 +198,7 @@ const RestaurantSignUp = (props) => {
               </Form.Group>
 
               <Form.Group as={Col} controlId="formGridZip">
-                <Form.Label>Zip</Form.Label>
+                <Form.Label>Zip Code *</Form.Label>
                 <Form.Control
                   required
                   name="zipCode"
@@ -204,11 +207,12 @@ const RestaurantSignUp = (props) => {
               </Form.Group>
             </Row>
             <Row>
-              <Form.Group required as={Col} controlId="formGridCountry">
-                <Form.Label>Country</Form.Label>
+              <Form.Group as={Col} controlId="formGridCountry">
+                <Form.Label>Country *</Form.Label>
                 <Form.Control
                   name="country"
                   as="select"
+                  required
                   onChange={onChangeHandler}
                   custom
                 >
@@ -222,7 +226,7 @@ const RestaurantSignUp = (props) => {
                 className="mb-2"
                 controlId="formGridContactNumber"
               >
-                <Form.Label>Contact Number</Form.Label>
+                <Form.Label>Contact Number *</Form.Label>
                 <Form.Control
                   required
                   name="contactNumber"

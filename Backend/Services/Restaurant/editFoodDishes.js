@@ -39,9 +39,8 @@ const editFoodItems = (req, res, err) => {
 
         con.query(updateSql, data, (err, result) => {
           if (err) throw err;
-          console.log("1 food item record updated on restaurant's page");
         });
-        console.log("Result print", result);
+
         return res.status(200).send({
           responseFlag: "Success",
         });

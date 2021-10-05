@@ -30,12 +30,13 @@ const RestaurantDetails = (props) => {
   const session = getSessionCookie();
   const user = useSelector((state) => state.authentication.user);
 
-  let restaurantId = -1;
+  let restaurantId;
 
   if (session.restaurantFlag) {
     restaurantId = session.primaryID;
   } else {
-    restaurantId = location.state?.restaurantId;
+    window.sessionStorage.setItem("restaurantId", location.state?.restaurantId);
+    restaurantId = window.sessionStorage.getItem("restaurantId");
   }
 
   if (profilePicture.imagePreview) {
@@ -63,9 +64,12 @@ const RestaurantDetails = (props) => {
 
     const data = await response.json();
 
+    console.log("dta jo mila", data);
+
     setRestaurantDetails((prevState) => {
       return {
         ...prevState,
+        restaurantId: data.restaurantId,
         restaurantName: data.restaurantName,
         address: data.address,
         about: data.about,
@@ -75,6 +79,10 @@ const RestaurantDetails = (props) => {
         zipCode: data.zipCode,
         emailId: data.emailId,
         contactNumber: data.contactNumber,
+        openTime: data.openTime,
+        closeTime: data.closeTime,
+        deliveryFlag: data.deliveryFlag,
+        pickupFlag: data.pickupFlag,
       };
     });
 

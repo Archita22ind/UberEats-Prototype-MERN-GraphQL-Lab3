@@ -1,6 +1,7 @@
 const con = require("../../Controller/Common/dbConnection");
 
 const createFavouritesList = (req, res) => {
+  console.log("main", req.body);
   let sql = `Select * from CustomerFavorites where RestaurantID =(?) AND  CustomerID =(?)`;
 
   con.query(

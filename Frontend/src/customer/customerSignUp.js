@@ -5,9 +5,15 @@ import Background from "../images/restaurantSignUp.jpeg";
 import countryList from "react-select-country-list";
 import { setSessionCookie } from "../common/session";
 import { useHistory } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { alertActions } from "../actions/alertActions";
 import { reduxConstants } from "../constants/reduxConstants";
+import {
+  formatPhoneNumber,
+  isValidEmail,
+  validatePassword,
+  validateZipcode,
+} from "../common/formValidations";
 
 function request(user) {
   return { type: reduxConstants.REGISTER_REQUEST, user };
@@ -38,6 +44,10 @@ const CustomerSignUp = (props) => {
   const onChangeHandler = (event) => {
     event.preventDefault();
 
+    if (event.target.name === "contactNumber") {
+      event.target.value = formatPhoneNumber(event.target.value);
+    }
+
     setCustomerDetails((prevState) => {
       return {
         ...prevState,
@@ -48,6 +58,23 @@ const CustomerSignUp = (props) => {
 
   const onSubmitHandler = async (event) => {
     event.preventDefault();
+
+    if (!isValidEmail(customerDetails.emailId)) {
+      alert("Enter a valid format of email id!");
+      return;
+    }
+
+    if (!validatePassword(customerDetails.password)) {
+      alert(
+        "Password should contain atleast one capital letter and a number and should be of atleast 8 characters!!"
+      );
+      return;
+    }
+
+    if (!validateZipcode(customerDetails.zipCode)) {
+      alert("Enter a valid Zip Code!");
+      return;
+    }
 
     dispatch(request(customerDetails.emailId));
 
@@ -99,7 +126,7 @@ const CustomerSignUp = (props) => {
           <Form onSubmit={onSubmitHandler}>
             <Row className="mb-3">
               <Form.Group as={Col} controlId="formGridFirstName">
-                <Form.Label>First Name</Form.Label>
+                <Form.Label>First Name *</Form.Label>
                 <Form.Control
                   required
                   name="firstName"
@@ -109,7 +136,7 @@ const CustomerSignUp = (props) => {
               </Form.Group>
 
               <Form.Group as={Col} controlId="formGridLastName">
-                <Form.Label>Last Name</Form.Label>
+                <Form.Label>Last Name *</Form.Label>
                 <Form.Control
                   required
                   name="lastName"
@@ -121,7 +148,7 @@ const CustomerSignUp = (props) => {
 
             <Row className="mb-3">
               <Form.Group as={Col} controlId="formGridEmail">
-                <Form.Label>Email</Form.Label>
+                <Form.Label>Email *</Form.Label>
                 <Form.Control
                   required
                   name="emailId"
@@ -135,7 +162,7 @@ const CustomerSignUp = (props) => {
               </Form.Group>
 
               <Form.Group as={Col} controlId="formGridPassword">
-                <Form.Label>Password</Form.Label>
+                <Form.Label>Password *</Form.Label>
                 <Form.Control
                   required
                   name="password"
@@ -144,8 +171,8 @@ const CustomerSignUp = (props) => {
                   onChange={onChangeHandler}
                 />
                 <Form.Text id="passwordHelpBlock" muted>
-                  Password must be 8-20 characters long and not contain
-                  spaces/special characters
+                  Password must be 8 or more characters and should contain not
+                  contain any spaces
                 </Form.Text>
               </Form.Group>
             </Row>
@@ -153,7 +180,7 @@ const CustomerSignUp = (props) => {
             <Row className="mb-4">
               <Form.Group as={Col} controlId="formGridCity">
                 <Form.Label>City</Form.Label>
-                <Form.Control required name="city" onChange={onChangeHandler} />
+                <Form.Control name="city" onChange={onChangeHandler} />
               </Form.Group>
 
               <Form.Group as={Col} controlId="formGridState">
@@ -168,7 +195,7 @@ const CustomerSignUp = (props) => {
             </Row>
             <Row>
               <Form.Group as={Col} controlId="formGridZip">
-                <Form.Label>Country</Form.Label>
+                <Form.Label>Country *</Form.Label>
                 <Form.Control
                   required
                   name="country"
@@ -185,7 +212,7 @@ const CustomerSignUp = (props) => {
                 className="mb-2"
                 controlId="formGridContactNumber"
               >
-                <Form.Label>Contact Number</Form.Label>
+                <Form.Label>Contact Number *</Form.Label>
                 <Form.Control
                   required
                   name="contactNumber"

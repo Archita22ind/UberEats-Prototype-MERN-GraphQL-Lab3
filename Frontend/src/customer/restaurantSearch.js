@@ -1,10 +1,12 @@
 import "../styling/customer/restaurantSearch.css";
 import { Container, Row, Col, Form } from "react-bootstrap";
-import * as Icon from "react-bootstrap-icons";
 import RestaurantList from "./restaurantList.js";
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
+import { getSessionCookie } from "../common/session";
 
 const RestaurantSearch = (props) => {
+  const session = getSessionCookie();
+
   const onFilterCheckHandler = (event) => {
     props.setFoodFilter((prevState) => {
       return {
@@ -29,6 +31,7 @@ const RestaurantSearch = (props) => {
             typeaheadValue: props.typeaheadValue[0].id
               ? props.typeaheadValue[0].id
               : [],
+            customerId: session.primaryID,
           }),
         }
       );

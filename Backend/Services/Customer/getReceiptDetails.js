@@ -8,7 +8,6 @@ const getReceiptDetails = (req, res) => {
     if (result) {
       res.status(200).send(
         result.map((element) => {
-          console.log(element);
           return {
             foodName: element.FoodName,
             price: element.Price,

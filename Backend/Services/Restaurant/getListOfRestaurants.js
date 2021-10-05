@@ -4,7 +4,7 @@ let selectSql;
 let columnsArray;
 
 const getListOfRestaurants = (req, res) => {
-  let customerId = 1;
+  let customerId = req.body.customerId;
 
   let custSql = `SELECT City from CustomerDetails where CustomerID=?`;
 
