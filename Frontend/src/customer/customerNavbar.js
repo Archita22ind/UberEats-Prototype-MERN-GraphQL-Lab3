@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import * as FaIcons from "react-icons/fa";
 import * as AiIcons from "react-icons/ai";
 import { Link } from "react-router-dom";
-import { SidebarData } from "./SidebarData";
+import { SidebarData } from "./customerSidebarData";
 import "./Navbar.css";
 import { IconContext } from "react-icons";
 import { useDispatch } from "react-redux";
@@ -10,7 +10,7 @@ import { reduxConstants } from "../constants/reduxConstants";
 import * as Cookies from "js-cookie";
 import { alertActions } from "../actions/alertActions";
 
-function Navbar() {
+function CustomerNavBar() {
   const [sidebar, setSidebar] = useState(false);
 
   const showSidebar = () => setSidebar(!sidebar);
@@ -77,4 +77,4 @@ function Navbar() {
   );
 }
 
-export default Navbar;
+export default CustomerNavBar;

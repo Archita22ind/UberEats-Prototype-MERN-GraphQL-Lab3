@@ -43,13 +43,6 @@ const RestaurantDetails = (props) => {
     imageUrl = profilePicture.imagePreview;
   }
 
-  const logOutHandler = () => {
-    dispatch({ type: reduxConstants.LOGOUT });
-    dispatch(alertActions.clear());
-    Cookies.remove("session");
-    history.push("/restaurantLogin");
-  };
-
   const getRestaurantProfileInfo = async () => {
     const response = await fetch(
       `http://10.0.0.8:8080/restaurantDetailsInfo?restaurantId=${restaurantId}`,
@@ -209,14 +202,6 @@ const RestaurantDetails = (props) => {
         <Row>
           <Col md={9}></Col>
           <Col>
-            <Button
-              variant="dark"
-              // onClick={() => showOrderHandler(true)}
-            >
-              Orders
-            </Button>
-          </Col>
-          <Col>
             <Button variant="dark" onClick={() => setModalShow(true)}>
               Add Dishes
             </Button>
@@ -265,16 +250,6 @@ const RestaurantDetails = (props) => {
         </Form>
       </Row>
       {displayList()}
-      {session.restaurantFlag ? (
-        <>
-          <h5>You are logged in with email {user}!</h5>
-          <Button variant="dark" onClick={logOutHandler}>
-            LogOut
-          </Button>
-        </>
-      ) : (
-        <h1>/</h1>
-      )}
     </Container>
   );
 };

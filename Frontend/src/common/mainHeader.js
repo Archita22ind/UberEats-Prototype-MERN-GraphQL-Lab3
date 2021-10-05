@@ -9,7 +9,9 @@ import {
 } from "react-bootstrap";
 import { Typeahead } from "react-bootstrap-typeahead";
 import * as Icon from "react-bootstrap-icons";
-import Navbar from "../styling/Navbar.js";
+import CustomerNavbar from "../customer/customerNavbar.js";
+import RestaurantNavbar from "../restaurant/restaurantNavbar.js";
+
 import { Link } from "react-router-dom";
 import useCartCheckoutModal from "./useCartCheckoutModal";
 import RestaurantSearch from "../customer/restaurantSearch";
@@ -19,19 +21,21 @@ import Favorites from "../customer/favorites.js";
 import Checkout from "../customer/checkout.js";
 import ProfileInfo from "../customer/profileInfo.js";
 import Orders from "../customer/orders.js";
+import { getSessionCookie } from "../common/session";
+import RestaurantOrders from "../restaurant/restaurantOrders";
+
 
 const MainHeader = (props) => {
   let locationName = "San Jose";
   let showTabs = props.tab;
   const [modalShow, setModalShow] = useState(false);
-  // const [typeaheadInput, setTypeaheadInput] = useState("");
   const [typeaheadOutput, setTypeaheadOutput] = useState([]);
   const [valueSelected, setValueSelected] = useState([{}]);
   const [foodFilter, setFoodFilter] = useState({});
   const [restaurantList, setRestaurantList] = useState([]);
-  // const [cartDetails, setCartDetails] = useState([]);
 
-  // const [cartTotal, setCartTotal] = useState(0.0);
+  const session = getSessionCookie();
+
   let onHide = () => setModalShow(false);
 
   // Used custom hook
@@ -43,13 +47,13 @@ const MainHeader = (props) => {
     event.preventDefault();
 
     optionDislayHandler(input);
-    // I cannot have this function here, BAD PRACTICE,
+
   };
 
   const onChangeHandler = (selected) => {
     setValueSelected(selected);
     if (selected[0].isRestaurant) {
-      history.push("/customerRestaurantDetails");
+      history.push("/restaurantDetails");
     } else {
       if (!showTabs) history.push("/restaurantSearch");
     }
@@ -98,6 +102,7 @@ const MainHeader = (props) => {
     else if (tab === "checkout") return <Checkout />;
     else if (tab === "profile") return <ProfileInfo />;
     else if (tab === "orders") return <Orders />;
+    else if (tab === "restaurantOrders") return <RestaurantOrders />;
   };
 
   return (
@@ -105,18 +110,25 @@ const MainHeader = (props) => {
       <Container fluid className="my-3">
         <Row>
           <Col xs={3} md={1}>
-            <Navbar />
+          {session.restaurantFlag ? ( <RestaurantNavbar />) : ( <CustomerNavbar />)}
           </Col>
           <Col className="mt-3" xs={4} md={2}>
-            <Link
+          {session.restaurantFlag ? (<Link
+              to="/restaurantDetails"
+              style={{ textDecoration: "none", color: "black" }}
+            >
+              {" "}
+              <h3>Uber Eats</h3>{" "}
+            </Link>) : (    <Link
               to="/restaurantSearch"
               style={{ textDecoration: "none", color: "black" }}
             >
               {" "}
               <h3>Uber Eats</h3>{" "}
-            </Link>
+            </Link>)}
+         
           </Col>
-          <Col className="mt-3" xs={4} md={2}>
+          {session.restaurantFlag ? ( <Col />) : (<><Col className="mt-3" xs={4} md={2}>
             <ToggleButtonGroup
               type="radio"
               name="options"
@@ -163,10 +175,10 @@ const MainHeader = (props) => {
             </Button>
 
             {cartModal()}
-          </Col>
+          </Col></>)}
+      
         </Row>
       </Container>
-
       {renderPages(showTabs)}
     </>
   );

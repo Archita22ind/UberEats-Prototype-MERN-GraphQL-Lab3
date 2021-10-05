@@ -20,9 +20,8 @@ const ProtectedRouter = ({ history }) => {
   } else {
     return (
       <>
-        <Route path="/restaurantDetails" render={() => <RestaurantDetails />} />
         <Route
-          path="/customerRestaurantDetails"
+          path="/restaurantDetails"
           render={() => <MainHeader tab={"restaurantDetails"} />}
         />
         <Route
@@ -38,7 +37,7 @@ const ProtectedRouter = ({ history }) => {
           render={() => <MainHeader tab={"profile"} />}
         />
         <Route path="/orders" render={() => <MainHeader tab={"orders"} />} />
-
+        <Route path="/restaurantOrders" render={() => <MainHeader tab={"restaurantOrders"} />} />
         <Route
           path="/checkout"
           render={() => <MainHeader tab={"checkout"} />}

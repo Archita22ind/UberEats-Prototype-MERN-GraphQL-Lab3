@@ -63,7 +63,7 @@ const RestaurantList = (props) => {
             <Card>
               <Link
                 to={{
-                  pathname: "/customerRestaurantDetails",
+                  pathname: "/restaurantDetails",
                   state: {
                     restaurantId: restaurant.RestaurantID,
                   },
