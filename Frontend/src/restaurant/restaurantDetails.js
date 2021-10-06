@@ -57,8 +57,6 @@ const RestaurantDetails = (props) => {
 
     const data = await response.json();
 
-    console.log("dta jo mila", data);
-
     setRestaurantDetails((prevState) => {
       return {
         ...prevState,

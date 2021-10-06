@@ -7,13 +7,17 @@ const showRestaurantOrderDetails = (req, res) => {
     if (err) throw err;
 
     if (result) {
-      res.status(200).send({
-        orderId: element.OrderID,
-        foodName: element.FoodName,
-        quantity: element.Quantity,
-        price: element.Price,
-        amount: element.Amount,
-      });
+      res.status(200).send(
+        result.map((element) => {
+          return {
+            orderId: element.OrderID,
+            foodName: element.FoodName,
+            quantity: element.Quantity,
+            price: element.Price,
+            amount: element.Amount,
+          };
+        })
+      );
     }
   });
 };

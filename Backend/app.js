@@ -29,7 +29,7 @@ const addDeliveryAddress = require("./Services/Customer/addDeliveryAddress");
 const getPastOrders = require("./Services/Customer/getPastOrders");
 const getReceiptDetails = require("./Services/Customer/getReceiptDetails");
 const showCustomerProfile = require("./Services/Restaurant/showCustomerProfile");
-const showRestaurantOrders = require("./Services/Restaurant/showRestaurantOrders");
+const getRestaurantOrders = require("./Services/Restaurant/getRestaurantOrders");
 const showRestaurantOrderDetails = require("./Services/Restaurant/showRestaurantOrderDetails");
 const updateOrderStatus = require("./Services/Restaurant/updateOrderStatus");
 
@@ -102,7 +102,7 @@ app.post("/getReceiptDetails", getReceiptDetails);
 
 app.post("/showCustomerProfile", showCustomerProfile);
 
-app.post("/showRestaurantOrders", showRestaurantOrders);
+app.post("/getRestaurantOrders", getRestaurantOrders);
 
 app.post("/showRestaurantOrderDetails", showRestaurantOrderDetails);
 

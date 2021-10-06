@@ -20,7 +20,7 @@ const getListOfRestaurants = (req, res) => {
     columnsArray = [];
     columnsArray = req.body.filter;
   } else if (req.body.filter.length > 0 && req.body.typeaheadValue.length > 0) {
-    selectSql = `SELECT RestaurantID, RestaurantName, City, State, Country, DeliveryFlag,PickupFlag, ProfilePicture from RestaurantDetails where RestaurantID in (SELECT distinct RestaurantID from FoodItems where FoodType in  (?)  and RestaurantID in  (?)) `;
+    selectSql = `SELECT RestaurantID, RestaurantName, City, State, Country, DeliveryFlag,PickupFlag, ProfilePicture from RestaurantDetails where RestaurantID in (SELECT distinct RestaurantID from FoodItems where FoodType in  (?)  and RestaurantID in  (?) ) `;
     columnsArray = [];
     columnsArray.push(...req.body.filter, ...req.body.typeaheadValue);
   } else if (
@@ -28,7 +28,7 @@ const getListOfRestaurants = (req, res) => {
     req.body.typeaheadValue.length > 0
   ) {
     selectSql = `SELECT RestaurantID, RestaurantName, City, State, Country, DeliveryFlag,PickupFlag, ProfilePicture from 
-    RestaurantDetails where RestaurantID in (?)) `;
+    RestaurantDetails where RestaurantID in (?) `;
     columnsArray = [];
     columnsArray = req.body.typeaheadValue;
   }

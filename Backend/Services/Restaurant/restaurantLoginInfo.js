@@ -9,7 +9,7 @@ const restaurantLoginInfo = (req, res) => {
   con.query(sqlSelect, [req.body.emailId], (err, result) => {
     if (err) throw err;
 
-    if (result[0].PasswordValue == req.body.password) {
+    if (result[0]?.PasswordValue == req.body.password) {
       res.send({
         successFlag: true,
         restaurantId: result[0].RestaurantID,
