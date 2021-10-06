@@ -24,15 +24,19 @@ const updateCartOrderDetails = (req, res) => {
     );
   }
 
-  let sqlSelect = `SELECT O.* , R.RestaurantName FROM  OrderDetails  O  , RestaurantDetails R WHERE  O.RestaurantID= R.RestaurantID AND O.CustomerID= ? `;
+  let sqlSelect = `SELECT O.* , R.RestaurantName FROM  OrderDetails  O  , RestaurantDetails R WHERE  O.RestaurantID= R.RestaurantID AND O.CustomerID= ?  AND O.OrderId = ?`;
 
-  con.query(sqlSelect, [req.body.CustomerID], (err, result) => {
-    if (err) throw err;
+  con.query(
+    sqlSelect,
+    [req.body.CustomerID, req.body.OrderId],
+    (err, result) => {
+      if (err) throw err;
 
-    if (result) {
-      res.send(result);
+      if (result) {
+        res.send(result);
+      }
     }
-  });
+  );
 };
 
 module.exports = updateCartOrderDetails;

@@ -17,3 +17,19 @@ describe("POST /customerSignIn", function () {
       .end(done);
   });
 });
+
+// Testing the customerSignIn
+describe("POST /customerSignIn", function () {
+  it("Should fail if credential is InValid", function (done) {
+    request
+      .post("/customerSignIn")
+      .set("Accept", "application/json")
+      .set("Content-Type", "application/json")
+      .send({ emailId: "archi12@gmail.com", password: "archi123@gmail.com" })
+      .expect(401)
+      .expect(function (response) {
+        expect(response.body).to.be.empty;
+      })
+      .end(done);
+  });
+});

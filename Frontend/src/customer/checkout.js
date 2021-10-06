@@ -10,6 +10,7 @@ import {
 import React, { useState, useEffect } from "react";
 import { getSessionCookie } from "../common/session";
 import useCartCheckoutModal from "../common/useCartCheckoutModal";
+import { useHistory } from "react-router-dom";
 
 const Checkout = () => {
   const [address, setAddress] = useState("");
@@ -18,8 +19,12 @@ const Checkout = () => {
   const [subTotal, setSubTotal] = useState(0);
   const [show, setShow] = useState(false);
 
-  const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
+  const history = useHistory();
+  const handleClose = () => {
+    setShow(false);
+    window.sessionStorage.removeItem("restaurantId");
+    history.replace("/restaurantSearch");
+  };
 
   const [tip, setTip] = useState(0);
   const deliveryFee = 2.5;
@@ -40,19 +45,16 @@ const Checkout = () => {
       );
       const data = await response.json();
 
-      // console.log("add ka data", data);
-
       deliveryAddress =
         data.addressLine1 + ", " + data.addressLine2 + ", " + data.city;
 
-      // console.log("state address", deliveryAddress);
       setAddress(deliveryAddress);
     } catch (error) {
       console.log(error);
     }
   };
 
-  const showOrderTotal = async () => {
+  const showOrderTotal = React.useCallback(async () => {
     try {
       const response = await fetch(
         `http://10.0.0.8:8080/getOrderTotal?customerId=${session.primaryID}`,
@@ -69,13 +71,12 @@ const Checkout = () => {
     } catch (error) {
       console.log(error);
     }
-  };
+  }, [session.primaryID]);
 
   const onTipPercentChangeHandler = (event) => {
     event.preventDefault();
     let tipValue = event.target.value;
     tipValue = tipValue / 100;
-    // console.log("tip value cal", event.target.value, subTotal, tipValue);
     setTip(tipValue * subTotal);
   };
 
@@ -93,10 +94,10 @@ const Checkout = () => {
           totalPrice: subTotal + tip + tax + deliveryFee,
         }),
       });
-      setShow(true);
+
       const data = await response.json();
       if (data.Message) {
-        showOrderBookedModal(show, handleClose);
+        setShow(true);
       }
       setSubTotal(0);
     } catch (error) {
@@ -132,9 +133,9 @@ const Checkout = () => {
     }
   };
 
-  const showOrderBookedModal = (show, handleClose) => {
+  const showOrderBookedModal = () => {
     console.log("i m called");
-    return (
+    return show ? (
       <Modal show={show} onHide={handleClose}>
         <Modal.Header closeButton></Modal.Header>
         <Modal.Body>Order Placed successfully! </Modal.Body>
@@ -144,8 +145,11 @@ const Checkout = () => {
           </Button>
         </Modal.Footer>
       </Modal>
+    ) : (
+      <div></div>
     );
   };
+
   useEffect(() => {
     showOrderTotal();
   }, [subTotal, tip, showOrderTotal, displaySelectedItems]);
@@ -203,13 +207,10 @@ const Checkout = () => {
               <Card.Header>
                 <font size="4">
                   <Row className="mt-4">
-                    <Button
-                      variant="success"
-                      type="submit"
-                      onClick={handleShow}
-                    >
+                    <Button variant="success" type="submit">
                       Place Order
                     </Button>
+                    {showOrderBookedModal()}
                   </Row>
                 </font>
                 <Form.Text id="generalMessage" muted>

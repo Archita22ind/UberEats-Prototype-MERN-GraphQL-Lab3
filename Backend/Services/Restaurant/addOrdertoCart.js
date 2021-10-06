@@ -34,7 +34,7 @@ const addOrdertoCart = (req, res) => {
         if (err) throw err;
 
         if (result) {
-          res.send("Added to cart");
+          res.send({ Message: "Added to cart" });
         }
       });
     } else {

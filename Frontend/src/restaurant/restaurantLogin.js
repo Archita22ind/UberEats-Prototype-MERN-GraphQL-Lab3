@@ -60,12 +60,13 @@ const RestaurantLogin = (props) => {
           restaurantFlag: true,
         })
       );
-      dispatch(success(userEmail)); //TODO get from api response
-      dispatch(alertActions.success("Login Successful !! "));
+      dispatch(success(userEmail));
+      // dispatch(alertActions.success("Login Successful !! "));
       history.push("/restaurantDetails");
     } catch (error) {
+      alert("Incorrect Login Id or Password. Please try again !");
       dispatch(failure(error.toString()));
-      dispatch(alertActions.error("Login Failed !!"));
+      // dispatch(alertActions.error("Login Failed !!"));
     }
   };
 
@@ -90,6 +91,7 @@ const RestaurantLogin = (props) => {
                     <Form.Control
                       name="emailId"
                       type="email"
+                      required
                       placeholder="Enter email Id"
                       onChange={onEmailChangeHandler}
                     />
@@ -101,6 +103,7 @@ const RestaurantLogin = (props) => {
                     <Form.Control
                       name="password"
                       type="password"
+                      required
                       placeholder="Password"
                       onChange={onPasswordChangeHandler}
                     />

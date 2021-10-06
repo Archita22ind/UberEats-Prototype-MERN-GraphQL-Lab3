@@ -6,10 +6,9 @@ import { BiMinus } from "react-icons/bi";
 import { getSessionCookie } from "./session";
 
 const useCartCheckoutModal = (modalShow, onHide) => {
-  console.log("Show Modal" + modalShow);
-
   const [cartDetails, setCartDetails] = useState([]);
   const [cartTotal, setCartTotal] = useState(0.0);
+  const [buttonDisabled, setbuttonDisabled] = useState(true);
   let totalAmount = 0.0;
 
   let restaurantName = "Your Cart is empty!!";
@@ -49,7 +48,7 @@ const useCartCheckoutModal = (modalShow, onHide) => {
         }
       );
       const data = await response.json();
-      console.log(data);
+      console.log("Quantiti chsngege", data);
 
       setCartDetails(data);
     } catch (error) {
@@ -71,6 +70,7 @@ const useCartCheckoutModal = (modalShow, onHide) => {
   };
 
   useEffect(() => calculateTotal(), [cartDetails]);
+  useEffect(() => buttonDisplay(), [cartTotal]);
 
   const increment = (value, key) => {
     onQuantityChangeHandler(value + 1, key);
@@ -125,6 +125,11 @@ const useCartCheckoutModal = (modalShow, onHide) => {
     }
   };
 
+  const buttonDisplay = () => {
+    if (cartTotal === 0) setbuttonDisabled(true);
+    else setbuttonDisabled(false);
+  };
+
   const cartModal = () => {
     return (
       <Modal
@@ -143,7 +148,12 @@ const useCartCheckoutModal = (modalShow, onHide) => {
         </Modal.Body>
         <Modal.Footer>
           <Form onSubmit={onSubmitHandler}>
-            <Button variant="dark" type="submit" onClick={onHide}>
+            <Button
+              variant="dark"
+              type="submit"
+              onClick={onHide}
+              disabled={buttonDisabled}
+            >
               Go to checkout : ${cartTotal.toFixed(2)}
             </Button>
           </Form>

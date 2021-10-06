@@ -24,7 +24,6 @@ import Orders from "../customer/orders.js";
 import { getSessionCookie } from "../common/session";
 import RestaurantOrders from "../restaurant/restaurantOrders";
 
-
 const MainHeader = (props) => {
   let locationName = "San Jose";
   let showTabs = props.tab;
@@ -47,12 +46,12 @@ const MainHeader = (props) => {
     event.preventDefault();
 
     optionDislayHandler(input);
-
   };
 
   const onChangeHandler = (selected) => {
     setValueSelected(selected);
     if (selected[0].isRestaurant) {
+      window.sessionStorage.setItem("restaurantId", selected[0].id);
       history.push("/restaurantDetails");
     } else {
       if (!showTabs) history.push("/restaurantSearch");
@@ -80,7 +79,6 @@ const MainHeader = (props) => {
   };
 
   const renderPages = (tab) => {
-    console.log("value of tab", tab);
     if (tab === "restaurantDetails") return <RestaurantDetails />;
     else if (tab === "restaurantSearch")
       return (
@@ -110,73 +108,89 @@ const MainHeader = (props) => {
       <Container fluid className="my-3">
         <Row>
           <Col xs={3} md={1}>
-          {session.restaurantFlag ? ( <RestaurantNavbar />) : ( <CustomerNavbar />)}
+            {session.restaurantFlag ? <RestaurantNavbar /> : <CustomerNavbar />}
           </Col>
           <Col className="mt-3" xs={4} md={2}>
-          {session.restaurantFlag ? (<Link
-              to="/restaurantDetails"
-              style={{ textDecoration: "none", color: "black" }}
-            >
-              {" "}
-              <h3>Uber Eats</h3>{" "}
-            </Link>) : (    <Link
-              to="/restaurantSearch"
-              style={{ textDecoration: "none", color: "black" }}
-            >
-              {" "}
-              <h3>Uber Eats</h3>{" "}
-            </Link>)}
-         
+            {session.restaurantFlag ? (
+              <Link
+                to="/restaurantDetails"
+                style={{ textDecoration: "none", color: "black" }}
+              >
+                {" "}
+                <h3>Uber Eats</h3>{" "}
+              </Link>
+            ) : (
+              <Link
+                to="/restaurantSearch"
+                style={{ textDecoration: "none", color: "black" }}
+              >
+                {" "}
+                <h3>Uber Eats</h3>{" "}
+              </Link>
+            )}
           </Col>
-          {session.restaurantFlag ? ( <Col />) : (<><Col className="mt-3" xs={4} md={2}>
-            <ToggleButtonGroup
-              type="radio"
-              name="options"
-              defaultValue={1}
-              // value={value} onChange={handleChange}
-            >
-              <ToggleButton variant="outline-dark" id="tbg-radio-1" value={1}>
-                <font size="2"> Delivery</font>
-              </ToggleButton>
-              <ToggleButton variant="outline-dark" id="tbg-radio-2" value={2}>
-                <font size="2"> Pickup</font>
-              </ToggleButton>
-            </ToggleButtonGroup>
-          </Col>
-          <Col className="mt-3" xs={4} md={2}>
-            <Button variant="outline-dark">
-              <Icon.GeoAltFill /> <font size="2"> {locationName}</font>
-            </Button>
-          </Col>
-          <Col className="mt-3" xs={12} md={3}>
-            <Typeahead
-              id="id123"
-              labelKey={(option) => `${option.name}`}
-              // labelKey="label"
-              maxResults={8}
-              paginate={false}
-              placeholder="What are you craving for?"
-              onChange={onChangeHandler}
-              onInputChange={inputChangeHandler}
-              options={typeaheadOutput}
-              selected={valueSelected.name}
-            />
-          </Col>
-          <Col className="mt-3" xs={4} md={2}>
-            <Button
-              variant="dark"
-              onClick={() => {
-                getCartDetails();
-                setModalShow(true);
-              }}
-            >
-              <Icon.CartPlus />
-              <font size="2"> Cart</font>
-            </Button>
+          {session.restaurantFlag ? (
+            <Col />
+          ) : (
+            <>
+              <Col className="mt-3" xs={4} md={2}>
+                <ToggleButtonGroup
+                  type="radio"
+                  name="options"
+                  defaultValue={1}
+                  // value={value} onChange={handleChange}
+                >
+                  <ToggleButton
+                    variant="outline-dark"
+                    id="tbg-radio-1"
+                    value={1}
+                  >
+                    <font size="2"> Delivery</font>
+                  </ToggleButton>
+                  <ToggleButton
+                    variant="outline-dark"
+                    id="tbg-radio-2"
+                    value={2}
+                  >
+                    <font size="2"> Pickup</font>
+                  </ToggleButton>
+                </ToggleButtonGroup>
+              </Col>
+              <Col className="mt-3" xs={4} md={2}>
+                <Button variant="outline-dark">
+                  <Icon.GeoAltFill /> <font size="2"> {locationName}</font>
+                </Button>
+              </Col>
+              <Col className="mt-3" xs={12} md={3}>
+                <Typeahead
+                  id="id123"
+                  labelKey={(option) => `${option.name}`}
+                  // labelKey="label"
+                  maxResults={8}
+                  paginate={false}
+                  placeholder="What are you craving for?"
+                  onChange={onChangeHandler}
+                  onInputChange={inputChangeHandler}
+                  options={typeaheadOutput}
+                  selected={valueSelected.name}
+                />
+              </Col>
+              <Col className="mt-3" xs={4} md={2}>
+                <Button
+                  variant="dark"
+                  onClick={() => {
+                    getCartDetails();
+                    setModalShow(true);
+                  }}
+                >
+                  <Icon.CartPlus />
+                  <font size="2"> Cart</font>
+                </Button>
 
-            {cartModal()}
-          </Col></>)}
-      
+                {cartModal()}
+              </Col>
+            </>
+          )}
         </Row>
       </Container>
       {renderPages(showTabs)}

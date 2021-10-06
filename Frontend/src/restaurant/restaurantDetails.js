@@ -35,7 +35,6 @@ const RestaurantDetails = (props) => {
   if (session.restaurantFlag) {
     restaurantId = session.primaryID;
   } else {
-    window.sessionStorage.setItem("restaurantId", location.state?.restaurantId);
     restaurantId = window.sessionStorage.getItem("restaurantId");
   }
 

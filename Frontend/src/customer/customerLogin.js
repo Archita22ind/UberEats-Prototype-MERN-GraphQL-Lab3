@@ -62,12 +62,14 @@ const CustomerLogin = (props) => {
         })
       );
       dispatch(success({ userEmail }));
-      dispatch(alertActions.success("Login Successful !!"));
+      // dispatch(alertActions.success("Login Successful !!"));
       history.push("/restaurantSearch");
     } catch (error) {
       dispatch(failure(error.toString()));
-      dispatch(alertActions.error("Login Failed !!"));
+      // alert("Incorrect Login Id or Password. Please try again !");
+      // dispatch(alertActions.error("Login Failed !!"));
       console.log(error);
+      alert(error);
     }
   };
 
@@ -92,6 +94,7 @@ const CustomerLogin = (props) => {
                     <Form.Control
                       name="emailId"
                       type="email"
+                      // required
                       placeholder="Enter email Id"
                       onChange={onEmailChangeHandler}
                     />
@@ -103,6 +106,7 @@ const CustomerLogin = (props) => {
                     <Form.Control
                       name="password"
                       type="password"
+                      required
                       placeholder="Password"
                       onChange={onPasswordChangeHandler}
                     />
