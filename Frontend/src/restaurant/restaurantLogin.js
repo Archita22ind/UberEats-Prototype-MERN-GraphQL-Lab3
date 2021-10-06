@@ -6,7 +6,6 @@ import Background from "../images/restaurantSignUp.jpeg";
 import { useDispatch, useSelector } from "react-redux";
 import { reduxConstants } from "../constants/reduxConstants";
 import { useHistory } from "react-router-dom";
-import { alertActions } from "../actions/alertActions";
 import { setSessionCookie } from "../common/session";
 
 function request(user) {
@@ -54,19 +53,24 @@ const RestaurantLogin = (props) => {
       });
 
       const data = await response.json();
-      setSessionCookie(
-        JSON.stringify({
-          primaryID: data.restaurantId,
-          restaurantFlag: true,
-        })
-      );
-      dispatch(success(userEmail));
-      // dispatch(alertActions.success("Login Successful !! "));
-      history.push("/restaurantDetails");
+
+      if (response.status === 200) {
+        setSessionCookie(
+          JSON.stringify({
+            primaryID: data.restaurantId,
+            restaurantFlag: true,
+          })
+        );
+        dispatch(success({ userEmail }));
+        history.push("/restaurantDetails");
+      } else if (response.status === 401) {
+        alert("Incorrect Email Id or Password. Please try again !");
+      } else {
+        throw new Error(response);
+      }
     } catch (error) {
-      alert("Incorrect Login Id or Password. Please try again !");
+      alert("Internal Server Error!!");
       dispatch(failure(error.toString()));
-      // dispatch(alertActions.error("Login Failed !!"));
     }
   };
 

@@ -1,13 +1,12 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Button, Row, Col, Form, Container, Card } from "react-bootstrap";
 import Image from "react-bootstrap/Image";
 import { Link } from "react-router-dom";
 import Background from "../images/restaurantSignUp.jpeg";
 import { setSessionCookie } from "../common/session";
 import { useHistory } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { reduxConstants } from "../constants/reduxConstants";
-import { alertActions } from "../actions/alertActions";
 
 function request(user) {
   return { type: reduxConstants.LOGIN_REQUEST, user };
@@ -55,21 +54,23 @@ const CustomerLogin = (props) => {
       });
       const data = await response.json();
 
-      setSessionCookie(
-        JSON.stringify({
-          primaryID: data.customerID,
-          restaurantFlag: false,
-        })
-      );
-      dispatch(success({ userEmail }));
-      // dispatch(alertActions.success("Login Successful !!"));
-      history.push("/restaurantSearch");
+      if (response.status === 200) {
+        setSessionCookie(
+          JSON.stringify({
+            primaryID: data.customerID,
+            restaurantFlag: false,
+          })
+        );
+        dispatch(success({ userEmail }));
+        history.push("/restaurantSearch");
+      } else if (response.status === 401) {
+        alert("Incorrect Email Id or Password. Please try again !");
+      } else {
+        throw new Error(response);
+      }
     } catch (error) {
+      alert("Internal Server Error!!");
       dispatch(failure(error.toString()));
-      // alert("Incorrect Login Id or Password. Please try again !");
-      // dispatch(alertActions.error("Login Failed !!"));
-      console.log(error);
-      alert(error);
     }
   };
 
@@ -94,7 +95,7 @@ const CustomerLogin = (props) => {
                     <Form.Control
                       name="emailId"
                       type="email"
-                      // required
+                      required
                       placeholder="Enter email Id"
                       onChange={onEmailChangeHandler}
                     />

@@ -9,7 +9,7 @@ const getPastOrders = (req, res) => {
    and O.CustomerID = (?) `;
     columnArray = [req.body.customerId];
   } else {
-    sqlSelect = `select R.RestaurantName, O.OrderId ,O.TotalPrice, O.TotalQuantity, O.DateOrdered from Orders O, RestaurantDetails R where R.RestaurantID = O.RestaurantID
+    sqlSelect = `select R.RestaurantName, O.OrderId ,O.TotalPrice, O.TotalQuantity, O.DateOrdered , O.FinalStatus from Orders O, RestaurantDetails R where R.RestaurantID = O.RestaurantID
     and O.CustomerID = (?)  AND FinalStatus = (?)`;
     columnArray = [req.body.customerId, req.body.orderStatus];
   }
@@ -25,6 +25,7 @@ const getPastOrders = (req, res) => {
             totalPrice: element.TotalPrice,
             dateOrdered: element.DateOrdered,
             totalItems: element.TotalQuantity,
+            orderStatus: element.FinalStatus,
           };
         })
       );

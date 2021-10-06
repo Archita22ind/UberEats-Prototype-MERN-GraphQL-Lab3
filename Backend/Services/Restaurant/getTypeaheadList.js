@@ -1,10 +1,9 @@
 const con = require("../../Controller/Common/dbConnection");
 
 const getTypeaheadList = (req, res) => {
-  console.log(req.body);
   let listOfTypeahead = [];
   let selectSql1 = `SELECT * FROM RestaurantDetails where RestaurantName like '%${req.body.input}%'`;
-  // console.log(selectSql1);
+
   con.query(selectSql1, (err, result1) => {
     if (err) throw err;
 
@@ -16,8 +15,6 @@ const getTypeaheadList = (req, res) => {
           isRestaurant: true,
         });
       });
-
-      // res.send(listOfTypeahead);
     }
   });
   let selectSql2 = `SELECT FoodName , RestaurantID from  FoodItems where FoodName
@@ -41,7 +38,6 @@ const getTypeaheadList = (req, res) => {
           tempObject[value.FoodName] = restIDsList;
         }
       });
-      console.log(tempObject);
 
       Object.keys(tempObject).forEach((keyVal) => {
         listOfTypeahead.push({

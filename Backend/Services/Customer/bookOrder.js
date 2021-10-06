@@ -2,14 +2,11 @@ const con = require("../../Controller/Common/dbConnection");
 const updateTotalItems = require("./updateTotalItems");
 
 const bookOrder = (req, res) => {
-  // let customerId = req.body.customerId;
-  //   let date_ob = new Date();
-
   let ts = Date.now();
   let date_ob = new Date(ts);
 
   let Updatesql = `UPDATE Orders SET  TotalPrice = (?),  DateOrdered = (?), FinalStatus =(?) where CustomerID = (?) and FinalStatus = (?)`;
-  //   console.log("date", date_ob);
+
   con.query(
     Updatesql,
     [req.body.totalPrice, date_ob, "Ordered", req.body.customerId, "New"],
