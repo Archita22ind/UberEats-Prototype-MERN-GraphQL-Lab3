@@ -4,11 +4,30 @@ import ListGroup from "react-bootstrap/ListGroup";
 import { getSessionCookie } from "../common/session";
 import ReceiptModal from "../customer/receiptModal";
 import CustomerModal from "./customerModal";
+const deliveryTypeOptions = ["", "Order Received", "Preparing", "On the way", "Delivered"];
+const pickupTypeOptions =   ["","Order Received", "Preparing", "Pick up Ready", "Picked up"];
+
+const orderFilterOptions = ["", "New Order", "Delivered", "Cancelled"];
+
+export const checkDeliveryStatusOptions = (deliveryType) => {
 
 
-export const orderFilterOptions = ["", "New", "Delivered", "Cancelled"];
-export const deliveryTypeOptions = ["", "Order Received", "Preparing", "On the way", "Delivered"];
-export const pickupTypeOptions =   ["","Order Received", "Preparing", "Pick up Ready", "Picked up"];
+    return deliveryType === 'delivery' ? (
+        deliveryTypeOptions.map((item) => {
+        return (
+          <option key={item} value={item}>
+            {item}
+          </option>
+        );
+      }) ) : (pickupTypeOptions.map((item) => {
+        return (
+          <option key={item} value={item}>
+            {item}
+          </option>
+        );
+      }))
+  }
+
 
 const RestaurantOrders = () => {
   const session = getSessionCookie();
@@ -50,26 +69,6 @@ const RestaurantOrders = () => {
         }
         return newState;
     });
-  }
-
-  console.log("Order Sttxsssaus", orderStatus);
-
-  const checkDeliveryStatusOptions = (deliveryType) => {
-
-    return deliveryType === 'delivery' ? (
-        deliveryTypeOptions.map((item) => {
-        return (
-          <option key={item} value={item}>
-            {item}
-          </option>
-        );
-      }) ) : (pickupTypeOptions.map((item) => {
-        return (
-          <option key={item} value={item}>
-            {item}
-          </option>
-        );
-      }))
   }
 
   const getRestaurantOrders = async () => {
@@ -126,6 +125,13 @@ const RestaurantOrders = () => {
           
            const data = await response.json();
 
+           setRestaurantOrdersList( (prevState) => {
+            return prevState.map( (prevOrder) => {
+              return prevOrder.orderId === data.orderId  ? {...data} : prevOrder;
+            });
+
+           });
+           setOrderStatus([]);
            alert("Order status updated succesfully")
      }else {
         alert("Please Select Delivery Status to Update")
@@ -197,8 +203,7 @@ const RestaurantOrders = () => {
                   </h4>
                 </Col>
                 <Col>
-                <Form>
-            <Form.Group as={Col}>
+
             <Button
                     variant="success"
                     onClick={() => updateDeliveryStatus(order.orderId)}
@@ -213,8 +218,6 @@ const RestaurantOrders = () => {
               >
                 {checkDeliveryStatusOptions(order.deliveryType)}
               </Form.Control>
-            </Form.Group>
-          </Form>
                 </Col>
               </Row>
               <Col>

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Container,
   Row,
@@ -35,6 +35,8 @@ const MainHeader = (props) => {
   const [foodFilter, setFoodFilter] = useState({});
   const [restaurantList, setRestaurantList] = useState([]);
 
+  const [customerLocation, setCustomerLocation] = useState("");
+
   const session = getSessionCookie();
 
   let onHide = () => setModalShow(false);
@@ -47,11 +49,32 @@ const MainHeader = (props) => {
 
   const history = useHistory();
 
+  useEffect( () => {
+    getCustomerLocation();
+  }, []);
+
   const inputChangeHandler = (input, event) => {
     event.preventDefault();
 
     optionDislayHandler(input);
   };
+
+  const getCustomerLocation = async () => {
+
+    if (!session.restaurantFlag){
+      const response = await fetch("http://10.0.0.8:8080/getCustomerLocation", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          customerId: session.primaryID,
+        }),
+      });
+
+      const data = await response.json();
+      setCustomerLocation(data.city)
+    }
+
+    }
 
   const onChangeHandler = (selected) => {
     setValueSelected(selected);
@@ -177,11 +200,11 @@ const MainHeader = (props) => {
                       </ToggleButton>
                 </ButtonGroup>      
               </Col>
-              <Col className="mt-3" xs={4} md={2}>
+              {customerLocation === "" ? (<Col/>) : (<Col className="mt-3" xs={4} md={2}>
                 <Button variant="outline-dark">
-                  <Icon.GeoAltFill /> <font size="2"> {locationName}</font>
+                  <Icon.GeoAltFill /> <font size="2"> {customerLocation}</font>
                 </Button>
-              </Col>
+              </Col>)}
               <Col className="mt-3" xs={12} md={3}>
                 <Typeahead
                   id="id123"

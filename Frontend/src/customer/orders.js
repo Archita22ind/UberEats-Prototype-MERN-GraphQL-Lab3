@@ -30,10 +30,12 @@ const Orders = (props) => {
 
   let orderFilterOptions = [
     "",
-    "Ordered",
     "Order Received",
     "Preparing",
+    "On the way",
     "Delivered",
+    "Pick up Ready",
+    "Picked up"
   ];
   const options = orderFilterOptions.map((item) => {
     return (
