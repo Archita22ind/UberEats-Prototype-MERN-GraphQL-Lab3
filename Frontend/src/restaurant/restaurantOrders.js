@@ -33,16 +33,22 @@ const RestaurantOrders = () => {
 
   const onOrderStatusChangeHandler = (event, orderId) => {
     setOrderStatus((prevState) => {
-        const newState = [...prevState];
-        return (newState.map( (order) => {
+        let indexElement = -1;
+        prevState.forEach( (order, index) => {
             if (order.orderId === orderId){
-                return {
-                    orderId:  orderId,
-                    orderStatus: event.target.value
-                } 
-            }else return order ;
+                indexElement =  index; 
+            }
+        })
+         let newState = [...prevState];
+        if (indexElement === -1){
+            newState.push({orderId: orderId , orderStatus: event.target.value})
+        }else {
+            newState[indexElement] = {
+                orderId:  orderId,
+                orderStatus: event.target.value
+            };
         }
-        ));
+        return newState;
     });
   }
 
@@ -98,10 +104,8 @@ const RestaurantOrders = () => {
 
   const updateDeliveryStatus = async (orderId) => {
 
-    console.log("Order Sttaus", orderStatus);
-
     let updatedOrderStatusList = orderStatus.filter(order => order.orderId === orderId);
-    let updatedOrderStatus = updatedOrderStatusList?.[0].orderStatus;
+    let updatedOrderStatus = updatedOrderStatusList?.[0]?.orderStatus;
 
     console.log("Order Sttaus", updatedOrderStatus);
   
@@ -124,7 +128,7 @@ const RestaurantOrders = () => {
 
            alert("Order status updated succesfully")
      }else {
-        alert("Could not find order status for this order")
+        alert("Please Select Delivery Status to Update")
      }
   }
 
