@@ -3,8 +3,6 @@ const app = require("../../app");
 
 //API to get the details of the restaurant owner from the sign up page, only mandatory fields updated
 const restaurantSignUpInfo = (req, res) => {
-  console.log(req.body);
-
   let checkSql = `SELECT * FROM RestaurantDetails where EmailID = ?`;
 
   con.query(checkSql, [req.body.emailId], (err, result1) => {
@@ -30,8 +28,7 @@ const restaurantSignUpInfo = (req, res) => {
         ],
         (err, result) => {
           if (err) throw err;
-          console.log(result);
-          console.log("1 record for restaurant details inserted");
+
           return res.status(200).send({
             restaurantId: result.insertId,
           });

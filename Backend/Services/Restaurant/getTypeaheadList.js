@@ -24,8 +24,6 @@ const getTypeaheadList = (req, res) => {
     if (err) throw err;
 
     if (result2) {
-      console.log(result2);
-
       let tempList = [];
       let tempObject = {};
 

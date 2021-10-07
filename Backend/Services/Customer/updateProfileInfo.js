@@ -2,14 +2,13 @@ const con = require("../../Controller/Common/dbConnection");
 const multer = require("multer");
 
 const updateProfileInfo = (req, res, err) => {
-  let cutomerid = 1;
   if (err instanceof multer.MulterError) {
     return res.status(500).json(err);
   }
 
   con.query(
     `SELECT * FROM CustomerDetails WHERE CustomerID = ?`,
-    [req.body?.customerId || cutomerid],
+    [req.body.customerId],
     (err, result) => {
       if (err) throw err;
 
@@ -39,16 +38,16 @@ const updateProfileInfo = (req, res, err) => {
           req.body.dateOfBirth || currentValues.DateOfBirth,
           req.body.about || currentValues.About,
           updateImage,
-          req.body.customerId || cutomerid,
+          req.body.customerId || currentValues.CustomerID,
         ];
 
         con.query(updateSql, data, (err, result) => {
           if (err) throw err;
-          console.log("1 customer  record updated");
-        });
-
-        return res.status(200).send({
-          responseFlag: "Success",
+          if (result) {
+            res.status(200).send({
+              responseFlag: "Success",
+            });
+          }
         });
       }
     }

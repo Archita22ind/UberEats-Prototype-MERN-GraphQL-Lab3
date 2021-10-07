@@ -5,13 +5,10 @@ const getRestaurantOrders = (req, res) => {
   let columnArray;
   let orderStatus;
   if (req.body.orderStatus) {
-    sqlSelect = `SELECT   OrderID,TotalPrice, TotalQuantity, DeliveryAddress, DateOrdered ,FinalStatus ,CustomerID FROM Orders where RestaurantID = (?) AND FinalStatus = (?) ORDER BY DateOrdered DESC`;
-    if (req.body.orderStatus === "New") orderStatus = "Order Received";
-    else orderStatus = req.body.orderStatus;
-
-    columnArray = [req.body.restaurantId, orderStatus];
+    sqlSelect = `SELECT   OrderID,TotalPrice, TotalQuantity, DeliveryAddress, DateOrdered ,FinalStatus ,CustomerID , DeliveryOrPickup FROM Orders where RestaurantID = (?) AND FinalStatus = (?) ORDER BY DateOrdered DESC`;
+    columnArray = [req.body.restaurantId, req.body.orderStatus];
   } else {
-    sqlSelect = `SELECT   OrderID,TotalPrice, TotalQuantity, DeliveryAddress, DateOrdered , FinalStatus, CustomerID FROM Orders where RestaurantID = (?) ORDER BY DateOrdered DESC`;
+    sqlSelect = `SELECT   OrderID,TotalPrice, TotalQuantity, DeliveryAddress, DateOrdered , FinalStatus, CustomerID , DeliveryOrPickup FROM Orders where RestaurantID = (?) ORDER BY DateOrdered DESC`;
     columnArray = [req.body.restaurantId];
   }
 
@@ -29,6 +26,7 @@ const getRestaurantOrders = (req, res) => {
             dateOrdered: element.DateOrdered,
             orderStatus: element.FinalStatus,
             customerId: element.CustomerID,
+            deliveryOrPickup: element.DeliveryOrPickup,
           };
         })
       );

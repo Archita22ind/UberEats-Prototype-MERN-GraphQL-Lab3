@@ -17,6 +17,7 @@ const Checkout = () => {
   let deliveryAddress;
   const session = getSessionCookie();
   const [subTotal, setSubTotal] = useState(0);
+  const [totalItems, setTotalItems] = useState(0);
   const [show, setShow] = useState(false);
 
   const history = useHistory();
@@ -66,8 +67,9 @@ const Checkout = () => {
         }
       );
       const data = await response.json();
-      console.log("got this data", data);
+
       setSubTotal(data.subTotal);
+      setTotalItems(data.totalItems);
     } catch (error) {
       console.log(error);
     }
@@ -92,6 +94,7 @@ const Checkout = () => {
         body: JSON.stringify({
           customerId: session.primaryID,
           totalPrice: subTotal + tip + tax + deliveryFee,
+          totalItems: totalItems,
         }),
       });
 
@@ -134,7 +137,6 @@ const Checkout = () => {
   };
 
   const showOrderBookedModal = () => {
-    console.log("i m called");
     return show ? (
       <Modal show={show} onHide={handleClose}>
         <Modal.Header closeButton></Modal.Header>

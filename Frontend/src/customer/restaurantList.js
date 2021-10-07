@@ -57,7 +57,6 @@ const RestaurantList = (props) => {
   };
 
   const linkToRestaurantPage = (restaurantId) => {
-    console.log("aahaha", restaurantId);
     window.sessionStorage.setItem("restaurantId", restaurantId);
     history.push("/restaurantDetails");
   };
@@ -65,7 +64,6 @@ const RestaurantList = (props) => {
   return (
     <Row>
       {props.restaurantList.map((restaurant, key) => {
-        console.log("inside list map", key, restaurant);
         return (
           <Col xs={12} md={3} className="mb-4">
             <Card>

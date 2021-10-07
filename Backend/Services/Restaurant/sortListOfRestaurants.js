@@ -1,14 +1,12 @@
 const sortListOfRestaurants = (result, customerLocation) => {
-  let arrayOfRestaurants = JSON.parse(JSON.stringify(result));
-
-  let customerLocationRestaurants = arrayOfRestaurants.filter(
-    (restuarant) => restuarant.City === customerLocation
-  );
+  let customerLocationRestaurants = result.filter((restaurant) => {
+    if (restaurant.City.trim() === customerLocation) return restaurant;
+  });
 
   let orderOfRestaurants = [...customerLocationRestaurants];
 
-  let differentLocationRestaurants = arrayOfRestaurants.filter(
-    (restuarant) => restuarant.City !== customerLocation
+  let differentLocationRestaurants = result.filter(
+    (restaurant) => restaurant.City.trim() !== customerLocation
   );
 
   orderOfRestaurants = [...orderOfRestaurants, ...differentLocationRestaurants];

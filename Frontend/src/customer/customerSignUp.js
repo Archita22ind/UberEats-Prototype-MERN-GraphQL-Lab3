@@ -71,7 +71,7 @@ const CustomerSignUp = (props) => {
       return;
     }
 
-    if (!validateZipcode(customerDetails.zipCode)) {
+    if (customerDetails.zipCode && !validateZipcode(customerDetails.zipCode)) {
       alert("Enter a valid Zip Code!");
       return;
     }

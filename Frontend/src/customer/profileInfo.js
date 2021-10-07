@@ -66,6 +66,7 @@ const ProfileInfo = (props) => {
 
     const formData = new FormData();
     formData.append("file", customerDetails.image);
+    formData.append("customerId", session.primaryID);
     formData.append("lastName", customerDetails.lastName);
     formData.append("firstName", customerDetails.firstName);
     formData.append("password", customerDetails.password);
@@ -86,11 +87,9 @@ const ProfileInfo = (props) => {
       const response = await fetch("http://10.0.0.8:8080/updateProfileInfo", {
         method: "POST",
         body: formData,
-        // headers: { 'Content-Type': 'multipart/form-data' }
       });
 
       const data = await response.json();
-      console.log(data);
     } catch (error) {
       console.log(error);
     }
@@ -121,8 +120,6 @@ const ProfileInfo = (props) => {
           imagePreview: { Holder },
         };
       }
-
-      // console.log("a kya rha h??", data.dateOfBirth);
       let dateArray = data.dateOfBirth?.split("T");
       return {
         ...prevState,

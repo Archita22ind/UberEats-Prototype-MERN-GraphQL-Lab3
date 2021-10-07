@@ -16,9 +16,8 @@ const RestaurantSearch = (props) => {
     });
   };
 
-  const fetchFilteredRestaurants = React.useCallback (async () => {
+  const fetchFilteredRestaurants = React.useCallback(async () => {
     try {
-      console.log("delivery value" ,props.deliveryType);
       const response = await fetch(
         "http://10.0.0.8:8080/getListOfRestaurants",
         {
@@ -50,7 +49,12 @@ const RestaurantSearch = (props) => {
     } catch (error) {
       console.log(error);
     }
-  }, [props.foodFilter, props.typeaheadValue, props.deliveryType, session.primaryID]); 
+  }, [
+    props.foodFilter,
+    props.typeaheadValue,
+    props.deliveryType,
+    session.primaryID,
+  ]);
 
   useEffect(() => {
     fetchFilteredRestaurants();

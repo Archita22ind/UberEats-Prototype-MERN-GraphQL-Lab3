@@ -6,7 +6,6 @@ const getDeliveryAddress = (req, res) => {
   con.query(sqlSelect, [req.query.customerId], (err, result) => {
     if (err) throw err;
     if (result) {
-      console.log("abhi ka res", result);
       res.status(200).send({
         addressLine1: result[0].AddressLine1,
         addressLine2: result[0].AddressLine2,

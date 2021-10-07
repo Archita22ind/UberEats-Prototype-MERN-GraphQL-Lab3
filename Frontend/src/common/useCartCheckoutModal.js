@@ -48,7 +48,6 @@ const useCartCheckoutModal = (modalShow, onHide) => {
         }
       );
       const data = await response.json();
-      console.log("Quantiti chsngege", data);
 
       setCartDetails(data);
     } catch (error) {
@@ -167,7 +166,7 @@ const useCartCheckoutModal = (modalShow, onHide) => {
     getCartDetails,
     displaySelectedItems,
     restaurantName,
-    cartDetails
+    cartDetails,
   };
 };
 

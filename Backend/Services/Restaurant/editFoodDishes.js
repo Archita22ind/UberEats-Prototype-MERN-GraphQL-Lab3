@@ -13,7 +13,7 @@ const editFoodItems = (req, res, err) => {
     (err, result) => {
       if (err) throw err;
 
-      if (result.length == 1) {
+      if (result.length === 1) {
         let currentValues = result[0];
 
         let updateImage;

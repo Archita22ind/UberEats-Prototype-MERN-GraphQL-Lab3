@@ -14,7 +14,7 @@ const getProfileInfo = (req, res, err) => {
       if (err) throw err;
 
       if (result) {
-        res.send({
+        res.status(200).send({
           lastName: result[0].LastName,
           firstName: result[0].FirstName,
           password: result[0].PasswordValue,

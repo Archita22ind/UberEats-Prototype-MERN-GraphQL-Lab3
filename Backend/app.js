@@ -32,6 +32,7 @@ const showCustomerProfile = require("./Services/Restaurant/showCustomerProfile")
 const getRestaurantOrders = require("./Services/Restaurant/getRestaurantOrders");
 const showRestaurantOrderDetails = require("./Services/Restaurant/showRestaurantOrderDetails");
 const updateOrderStatus = require("./Services/Restaurant/updateOrderStatus");
+const getCustomerLocation = require("./Services/Customer/getCustomerLocation");
 
 const app = express();
 app.use(express.json());
@@ -105,6 +106,8 @@ app.post("/showCustomerProfile", showCustomerProfile);
 app.post("/getRestaurantOrders", getRestaurantOrders);
 
 app.post("/showRestaurantOrderDetails", showRestaurantOrderDetails);
+
+app.post("/getCustomerLocation", getCustomerLocation);
 
 app.post("/updateOrderStatus", updateOrderStatus);
 const PORT = process.env.PORT || 8080;

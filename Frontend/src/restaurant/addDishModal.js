@@ -1,12 +1,13 @@
 import React, { useState } from "react";
 import { Container, Row, Form, Col, Modal, Button } from "react-bootstrap";
+import { getSessionCookie } from "../common/session";
 
 const AddDishModal = (props) => {
   let onClickValue = props.show;
   let onHideValue = props.onHide;
 
-  let restaurantId = 1;
   const [addDishValues, setAddDishValues] = useState({});
+  const session = getSessionCookie();
 
   const onChangeHandler = (event) => {
     event.preventDefault();
@@ -47,7 +48,7 @@ const AddDishModal = (props) => {
     event.preventDefault();
 
     const formData = new FormData();
-    formData.append("restaurantId", restaurantId);
+    formData.append("restaurantId", session.primaryID);
     formData.append("file", addDishValues.image);
     formData.append("dishName", addDishValues.dishName);
     formData.append("price", addDishValues.price);
@@ -64,9 +65,10 @@ const AddDishModal = (props) => {
       });
 
       const data = await response.json();
-      // enter you logic when the fetch is successful
-      console.log(data);
+
+      props.onHide();
       props.getDishesHandler();
+      setAddDishValues({});
     } catch (error) {
       console.log(error);
     }
@@ -84,7 +86,7 @@ const AddDishModal = (props) => {
             <Form>
               <p>Add dish!</p>
               <Row className="mb-3">
-                <Form.Group as={Col} controlId="formGridDishName">
+                <Form.Group as={Col}>
                   <Form.Label>Dish Name</Form.Label>
                   <Form.Control
                     required
@@ -93,7 +95,7 @@ const AddDishModal = (props) => {
                     onChange={onChangeHandler}
                   />
                 </Form.Group>
-                <Form.Group as={Col} controlId="formGridPrice">
+                <Form.Group as={Col}>
                   <Form.Label>Price</Form.Label>
                   <Form.Control
                     required
@@ -110,8 +112,7 @@ const AddDishModal = (props) => {
         <Modal.Body className="show-grid">
           <Container>
             <Row>
-              <Form.Group controlId="formGridImage" xs={12} md={12}>
-                {/* <Form.Label>Profile Image</Form.Label> */}
+              <Form.Group xs={12} md={12}>
                 {viewImageHandler()}
                 <Form.Control
                   name="image"
@@ -124,8 +125,7 @@ const AddDishModal = (props) => {
             </Row>
 
             <Row className="mb-3">
-              <Form.Group xs={12} md={12} controlId="formGridDishDescription">
-                {/* <Form.Label>Description</Form.Label> */}
+              <Form.Group xs={12} md={12}>
                 <Form.Control
                   required
                   name="description"
@@ -136,7 +136,7 @@ const AddDishModal = (props) => {
             </Row>
 
             <Row>
-              <Form.Group controlId="formGridMainIngredients">
+              <Form.Group>
                 <Form.Control
                   required
                   name="mainIngredients"
@@ -148,9 +148,7 @@ const AddDishModal = (props) => {
 
             <Row>
               <Col xs={12} md={6}>
-                <Form.Group xs={12} md={12} controlId="formGridDishType">
-                  {/* <Form.Label>Description</Form.Label> */}
-
+                <Form.Group xs={12} md={12}>
                   <Form.Select
                     required
                     name="dishType"
@@ -166,7 +164,7 @@ const AddDishModal = (props) => {
                 </Form.Group>
               </Col>
               <Col xs={6} md={6}>
-                <Form.Group xs={12} md={12} controlId="formGridCategoryType">
+                <Form.Group xs={12} md={12}>
                   <Form.Select
                     required
                     name="dishCategory"
@@ -184,7 +182,7 @@ const AddDishModal = (props) => {
               </Col>
             </Row>
             <Row>
-              <Form.Group xs={12} md={12} controlId="formGridCuisine">
+              <Form.Group xs={12} md={12}>
                 <Form.Select required name="cuisine" onChange={onChangeHandler}>
                   <option>Select Cuisine</option>
                   <option value="Indian">Indian</option>
@@ -204,7 +202,7 @@ const AddDishModal = (props) => {
           </Container>
         </Modal.Body>
         <Modal.Footer>
-          <Button onClick={props.onHide} type="submit" variant="dark">
+          <Button type="submit" variant="dark">
             Save
           </Button>
         </Modal.Footer>

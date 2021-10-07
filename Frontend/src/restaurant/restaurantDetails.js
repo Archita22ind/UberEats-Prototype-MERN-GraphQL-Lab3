@@ -161,8 +161,13 @@ const RestaurantDetails = (props) => {
                   <Card.Img variant="top" src={item.imagePreview} />
                   <Card.Header>{item.dishName}</Card.Header>
                   <Card.Body style={{ height: "80px" }}>
-                    <Card.Text>{item.description}</Card.Text>
-                    <Card.Text>{item.price}</Card.Text>
+                    <font size="2">
+                      <Card.Text>{item.description}</Card.Text>
+
+                      <Card.Text>
+                        ${item.price} • {item.dishType} • {item.dishCategory}
+                      </Card.Text>
+                    </font>
                   </Card.Body>
                 </Card>
               </Button>
@@ -213,14 +218,11 @@ const RestaurantDetails = (props) => {
   };
 
   return (
-    <Container fluid className="mt-5">
+    <Container fluid>
       <Row>
-        <Form
-        // onSubmit={submitProfileImageHandler}
-        >
+        <Form>
           <Row>
             <Col>
-              {/* <Form.Control src={profilePicture.imagePreview } name ="imagePreview" type="image" width="1000" height="250" /> */}
               <Card>
                 <Card.Img variant="top" src={imageUrl} height="300px" />
 

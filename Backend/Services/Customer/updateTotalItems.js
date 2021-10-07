@@ -1,40 +1,33 @@
-const con = require("../../Controller/Common/dbConnection");
+// const con = require("../../Controller/Common/dbConnection");
 
-const updateTotalItems = (customerId) => {
-  let totalQuantity = 0;
-  let sql = `SELECT Quantity , OrderId from OrderDetails where CustomerId = (?) and OrderStatus=(?)`;
+// const updateTotalItems = (customerId) => {
+//   let totalQuantity = 0;
+//   let sql = `SELECT Quantity , OrderId from OrderDetails where CustomerId = (?) `;
 
-  con.query(sql, [customerId, "Ordered"], (err, result) => {
-    if (err) throw err;
-    if (result) {
-      result.forEach((element) => {
-        totalQuantity += element.Quantity;
-      });
+//   con.query(sql, [customerId], (err, result) => {
+//     if (err) throw err;
+//     if (result) {
+//       result.forEach((element) => {
+//         totalQuantity += element.Quantity;
+//       });
 
-      let Updatesql = `UPDATE Orders SET  TotalQuantity = (?), FinalStatus=(?) where OrderId = (?)`;
+//       let Updatesql = `UPDATE Orders SET  TotalQuantity = (?), FinalStatus=(?) where OrderId = (?)`;
 
-      con.query(
-        Updatesql,
-        [totalQuantity, "Order Received", result[0].OrderId],
-        (err, result1) => {
-          if (err) throw err;
-          if (result1) {
-            let Updatesql1 = `UPDATE OrderDetails SET  OrderStatus=(?) where OrderId = (?)`;
-            con.query(
-              Updatesql1,
-              ["Order Sent", result[0].OrderId],
-              (err, result2) => {
-                if (err) throw err;
-                if (result2) {
-                  console.log("total quantity updated");
-                }
-              }
-            );
-          }
-        }
-      );
-    }
-  });
-};
+//       con.query(
+//         Updatesql,
+//         [totalQuantity, "Order Received", result[0].OrderId],
+//         (err, result1) => {
+//           if (err) throw err;
 
-module.exports = updateTotalItems;
+//           if (result1) {
+//             res.status(200).send({
+//               message: "Order status updated",
+//             });
+//           }
+//         }
+//       );
+//     }
+//   });
+// };
+
+// module.exports = updateTotalItems;

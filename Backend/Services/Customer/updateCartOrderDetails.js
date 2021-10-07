@@ -1,8 +1,6 @@
 const con = require("../../Controller/Common/dbConnection");
 
 const updateCartOrderDetails = (req, res) => {
-  console.log("update", req.body);
-
   if (req.body.Quantity === 0) {
     let sqlDelete = `DELETE FROM OrderDetails WHERE OrderDetailId = ?`;
     con.query(sqlDelete, [req.body.OrderDetailId], (err, result) => {

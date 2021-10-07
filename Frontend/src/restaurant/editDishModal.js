@@ -1,10 +1,11 @@
 import React from "react";
 import { Container, Row, Form, Col, Modal, Button } from "react-bootstrap";
+import { getSessionCookie } from "../common/session";
 
 const EditDishModal = (props) => {
   let onShowVal = props.dishItem.show;
 
-  // let restaurantId = 1;
+  const session = getSessionCookie();
 
   const onChangeHandler = (event) => {
     event.preventDefault();
@@ -32,7 +33,7 @@ const EditDishModal = (props) => {
           imagePreview: URL.createObjectURL(event.target.files[0]),
           [event.target.name]: event.target.files[0],
         };
-        console.log("I am in Image change Handler", newListOfDishes);
+
         return newListOfDishes;
       });
     }
@@ -49,13 +50,12 @@ const EditDishModal = (props) => {
       );
     }
   };
-  // console.log(props.dishItem.image);
 
   const submitDishesHandler = async (event) => {
     event.preventDefault();
 
     const formData = new FormData();
-    formData.append("restaurantId", 1);
+    formData.append("restaurantId", session.primaryID);
     formData.append("foodId", props.dishItem.foodId);
     formData.append("file", props.dishItem.image);
     formData.append("dishName", props.dishItem.dishName);
@@ -66,8 +66,6 @@ const EditDishModal = (props) => {
     formData.append("dishCategory", props.dishItem.dishCategory);
     formData.append("cuisine", props.dishItem.cuisine);
 
-    console.log("Printing formData", formData);
-
     try {
       const response = await fetch("http://10.0.0.8:8080/editFoodItems", {
         method: "POST",
@@ -75,8 +73,7 @@ const EditDishModal = (props) => {
       });
 
       const data = await response.json();
-      // enter you logic when the fetch is successful
-      console.log("Data", data);
+
       props.onHide();
     } catch (error) {
       console.log(error);
@@ -97,7 +94,7 @@ const EditDishModal = (props) => {
             <Form>
               <p>Edit dish!</p>
               <Row className="mb-3">
-                <Form.Group as={Col} controlId="formGridDishName">
+                <Form.Group as={Col}>
                   <Form.Label>Dish Name</Form.Label>
                   <Form.Control
                     name="dishName"
@@ -106,7 +103,7 @@ const EditDishModal = (props) => {
                     onChange={onChangeHandler}
                   />
                 </Form.Group>
-                <Form.Group as={Col} controlId="formGridPrice">
+                <Form.Group as={Col}>
                   <Form.Label>Price</Form.Label>
                   <Form.Control
                     name="price"
@@ -123,7 +120,7 @@ const EditDishModal = (props) => {
         <Modal.Body className="show-grid">
           <Container>
             <Row>
-              <Form.Group controlId="formGridImage" xs={12} md={12}>
+              <Form.Group xs={12} md={12}>
                 {viewImageHandler()}
                 <Form.Control
                   name="image"
@@ -136,7 +133,7 @@ const EditDishModal = (props) => {
             </Row>
 
             <Row className="mb-3">
-              <Form.Group xs={12} md={12} controlId="formGridDishDescription">
+              <Form.Group xs={12} md={12}>
                 {/* <Form.Label>Description</Form.Label> */}
                 <Form.Control
                   name="description"
@@ -148,7 +145,7 @@ const EditDishModal = (props) => {
             </Row>
 
             <Row>
-              <Form.Group controlId="formGridMainIngredients">
+              <Form.Group>
                 <Form.Control
                   name="mainIngredients"
                   placeholder="Enter main ingredients"
@@ -160,7 +157,7 @@ const EditDishModal = (props) => {
 
             <Row>
               <Col xs={12} md={6}>
-                <Form.Group xs={12} md={12} controlId="formGridDishType">
+                <Form.Group xs={12} md={12}>
                   <Form.Select
                     name="dishType"
                     defaultValue={props.dishItem.dishType}
@@ -176,7 +173,7 @@ const EditDishModal = (props) => {
                 </Form.Group>
               </Col>
               <Col xs={6} md={6}>
-                <Form.Group xs={12} md={12} controlId="formGridCategoryType">
+                <Form.Group xs={12} md={12}>
                   <Form.Select
                     name="dishCategory"
                     defaultValue={props.dishItem.dishCategory}
@@ -194,7 +191,7 @@ const EditDishModal = (props) => {
               </Col>
             </Row>
             <Row>
-              <Form.Group xs={12} md={12} controlId="formGridCuisine">
+              <Form.Group xs={12} md={12}>
                 <Form.Select
                   name="cuisine"
                   defaultValue={props.dishItem.cuisine}

@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Container, Row, Form, Col, Modal, Button } from "react-bootstrap";
-import {useSelector} from "react-redux";
+import { useSelector } from "react-redux";
 
 const OrderModal = (props) => {
   const [cartDetail, setCartDetail] = useState({});
   const [buttonDisabled, setbuttonDisabled] = useState(true);
+  const [quanity, setQuantity] = useState(0);
 
   const customerDeliveryType = useSelector((state) => state.order.deliveryType);
   let modalHide = props.onHide;
@@ -36,7 +37,8 @@ const OrderModal = (props) => {
         dishPrice: props.dishItem.price,
       };
     });
-    buttonDisplay();
+
+    setQuantity(event.target.value);
   };
 
   const viewImageHandler = () => {
@@ -53,27 +55,37 @@ const OrderModal = (props) => {
 
   const onSubmitHandler = async (event) => {
     event.preventDefault();
-    console.log("DTYPE",customerDeliveryType);
     try {
       const response = await fetch("http://10.0.0.8:8080/addOrdertoCart", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({...cartDetail, deliveryType: customerDeliveryType}),
+        body: JSON.stringify({
+          ...cartDetail,
+          deliveryType: customerDeliveryType,
+        }),
       });
       const data = await response.json();
-      console.log(data);
+
+      setCartDetail((prevState) => {
+        return {
+          ...prevState,
+          orderId: data.orderId,
+        };
+      });
+      props.onHide();
     } catch (error) {
       console.log(error);
     }
   };
 
   const buttonDisplay = () => {
-    if (cartDetail === 0) setbuttonDisabled(true);
+    if (quanity === 0) setbuttonDisabled(true);
     else setbuttonDisabled(false);
   };
 
+  useEffect(() => buttonDisplay(), [quanity]);
   return (
     <Modal
       show={props.dishItem.show}
@@ -103,7 +115,7 @@ const OrderModal = (props) => {
                 <Form.Control
                   name="quantity"
                   as="select"
-                  defaultValue={0}
+                  // defaultValue={0}
                   htmlSize={1}
                   size="sm"
                   custom
@@ -115,12 +127,7 @@ const OrderModal = (props) => {
               </Form.Group>
             </Col>
             <Col md={6}>
-              <Button
-                type="submit"
-                variant="dark"
-                onClick={props.onHide}
-                disabled={buttonDisabled}
-              >
+              <Button type="submit" variant="dark" disabled={buttonDisabled}>
                 Add to Order
               </Button>
             </Col>

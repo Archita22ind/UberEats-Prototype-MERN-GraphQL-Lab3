@@ -1,8 +1,7 @@
 import React from "react";
-import { Row, Col, Button, Form, FloatingLabel } from "react-bootstrap";
+import { Row, Col, Button, Form } from "react-bootstrap";
 
 const RestaurantEditDetails = (props) => {
-  // console.log("printing rest details", props.restaurantDetails);
   const onChangeHandler = (event) => {
     event.preventDefault();
 
@@ -43,7 +42,6 @@ const RestaurantEditDetails = (props) => {
     formData.append("closeTime", props.restaurantDetails.closeTime);
     formData.append("deliveryFlag", props.restaurantDetails.deliveryFlag);
     formData.append("pickupFlag", props.restaurantDetails.pickupFlag);
-    console.log("Printing formdata", formData);
 
     try {
       const response = await fetch(
@@ -55,7 +53,6 @@ const RestaurantEditDetails = (props) => {
       );
 
       const data = await response.json();
-      console.log(data);
     } catch (error) {
       console.log(error);
     }
@@ -71,8 +68,6 @@ const RestaurantEditDetails = (props) => {
   //   props.restaurantDetails.state +
   //   "," +
   //   props.restaurantDetails.zipCode;
-
-  // console.log(addressString);
 
   return (
     <Form>
@@ -255,15 +250,13 @@ const RestaurantEditDetails = (props) => {
                 onChange={onChangeHandler}
               />
             </Col>
-            {/* </Form.Group> */}
           </Col>
 
-          {/* <Form.Group className="mb-1"> */}
           <Col>
             <Form.Label>Delivery Available</Form.Label>
           </Col>
           <Col>
-            <Form.Control
+            <Form.Select
               plaintext={props.isFormReadOnly}
               readOnly={props.isFormReadOnly}
               name="deliveryFlag"
@@ -273,28 +266,32 @@ const RestaurantEditDetails = (props) => {
                   : "Yes/No"
               }
               onChange={onChangeHandler}
-            />
+            >
+              <option value="Yes">Yes</option>
+              <option value="No">No</option>
+            </Form.Select>
           </Col>
-          {/* </Form.Group> */}
 
           <Col>
             <Form.Label>Pickup Available: </Form.Label>
           </Col>
           <Col>
-            {/* <Form.Group className="mb-1"> */}
-            <Form.Control
+            <Form.Select
               size="sm"
+              as="select"
               plaintext={props.isFormReadOnly}
               readOnly={props.isFormReadOnly}
-              name="pickUpFlag"
+              name="pickupFlag"
               placeholder={
                 props.restaurantDetails.pickupFlag
                   ? props.restaurantDetails.pickupFlag
                   : "Yes/No"
               }
               onChange={onChangeHandler}
-            />
-            {/* </Form.Group> */}
+            >
+              <option value="Yes">Yes</option>
+              <option value="No">No</option>
+            </Form.Select>
           </Col>
 
           <Col md={10}>
