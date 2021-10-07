@@ -3,7 +3,7 @@ import {
   Container,
   Row,
   Col,
-  ToggleButtonGroup,
+  ButtonGroup,
   ToggleButton,
   Button,
 } from "react-bootstrap";
@@ -23,6 +23,8 @@ import ProfileInfo from "../customer/profileInfo.js";
 import Orders from "../customer/orders.js";
 import { getSessionCookie } from "../common/session";
 import RestaurantOrders from "../restaurant/restaurantOrders";
+import { useDispatch, useSelector } from "react-redux";
+import { reduxConstants } from "../constants/reduxConstants.js";
 
 const MainHeader = (props) => {
   let locationName = "San Jose";
@@ -37,8 +39,11 @@ const MainHeader = (props) => {
 
   let onHide = () => setModalShow(false);
 
+  const dispatch = useDispatch ();
+  const deliveryType = useSelector((state) => state.order.deliveryType);
+
   // Used custom hook
-  const { cartModal, getCartDetails } = useCartCheckoutModal(modalShow, onHide);
+  const { cartModal, getCartDetails, cartDetails } = useCartCheckoutModal(modalShow, onHide);
 
   const history = useHistory();
 
@@ -57,6 +62,16 @@ const MainHeader = (props) => {
       if (!showTabs) history.push("/restaurantSearch");
     }
   };
+
+  const deliveryTypeChangeHandler = (event) => {
+
+    if (cartDetails && cartDetails.length >0){
+      alert (" This option cannot be changed as there is an existing order in your cart");
+    }else {
+      let value = event.currentTarget.value;
+      dispatch({type: reduxConstants.ORDER_DELIVERY_TYPE, value});
+    }
+  }
 
   const optionDislayHandler = async (typeaheadInput) => {
     try {
@@ -88,6 +103,7 @@ const MainHeader = (props) => {
           restaurantList={restaurantList}
           setRestaurantList={setRestaurantList}
           typeaheadValue={valueSelected}
+          deliveryType={deliveryType}
         />
       );
     else if (tab === "favorites")
@@ -134,27 +150,32 @@ const MainHeader = (props) => {
           ) : (
             <>
               <Col className="mt-3" xs={4} md={2}>
-                <ToggleButtonGroup
-                  type="radio"
-                  name="options"
-                  defaultValue={1}
-                  // value={value} onChange={handleChange}
-                >
-                  <ToggleButton
-                    variant="outline-dark"
-                    id="tbg-radio-1"
-                    value={1}
-                  >
-                    <font size="2"> Delivery</font>
-                  </ToggleButton>
-                  <ToggleButton
-                    variant="outline-dark"
-                    id="tbg-radio-2"
-                    value={2}
-                  >
-                    <font size="2"> Pickup</font>
-                  </ToggleButton>
-                </ToggleButtonGroup>
+                <ButtonGroup className="mb-2">
+                      <ToggleButton
+                          key={1}
+                          id={1}
+                          type="radio"
+                          variant="outline-dark"
+                          name="radio"
+                          value="delivery"
+                          checked={deliveryType === "delivery"}
+                          onChange={deliveryTypeChangeHandler}
+                        >
+                         <font size="2"> Delivery</font>
+                      </ToggleButton>
+                      <ToggleButton
+                          key={2}
+                          id={2}
+                          type="radio"
+                          variant="outline-dark"
+                          name="radio"
+                          value="pickup"
+                          checked={deliveryType === "pickup"}
+                          onChange={deliveryTypeChangeHandler}
+                        >
+                        <font size="2"> Pickup</font>
+                      </ToggleButton>
+                </ButtonGroup>      
               </Col>
               <Col className="mt-3" xs={4} md={2}>
                 <Button variant="outline-dark">

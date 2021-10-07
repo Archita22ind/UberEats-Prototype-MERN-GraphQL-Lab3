@@ -13,5 +13,5 @@ export const reduxConstants = {
 
   LOGOUT: "USERS_LOGOUT",
 
-  ORDER_CREATE: "ORDER_CREATE",
+  ORDER_DELIVERY_TYPE: "ORDER_DELIVERY_TYPE",
 };

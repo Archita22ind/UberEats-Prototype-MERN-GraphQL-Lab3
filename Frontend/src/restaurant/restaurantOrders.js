@@ -5,6 +5,11 @@ import { getSessionCookie } from "../common/session";
 import ReceiptModal from "../customer/receiptModal";
 import CustomerModal from "./customerModal";
 
+
+export const orderFilterOptions = ["", "New", "Delivered", "Cancelled"];
+export const deliveryTypeOptions = ["", "Order Received", "Preparing", "On the way", "Delivered"];
+export const pickupTypeOptions =   ["","Order Received", "Preparing", "Pick up Ready", "Picked up"];
+
 const RestaurantOrders = () => {
   const session = getSessionCookie();
   const [restaurantOrdersList, setRestaurantOrdersList] = useState([]);
@@ -14,7 +19,9 @@ const RestaurantOrders = () => {
   const [customerDetailsModalShow, setCustomerDetailsModalShow] =
     useState(false);
   const [customerDetails, setCustomerDetails] = useState([]);
-  let orderFilterOptions = ["", "New", "Delivered", "Cancelled"];
+
+  const [orderStatus, setOrderStatus] = useState ([]);
+
 
   const options = orderFilterOptions.map((item) => {
     return (
@@ -23,6 +30,41 @@ const RestaurantOrders = () => {
       </option>
     );
   });
+
+  const onOrderStatusChangeHandler = (event, orderId) => {
+    setOrderStatus((prevState) => {
+        const newState = [...prevState];
+        return (newState.map( (order) => {
+            if (order.orderId === orderId){
+                return {
+                    orderId:  orderId,
+                    orderStatus: event.target.value
+                } 
+            }else return order ;
+        }
+        ));
+    });
+  }
+
+  console.log("Order Sttxsssaus", orderStatus);
+
+  const checkDeliveryStatusOptions = (deliveryType) => {
+
+    return deliveryType === 'delivery' ? (
+        deliveryTypeOptions.map((item) => {
+        return (
+          <option key={item} value={item}>
+            {item}
+          </option>
+        );
+      }) ) : (pickupTypeOptions.map((item) => {
+        return (
+          <option key={item} value={item}>
+            {item}
+          </option>
+        );
+      }))
+  }
 
   const getRestaurantOrders = async () => {
     const response = await fetch("http://10.0.0.8:8080/getRestaurantOrders", {
@@ -52,6 +94,39 @@ const RestaurantOrders = () => {
       getOrderDetails(Id);
     }
   };
+
+
+  const updateDeliveryStatus = async (orderId) => {
+
+    console.log("Order Sttaus", orderStatus);
+
+    let updatedOrderStatusList = orderStatus.filter(order => order.orderId === orderId);
+    let updatedOrderStatus = updatedOrderStatusList?.[0].orderStatus;
+
+    console.log("Order Sttaus", updatedOrderStatus);
+  
+    if (updatedOrderStatus){
+        const response = await fetch(
+            "http://10.0.0.8:8080/updateOrderStatus",
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                orderId: orderId,
+                orderStatus: updatedOrderStatus,
+              }),
+            }
+          );
+          
+           const data = await response.json();
+
+           alert("Order status updated succesfully")
+     }else {
+        alert("Could not find order status for this order")
+     }
+  }
 
   const getOrderDetails = async (orderId) => {
     const response = await fetch(
@@ -104,7 +179,7 @@ const RestaurantOrders = () => {
 
   const displayOrders = () => {
     return restaurantOrdersList?.length > 0 ? (
-      restaurantOrdersList.map((order) => {
+      restaurantOrdersList.map((order, index) => {
         return (
           <Row>
             {" "}
@@ -118,12 +193,24 @@ const RestaurantOrders = () => {
                   </h4>
                 </Col>
                 <Col>
-                  <Button
+                <Form>
+            <Form.Group as={Col}>
+            <Button
                     variant="success"
-                    // onClick={() => onClickHandler(order.orderId, false)}
+                    onClick={() => updateDeliveryStatus(order.orderId)}
                   >
                     Update Delivery status
                   </Button>
+                  <Form.Control
+                name="deliveryStatusSelected"
+                placeholder="Order Status"
+                as="select"
+                onChange={(event) => onOrderStatusChangeHandler(event, order.orderId)}
+              >
+                {checkDeliveryStatusOptions(order.deliveryType)}
+              </Form.Control>
+            </Form.Group>
+          </Form>
                 </Col>
               </Row>
               <Col>

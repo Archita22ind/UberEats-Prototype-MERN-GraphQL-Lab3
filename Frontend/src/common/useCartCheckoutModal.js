@@ -167,6 +167,7 @@ const useCartCheckoutModal = (modalShow, onHide) => {
     getCartDetails,
     displaySelectedItems,
     restaurantName,
+    cartDetails
   };
 };
 

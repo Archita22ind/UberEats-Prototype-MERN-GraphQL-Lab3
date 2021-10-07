@@ -1,10 +1,12 @@
 import React, { useState } from "react";
 import { Container, Row, Form, Col, Modal, Button } from "react-bootstrap";
+import {useSelector} from "react-redux";
 
 const OrderModal = (props) => {
   const [cartDetail, setCartDetail] = useState({});
   const [buttonDisabled, setbuttonDisabled] = useState(true);
 
+  const customerDeliveryType = useSelector((state) => state.order.deliveryType);
   let modalHide = props.onHide;
 
   let quantityList = Array.from(Array(100).keys());
@@ -51,14 +53,14 @@ const OrderModal = (props) => {
 
   const onSubmitHandler = async (event) => {
     event.preventDefault();
-
+    console.log("DTYPE",customerDeliveryType);
     try {
       const response = await fetch("http://10.0.0.8:8080/addOrdertoCart", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(cartDetail),
+        body: JSON.stringify({...cartDetail, deliveryType: customerDeliveryType}),
       });
       const data = await response.json();
       console.log(data);

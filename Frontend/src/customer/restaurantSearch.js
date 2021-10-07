@@ -14,11 +14,11 @@ const RestaurantSearch = (props) => {
         [event.target.name]: event.target.checked,
       };
     });
-    fetchFilteredRestaurants();
   };
 
-  const fetchFilteredRestaurants = async () => {
+  const fetchFilteredRestaurants = React.useCallback (async () => {
     try {
+      console.log("delivery value" ,props.deliveryType);
       const response = await fetch(
         "http://10.0.0.8:8080/getListOfRestaurants",
         {
@@ -32,6 +32,7 @@ const RestaurantSearch = (props) => {
               ? props.typeaheadValue[0].id
               : [],
             customerId: session.primaryID,
+            deliveryType: props.deliveryType,
           }),
         }
       );
@@ -49,11 +50,11 @@ const RestaurantSearch = (props) => {
     } catch (error) {
       console.log(error);
     }
-  };
+  }, [props.foodFilter, props.typeaheadValue, props.deliveryType, session.primaryID]); 
 
   useEffect(() => {
     fetchFilteredRestaurants();
-  }, [props.foodFilter, props.typeaheadValue]); //TO DO: ADD a react use callback here
+  }, [fetchFilteredRestaurants]); //TO DO: ADD a react use callback here
 
   return (
     <>

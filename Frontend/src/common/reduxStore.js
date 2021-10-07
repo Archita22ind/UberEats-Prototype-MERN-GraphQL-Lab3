@@ -3,13 +3,13 @@ import { combineReducers } from "redux";
 import { authentication } from "../reducers/authenticationReducer";
 import { registration } from "../reducers/registerReducer";
 import { alert } from "../reducers/alertReducer";
-import { cartDetails } from "../reducers/cartDetailsReducer";
+import { order } from "../reducers/orderReducer";
 
 const rootReducer = combineReducers({
   authentication,
   registration,
   alert,
-  cartDetails,
+  order,
 });
 
 export const store = createStore(
