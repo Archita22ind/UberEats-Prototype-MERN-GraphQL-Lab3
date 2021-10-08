@@ -11,7 +11,7 @@ const getProfileInfo = (req, res, err) => {
     sqlSelect,
     [req.body?.customerId || req.query.customerId],
     (err, result) => {
-      if (err) throw err;
+      // if (err) throw err;
 
       if (result) {
         res.status(200).send({

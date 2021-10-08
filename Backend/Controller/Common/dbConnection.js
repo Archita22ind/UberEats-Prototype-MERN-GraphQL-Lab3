@@ -14,9 +14,25 @@ var con = mysql.createConnection({
 //   database: "mydb",
 // });
 
-con.connect(function (err) {
-  if (err) throw err;
-  console.log("Connected!");
-});
+// var con = mysql.createPool({
+//   connectionLimit: 100,
+//   host: "localhost",
+//   user: "root",
+//   password: "pikutuku",
+//   database: "mydb",
+//   debug: false,
+// });
+try {
+  con.connect(function (err) {
+    // if (err) throw err;
+    if (err) {
+      console.log("Error while connecting to database", err);
+    } else {
+      console.log("Connected!");
+    }
+  });
+} catch (error) {
+  console.log("Error while connecting to mySQL");
+}
 
 module.exports = con;

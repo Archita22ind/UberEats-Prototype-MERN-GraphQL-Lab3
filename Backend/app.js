@@ -34,6 +34,7 @@ const showRestaurantOrderDetails = require("./Services/Restaurant/showRestaurant
 const updateOrderStatus = require("./Services/Restaurant/updateOrderStatus");
 const getCustomerLocation = require("./Services/Customer/getCustomerLocation");
 const getDeliveryType = require("./Services/Customer/getDeliveryType");
+const createNewOrder = require("./Services/Customer/createNewOrder");
 
 const app = express();
 app.use(express.json());
@@ -113,6 +114,9 @@ app.post("/getCustomerLocation", getCustomerLocation);
 app.get("/getDeliveryType", getDeliveryType);
 
 app.post("/updateOrderStatus", updateOrderStatus);
+
+app.post("/createNewOrder", createNewOrder);
+
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, console.log(`Server started on port ${PORT}`));
 

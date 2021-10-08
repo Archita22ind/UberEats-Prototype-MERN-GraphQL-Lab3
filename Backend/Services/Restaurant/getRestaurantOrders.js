@@ -3,12 +3,13 @@ const con = require("../../Controller/Common/dbConnection");
 const getRestaurantOrders = (req, res) => {
   let sqlSelect;
   let columnArray;
-  let orderStatus;
-  if (req.body.orderStatus) {
+
+  if (req.body.orderStatus.length > 0) {
     sqlSelect = `SELECT   OrderID,TotalPrice, TotalQuantity, DeliveryAddress, DateOrdered ,FinalStatus ,CustomerID , DeliveryOrPickup FROM Orders where RestaurantID = (?) AND FinalStatus = (?) ORDER BY DateOrdered DESC`;
     columnArray = [req.body.restaurantId, req.body.orderStatus];
   } else {
-    sqlSelect = `SELECT   OrderID,TotalPrice, TotalQuantity, DeliveryAddress, DateOrdered , FinalStatus, CustomerID , DeliveryOrPickup FROM Orders where RestaurantID = (?) ORDER BY DateOrdered DESC`;
+    console.log("else", req.body);
+    sqlSelect = `SELECT   OrderID,TotalPrice, TotalQuantity, DeliveryAddress, DateOrdered , FinalStatus, CustomerID , DeliveryOrPickup FROM Orders where RestaurantID = ? AND FinalStatus <> "${"New"}" ORDER BY DateOrdered DESC`;
     columnArray = [req.body.restaurantId];
   }
 
@@ -26,7 +27,7 @@ const getRestaurantOrders = (req, res) => {
             dateOrdered: element.DateOrdered,
             orderStatus: element.FinalStatus,
             customerId: element.CustomerID,
-            deliveryOrPickup: element.DeliveryOrPickup,
+            deliveryType: element.DeliveryOrPickup,
           };
         })
       );
