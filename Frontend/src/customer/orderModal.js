@@ -1,11 +1,16 @@
 import React, { useState, useEffect } from "react";
 import { Container, Row, Form, Col, Modal, Button } from "react-bootstrap";
 import { useSelector } from "react-redux";
+import { getSessionCookie } from "../common/session";
 
 const OrderModal = (props) => {
   const [cartDetail, setCartDetail] = useState({});
   const [buttonDisabled, setbuttonDisabled] = useState(true);
   const [quanity, setQuantity] = useState(0);
+  const [cartRestaurantDetails, setCartRestaurantDetails] = useState([]);
+  const [showNewOrderModal, setShowNewOrderModal] = useState (false);
+
+  const session = getSessionCookie();
 
   const customerDeliveryType = useSelector((state) => state.order.deliveryType);
   let modalHide = props.onHide;
@@ -35,11 +40,38 @@ const OrderModal = (props) => {
         foodName: props.dishItem.dishName,
         quantity: event.target.value,
         dishPrice: props.dishItem.price,
+        restaurantName: props.dishItem.restaurantName,
       };
     });
 
     setQuantity(event.target.value);
   };
+
+  const getCartDetails = async () => {
+    try {
+      const response = await fetch("http://10.0.0.8:8080/showCartDetails", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          customerId: session.primaryID,
+        }),
+      });
+      const data = await response.json();
+      console.log("Show Cart Details", data);
+      if(data.length>0){
+        setCartRestaurantDetails([data[0].RestaurantID, data[0].RestaurantName]); 
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect (()=> {
+    getCartDetails();
+  }, [props.dishItem.show]
+  );
 
   const viewImageHandler = () => {
     if (props.dishItem.image) {
@@ -53,31 +85,96 @@ const OrderModal = (props) => {
     }
   };
 
-  const onSubmitHandler = async (event) => {
-    event.preventDefault();
-    try {
-      const response = await fetch("http://10.0.0.8:8080/addOrdertoCart", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          ...cartDetail,
-          deliveryType: customerDeliveryType,
-        }),
-      });
-      const data = await response.json();
+  const newOrderClickHandler = () => {
 
-      setCartDetail((prevState) => {
-        return {
-          ...prevState,
-          orderId: data.orderId,
-        };
-      });
-      props.onHide();
-    } catch (error) {
-      console.log(error);
+    submitNewOrder();
+
+  }
+
+  const submitNewOrder = async () => {
+
+    try {
+    const response = await fetch("http://10.0.0.8:8080/createNewOrder", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        ...cartDetail,
+        deliveryType: customerDeliveryType,
+      }),
+    });
+
+    const data = await response.json()
+    setCartDetail((prevState) => {
+      return {
+        ...prevState,
+        orderId: data.orderId,
+      };
+    });
+    setShowNewOrderModal(false);
+  } catch (error) {
+    console.log(error);
+  }
+  }
+
+  const displayNewOrderModal = () => {
+    return (
+      <Modal
+      show={showNewOrderModal}
+      onHide={()=> setShowNewOrderModal(false)}
+      aria-labelledby="contained-modal-title-vcenter"
+      size = "sm"
+    >
+      <Modal.Header closeButton>
+        <h4>Create new order ?</h4>
+      </Modal.Header>
+      <Modal.Body className="show-grid">
+        <font size="3">
+        Your order contains items from Restaurant {cartRestaurantDetails[1]}. Create
+        a new order to add items from Restaurant {cartDetail.restaurantName}  
+        </font>
+      </Modal.Body>
+      <Modal.Footer>
+      <Button onClick = {newOrderClickHandler} variant="dark">
+                New Order
+      </Button>
+        </Modal.Footer>
+    </Modal>
+    );
+  }
+
+  const onSubmitHandler = async (event) => {
+
+    event.preventDefault();
+
+    if (cartRestaurantDetails.length===0 || (cartDetail && cartDetail.restaurantId === cartRestaurantDetails[0])){
+      try {
+        const response = await fetch("http://10.0.0.8:8080/addOrdertoCart", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            ...cartDetail,
+            deliveryType: customerDeliveryType,
+          }),
+        });
+        const data = await response.json();
+  
+        setCartDetail((prevState) => {
+          return {
+            ...prevState,
+            orderId: data.orderId,
+          };
+        });
+      } catch (error) {
+        console.log(error);
+      }  
+    }else if (cartDetail && cartDetail.restaurantId !== cartRestaurantDetails[0]) {
+      setShowNewOrderModal(true);
     }
+    props.onHide();
   };
 
   const buttonDisplay = () => {
@@ -87,6 +184,7 @@ const OrderModal = (props) => {
 
   useEffect(() => buttonDisplay(), [quanity]);
   return (
+    <>
     <Modal
       show={props.dishItem.show}
       onHide={modalHide}
@@ -135,6 +233,8 @@ const OrderModal = (props) => {
         </Form>
       </Modal.Footer>
     </Modal>
+      {displayNewOrderModal()}
+    </>
   );
 };
 

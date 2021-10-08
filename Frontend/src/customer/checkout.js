@@ -19,6 +19,11 @@ const Checkout = () => {
   const [subTotal, setSubTotal] = useState(0);
   const [totalItems, setTotalItems] = useState(0);
   const [show, setShow] = useState(false);
+  const [selectedAddress, setSelectedAddress] = useState("");
+  const [newSelectedAddress, setNewSelectedAddress] = useState("");
+
+  
+  const [deliveryType, setDeliveryType] = useState ("delivery");
 
   const history = useHistory();
   const handleClose = () => {
@@ -32,6 +37,31 @@ const Checkout = () => {
   const tax = 3.5;
   const { getCartDetails, displaySelectedItems, restaurantName } =
     useCartCheckoutModal();
+ 
+  const getDeliveryType = async () => {
+
+    try{
+      const response = await fetch(
+        `http://10.0.0.8:8080/getDeliveryType?customerId=${session.primaryID}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      const data = await response.json();
+      setDeliveryType(data.deliveryType);
+      
+    }catch (error) {
+      console.log(error);
+    }
+  }
+
+  useEffect (()=> {
+    getDeliveryType();
+  }, []);
 
   const getDeliveryAddress = async () => {
     try {
@@ -84,34 +114,46 @@ const Checkout = () => {
 
   const onSubmitHandler = async (event) => {
     event.preventDefault();
+    if ((selectedAddress.length>4 && deliveryType === "delivery") || deliveryType === "pickup"){
 
-    try {
-      const response = await fetch("http://10.0.0.8:8080/bookOrder", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          customerId: session.primaryID,
-          totalPrice: subTotal + tip + tax + deliveryFee,
-          totalItems: totalItems,
-        }),
-      });
-
-      const data = await response.json();
-      if (data.Message) {
-        setShow(true);
+      try {
+        const response = await fetch("http://10.0.0.8:8080/bookOrder", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            customerId: session.primaryID,
+            totalPrice: subTotal + tip + tax + deliveryFee,
+            totalItems: totalItems,
+          }),
+        });
+  
+        const data = await response.json();
+        if (data.Message) {
+          setShow(true);
+        }
+        setSubTotal(0);
+      } catch (error) {
+        console.log(error);
       }
-      setSubTotal(0);
-    } catch (error) {
-      console.log(error);
+
+    }else {
+      alert ("Please enter valid delivery address and click confirm address button if you are adding a new delivery address to place your order");
     }
+
   };
 
-  const onChangeHandler = (event) => {
+  const onAddressChangeHandler = (event) => {
     event.preventDefault();
 
-    setAddress(event.target.value);
+    setSelectedAddress(event.target.value);
+  };
+
+  const onNewAddressChangeHandler = (event) => {
+    event.preventDefault();
+
+    setNewSelectedAddress(event.target.value);
   };
 
   const onSumbitHandler = async (event) => {
@@ -127,10 +169,12 @@ const Checkout = () => {
         },
         body: JSON.stringify({
           customerId: session.primaryID,
-          address: address,
+          address: newSelectedAddress,
         }),
       });
       const data = await response.json();
+
+      setSelectedAddress(newSelectedAddress);
     } catch (error) {
       console.log(error);
     }
@@ -182,7 +226,7 @@ const Checkout = () => {
                     name="deliveryAddress"
                     as="select"
                     custom
-                    // onChange={onChangeHandler}
+                    onChange={onAddressChangeHandler}
                   >
                     <option>..</option>
                     <option>{address}</option>
@@ -193,7 +237,7 @@ const Checkout = () => {
                   <Form.Label>Add a new Delivery Address</Form.Label>
                   <Form.Control
                     name="deliveryAddressNew"
-                    onChange={onChangeHandler}
+                    onChange={onNewAddressChangeHandler}
                   ></Form.Control>
                 </Form.Group>
                 <Button variant="dark" type="submit">

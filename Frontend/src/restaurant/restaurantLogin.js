@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { reduxConstants } from "../constants/reduxConstants";
 import { useHistory } from "react-router-dom";
 import { setSessionCookie } from "../common/session";
+import {NODE_HOST , NODE_PORT} from "../common/envConfig";
 
 function request(user) {
   return { type: reduxConstants.LOGIN_REQUEST, user };
@@ -22,7 +23,7 @@ const RestaurantLogin = (props) => {
   const history = useHistory();
   const [userEmail, setUserEmail] = useState("");
   const [userPassword, setUserPassword] = useState("");
-  const loggingIn = useSelector((state) => state.authentication.loggingIn);
+  // const loggingIn = useSelector((state) => state.authentication.loggingIn);
 
   const dispatch = useDispatch();
 
@@ -41,7 +42,7 @@ const RestaurantLogin = (props) => {
 
     dispatch(request({ userEmail }));
     try {
-      const response = await fetch("http://10.0.0.8:8080/restaurantLoginInfo", {
+      const response = await fetch(`http://${NODE_HOST}:${NODE_PORT}/restaurantLoginInfo`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -115,9 +116,6 @@ const RestaurantLogin = (props) => {
                 </Row>
               </Row>
               <Button variant="dark" type="submit">
-                {loggingIn && (
-                  <span className="spinner-border spinner-border-sm mr-1"></span>
-                )}
                 Sign In
               </Button>
             </Form>
@@ -129,6 +127,11 @@ const RestaurantLogin = (props) => {
             <Link to="/restaurantSignUp">
               <Button variant="dark" type="submit">
                 SignUp
+              </Button>
+              </Link>
+              <Link className="my-3" to="/">
+              <Button variant="dark">
+                HomePage
               </Button>
             </Link>
           </Card>

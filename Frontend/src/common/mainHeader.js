@@ -27,7 +27,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { reduxConstants } from "../constants/reduxConstants.js";
 
 const MainHeader = (props) => {
-  let locationName = "San Jose";
+  
   let showTabs = props.tab;
   const [modalShow, setModalShow] = useState(false);
   const [typeaheadOutput, setTypeaheadOutput] = useState([]);

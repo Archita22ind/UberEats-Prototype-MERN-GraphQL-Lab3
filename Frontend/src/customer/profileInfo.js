@@ -3,6 +3,11 @@ import { getSessionCookie } from "../common/session";
 import { Button, Row, Col, Form, Card, Container } from "react-bootstrap";
 import Holder from "../images/holder.png";
 import countryList from "react-select-country-list";
+import {
+  formatPhoneNumber,
+  isValidEmail,
+  validateZipcode,
+} from "../common/formValidations";
 
 const ProfileInfo = (props) => {
   let countryArray = ["..."];
@@ -19,7 +24,12 @@ const ProfileInfo = (props) => {
   const [customerDetails, setCustomerDetails] = useState({});
 
   const onChangeHandler = (event) => {
+    
     event.preventDefault();
+
+    if (event.target.name === "contactNumber") {
+      event.target.value = formatPhoneNumber(event.target.value);
+    }
 
     setCustomerDetails((prevState) => {
       return {
@@ -64,12 +74,21 @@ const ProfileInfo = (props) => {
   const updateProfileInfo = async (event) => {
     event.preventDefault();
 
+    if (customerDetails.zipCode && !validateZipcode(customerDetails.zipCode)) {
+      alert("Enter a valid Zip Code!");
+      return;
+    }
+
+    if (!isValidEmail(customerDetails.emailId)) {
+      alert("Enter a valid format of email id!");
+      return;
+    }
+
     const formData = new FormData();
     formData.append("file", customerDetails.image);
     formData.append("customerId", session.primaryID);
     formData.append("lastName", customerDetails.lastName);
     formData.append("firstName", customerDetails.firstName);
-    formData.append("password", customerDetails.password);
     formData.append("address1", customerDetails.address1);
     formData.append("address2", customerDetails.address2);
     formData.append("city", customerDetails.city);
@@ -187,6 +206,7 @@ const ProfileInfo = (props) => {
                   <Form.Label>First Name</Form.Label>
                   <Form.Control
                     name="firstName"
+                    required
                     placeholder="First Name"
                     value={customerDetails.firstName}
                     onChange={onChangeHandler}
@@ -210,6 +230,7 @@ const ProfileInfo = (props) => {
                   <Form.Control
                     name="emailId"
                     type="email"
+                    required
                     placeholder="Enter email"
                     value={customerDetails.emailId}
                     onChange={onChangeHandler}
@@ -227,7 +248,7 @@ const ProfileInfo = (props) => {
                 </Form.Group>
               </Row>
               <Row className="mb-1">
-                <Form.Group as={Col} controlId="formGridNickname">
+                <Form.Group as={Col}>
                   <Form.Label>Nickname</Form.Label>
                   <Form.Control
                     name="nickname"

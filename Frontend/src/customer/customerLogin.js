@@ -7,6 +7,7 @@ import { setSessionCookie } from "../common/session";
 import { useHistory } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { reduxConstants } from "../constants/reduxConstants";
+import {NODE_HOST , NODE_PORT} from "../common/envConfig";
 
 function request(user) {
   return { type: reduxConstants.LOGIN_REQUEST, user };
@@ -42,7 +43,7 @@ const CustomerLogin = (props) => {
     dispatch(request({ userEmail }));
 
     try {
-      const response = await fetch("http://10.0.0.8:8080/customerSignIn", {
+      const response = await fetch(`http://${NODE_HOST}:${NODE_PORT}/customerSignIn`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -126,6 +127,11 @@ const CustomerLogin = (props) => {
             <Link to="/customerSignUp">
               <Button variant="dark" type="submit">
                 SignUp
+              </Button>
+            </Link>
+            <Link className="my-3" to="/">
+              <Button variant="dark">
+                HomePage
               </Button>
             </Link>
           </Card>

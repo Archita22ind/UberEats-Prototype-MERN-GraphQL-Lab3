@@ -22,6 +22,7 @@ const pickupTypeOptions = [
 const orderFilterOptions = ["", "New Order", "Delivered", "Cancelled"];
 
 export const checkDeliveryStatusOptions = (deliveryType) => {
+  console.log("I am in delivery", deliveryType);
   return deliveryType === "delivery"
     ? deliveryTypeOptions.map((item) => {
         return (
@@ -200,9 +201,7 @@ const RestaurantOrders = () => {
               <Row>
                 <Col>
                   <h4>
-                    {order.orderStatus === "Order Received"
-                      ? "New"
-                      : order.orderStatus}
+                    {order.orderStatus}
                   </h4>
                 </Col>
                 <Col>

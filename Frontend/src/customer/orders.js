@@ -30,6 +30,7 @@ const Orders = (props) => {
 
   let orderFilterOptions = [
     "",
+    "New Order",
     "Order Received",
     "Preparing",
     "On the way",
