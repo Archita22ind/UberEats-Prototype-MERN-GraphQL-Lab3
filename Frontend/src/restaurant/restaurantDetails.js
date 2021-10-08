@@ -21,9 +21,10 @@ const RestaurantDetails = (props) => {
   const history = useHistory();
 
   const [modalShow, setModalShow] = useState(false);
+  const [restaurantModalShow, setRestaurantModalShow] = useState(false);
   const [profilePicture, setProfilePicture] = useState({});
   const [restaurantDetails, setRestaurantDetails] = useState({});
-  const [isFormReadOnly, setIsFormReadOnly] = useState(true);
+  // const [isFormReadOnly, setIsFormReadOnly] = useState(true);
   const [renderedList, setRenderedList] = useState([]);
   // const [showOrderModal, setshowOrderModal] = useState(false);
   const location = useLocation();
@@ -160,15 +161,16 @@ const RestaurantDetails = (props) => {
                 <Card>
                   <Card.Img variant="top" src={item.imagePreview} />
                   <Card.Header>{item.dishName}</Card.Header>
-                  <Card.Body style={{ height: "80px" }}>
-                    <font size="2">
-                      <Card.Text>{item.description}</Card.Text>
 
-                      <Card.Text>
-                        ${item.price} • {item.dishType} • {item.dishCategory}
-                      </Card.Text>
-                    </font>
-                  </Card.Body>
+                  <font size="1">
+                    <Card.Text>{item.description}</Card.Text>
+                  </font>
+                  <font size="2">
+                    <Card.Text></Card.Text>
+                    <Card.Text>
+                      ${item.price} • {item.dishType} • {item.dishCategory}
+                    </Card.Text>
+                  </font>
                 </Card>
               </Button>
               {renderModal(key, item)}
@@ -180,7 +182,7 @@ const RestaurantDetails = (props) => {
   };
 
   useEffect(() => {
-    getDishesHandler(); //3rd party effects
+    getDishesHandler();
   }, []);
 
   useEffect(() => {
@@ -191,7 +193,7 @@ const RestaurantDetails = (props) => {
     if (session.restaurantFlag)
       return (
         <Col>
-          <Button onClick={(event) => setIsFormReadOnly(false)} variant="dark">
+          <Button onClick={() => setRestaurantModalShow(true)} variant="dark">
             Edit
             <BsPencilSquare />
           </Button>
@@ -230,8 +232,12 @@ const RestaurantDetails = (props) => {
                   <Row>
                     <Col md={11}>
                       <RestaurantEditDetails
-                        isFormReadOnly={isFormReadOnly}
-                        setIsFormReadOnly={setIsFormReadOnly}
+                        // isFormReadOnly={isFormReadOnly}
+                        // setIsFormReadOnly={setIsFormReadOnly}
+
+                        show={restaurantModalShow}
+                        getRestaurantProfileInfo={getRestaurantProfileInfo}
+                        onHide={() => setRestaurantModalShow(false)}
                         restaurantDetails={restaurantDetails}
                         setRestaurantDetails={setRestaurantDetails}
                         profilePicture={profilePicture}
