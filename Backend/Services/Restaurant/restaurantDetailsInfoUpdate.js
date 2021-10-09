@@ -26,7 +26,7 @@ const restaurantDetailsInfoUpdate = (req, res, err) => {
         else updateImage = currentValues.ProfilePicture;
 
         let data = [
-          req.body.restaurant || currentValues.RestaurantName,
+          req.body.restaurantName || currentValues.RestaurantName,
           req.body.address || currentValues.Address,
           req.body.city || currentValues.City,
           req.body.state || currentValues.State,

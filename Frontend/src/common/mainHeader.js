@@ -158,11 +158,11 @@ const MainHeader = (props) => {
           <Col className="mt-3" xs={4} md={2}>
             {session.restaurantFlag ? (
               <Link to="/restaurantDetails">
-                <Image src={UberEatsIcon} />
+                <Image src={UberEatsIcon} width="175px" />
               </Link>
             ) : (
               <Link to="/restaurantSearch">
-                <Image src={UberEatsIcon} />
+                <Image src={UberEatsIcon} width="175px" />
               </Link>
             )}
           </Col>

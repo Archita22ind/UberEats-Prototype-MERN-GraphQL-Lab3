@@ -186,7 +186,7 @@ const EditDishModal = (props) => {
                     <option value="Soups">Soups</option>
                     <option value="Main Course">Main Course</option>
                     <option value="Beverages">Beverages</option>
-                    <option value="Deserts">Deserts</option>
+                    <option value="Desserts">Deserts</option>
                   </Form.Select>
                 </Form.Group>
               </Col>

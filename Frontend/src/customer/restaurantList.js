@@ -63,7 +63,7 @@ const RestaurantList = (props) => {
         return (
           <Col xs={12} md={3} className="mb-4">
             <Card>
-              <Card.Body
+              <div
                 style={{ cursor: "pointer" }}
                 onClick={() => onClickHandler(restaurant.RestaurantID)}
               >
@@ -79,7 +79,7 @@ const RestaurantList = (props) => {
                     {restaurant.Address}
                   </Card.Text>
                 </div>
-              </Card.Body>
+              </div>
               <font size="1">
                 <Card.Footer>
                   {restaurant.City}, {restaurant.State} {"                  "}

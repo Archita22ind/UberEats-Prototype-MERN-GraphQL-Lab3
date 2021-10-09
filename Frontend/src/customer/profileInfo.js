@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { getSessionCookie } from "../common/session";
 import { Button, Row, Col, Form, Card, Container } from "react-bootstrap";
-import Holder from "../images/holder.png";
+import Holder from "../images/profileHolder.png";
 import { NODE_HOST, NODE_PORT } from "../common/envConfig";
 import countryList from "react-select-country-list";
 import {
@@ -41,6 +41,8 @@ const ProfileInfo = (props) => {
 
   const onImageChangeHandler = (event) => {
     if (event.target.files && event.target.files[0]) {
+      console.log("did i come here?");
+
       setCustomerDetails((prevState) => {
         return {
           ...prevState,
@@ -52,22 +54,18 @@ const ProfileInfo = (props) => {
   };
 
   const viewImageHandler = () => {
+    console.log("cust details", customerDetails);
     if (customerDetails.imagePreview) {
+      console.log("Yahan", customerDetails.imagePreview);
       return (
-        <Card style={{ width: "21rem" }}>
-          <Card.Img
-            variant="top"
-            src={customerDetails.imagePreview}
-            height="200px"
-          />
-        </Card>
+        <Card.Img
+          variant="top"
+          src={customerDetails.imagePreview}
+          height="200px"
+        />
       );
     } else {
-      return (
-        <Card style={{ width: "16rem" }}>
-          <Card.Img variant="top" src={Holder} height="200px" />
-        </Card>
-      );
+      return <Card.Img variant="top" src={Holder} height="200px" />;
     }
   };
 
@@ -133,13 +131,16 @@ const ProfileInfo = (props) => {
 
     setCustomerDetails((prevState) => {
       let customerImageObject;
+      console.log("data image", data.image);
       if (data.image) {
         customerImageObject = {
           imagePreview: `http://${NODE_HOST}:${NODE_PORT}/` + data.image,
         };
       } else {
+        console.log("here?");
+        console.log("holder", Holder);
         customerImageObject = {
-          imagePreview: { Holder },
+          imagePreview: Holder,
         };
       }
       let dateArray = data.dateOfBirth?.split("T");
@@ -169,15 +170,15 @@ const ProfileInfo = (props) => {
   }, []);
 
   return (
-    <Container fluid className="mt-5" style={{ backgroundColor: "grey" }}>
+    <Container fluid className="mt-1" style={{ backgroundColor: "#ffffe6" }}>
       <h1>Customer Profile</h1>
       <font size="3" class="font-weight-bold">
         <Form onSubmit={updateProfileInfo}>
           <Row>
             <Col md={1}></Col>
-            <Col xs={12} md={4} fluid className="mt-5">
+            <Col xs={12} md={4} fluid className="mt-2">
               <Form.Group as={Col} xs={12} md={7}>
-                <Card style={{ width: " 21rem" }}>
+                <Card style={{ width: " 16rem" }}>
                   {viewImageHandler()}
                   <Form.Control
                     name="image"
@@ -189,8 +190,8 @@ const ProfileInfo = (props) => {
                 </Card>
               </Form.Group>
 
-              <Form.Group as={Col} className="mt=3">
-                <Form.Label>About</Form.Label>
+              <Form.Group as={Col} className="mt-2">
+                {/* <Form.Label>About</Form.Label> */}
                 <Form.Control
                   style={{ height: "100px", width: " 340px" }}
                   name="about"
@@ -203,7 +204,7 @@ const ProfileInfo = (props) => {
               </Form.Group>
             </Col>
 
-            <Col xs={12} md={6} fluid className="mt-5">
+            <Col xs={12} md={6} fluid className="mt-2">
               <Row className="mb-1">
                 <Form.Group as={Col}>
                   <Form.Label>First Name</Form.Label>
@@ -318,7 +319,7 @@ const ProfileInfo = (props) => {
                   <Form.Label>State</Form.Label>
                   <Form.Control
                     name="state"
-                    placeholder="Apartment, studio, or floor"
+                    placeholder="State"
                     value={customerDetails.state}
                     onChange={onChangeHandler}
                   />

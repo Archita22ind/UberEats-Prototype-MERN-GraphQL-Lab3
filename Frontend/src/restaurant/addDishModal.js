@@ -179,7 +179,7 @@ const AddDishModal = (props) => {
                     <option value="Soups">Soups</option>
                     <option value="Main Course">Main Course</option>
                     <option value="Beverages">Beverages</option>
-                    <option value="Deserts">Deserts</option>
+                    <option value="Deserts">Desserts</option>
                   </Form.Select>
                 </Form.Group>
               </Col>
