@@ -3,7 +3,7 @@ import { Button, Row, Col, Form, Container, Card } from "react-bootstrap";
 import Image from "react-bootstrap/Image";
 import { Link } from "react-router-dom";
 import Background from "../images/restaurantSignUp.jpeg";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { reduxConstants } from "../constants/reduxConstants";
 import { useHistory } from "react-router-dom";
 import { setSessionCookie } from "../common/session";
@@ -66,7 +66,7 @@ const RestaurantLogin = (props) => {
           })
         );
         dispatch(success({ userEmail }));
-        history.push("/restaurantDetails");
+        history.replace("/restaurantDetails");
       } else if (response.status === 401) {
         alert("Incorrect Email Id or Password. Please try again !");
       } else {

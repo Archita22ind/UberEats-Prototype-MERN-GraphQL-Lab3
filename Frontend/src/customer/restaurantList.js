@@ -6,7 +6,6 @@ import { FcLikePlaceholder } from "react-icons/fc";
 import { FcLike } from "react-icons/fc";
 import { useHistory } from "react-router-dom";
 import { NODE_HOST, NODE_PORT } from "../common/envConfig";
-import CustomerNavLink from "./custNavLink.js";
 
 const RestaurantList = (props) => {
   const history = useHistory();
@@ -14,16 +13,11 @@ const RestaurantList = (props) => {
   const viewImageHandler = (restaurant) => {
     if (restaurant.imagePreview) {
       return (
-        // <Card style={{ width: "12rem" }}>
         <Card.Img
           variant="top"
           src={restaurant.imagePreview}
           height="150px"
-          // variant="top"
-
-          // height="200px"
         />
-        // </Card>
       );
     } else {
       return (
@@ -33,6 +27,11 @@ const RestaurantList = (props) => {
       );
     }
   };
+
+  const onClickHandler = (restaurantId) => {
+    window.sessionStorage.setItem("restaurantId", restaurantId);
+    history.push("/restaurantDetails");
+  }
 
   const createFavouritesList = async (restaurantId) => {
     try {
@@ -67,16 +66,12 @@ const RestaurantList = (props) => {
         return (
           <Col xs={12} md={3} className="mb-4">
             <Card>
-              <CustomerNavLink
-                exact={true}
-                to="/restaurantDetails"
-                restaurantId={restaurant.RestaurantID}
-              >
-                {viewImageHandler(restaurant)}
+            <Card.Body style = {{cursor: 'pointer'}} onClick={() => onClickHandler(restaurant.RestaurantID)}>
+            {viewImageHandler(restaurant)}
                 <Card.Text style={{ fontSize: 20 }}>
                   {restaurant.RestaurantName}
                 </Card.Text>
-              </CustomerNavLink>
+              </Card.Body>
               <font size="2">
                 <Card.Footer>
                   {restaurant.City}, {restaurant.State} {"                  "}
