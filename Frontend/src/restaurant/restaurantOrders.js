@@ -4,6 +4,7 @@ import ListGroup from "react-bootstrap/ListGroup";
 import { getSessionCookie } from "../common/session";
 import ReceiptModal from "../customer/receiptModal";
 import CustomerModal from "./customerModal";
+import { NODE_HOST, NODE_PORT } from "../common/envConfig";
 const deliveryTypeOptions = [
   "",
   "Order Received",
@@ -22,7 +23,6 @@ const pickupTypeOptions = [
 const orderFilterOptions = ["", "New Order", "Delivered", "Cancelled"];
 
 export const checkDeliveryStatusOptions = (deliveryType) => {
-  console.log("I am in delivery", deliveryType);
   return deliveryType === "delivery"
     ? deliveryTypeOptions.map((item) => {
         return (
@@ -82,16 +82,19 @@ const RestaurantOrders = () => {
   };
 
   const getRestaurantOrders = async () => {
-    const response = await fetch("http://10.0.0.8:8080/getRestaurantOrders", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        restaurantId: session.primaryID,
-        orderStatus: orderFilter,
-      }),
-    });
+    const response = await fetch(
+      `http://${NODE_HOST}:${NODE_PORT}/getRestaurantOrders`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          restaurantId: session.primaryID,
+          orderStatus: orderFilter,
+        }),
+      }
+    );
     const data = await response.json();
 
     setRestaurantOrdersList(data);
@@ -117,16 +120,19 @@ const RestaurantOrders = () => {
     let updatedOrderStatus = updatedOrderStatusList?.[0]?.orderStatus;
 
     if (updatedOrderStatus) {
-      const response = await fetch("http://10.0.0.8:8080/updateOrderStatus", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          orderId: orderId,
-          orderStatus: updatedOrderStatus,
-        }),
-      });
+      const response = await fetch(
+        `http://${NODE_HOST}:${NODE_PORT}/updateOrderStatus`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            orderId: orderId,
+            orderStatus: updatedOrderStatus,
+          }),
+        }
+      );
 
       const data = await response.json();
 
@@ -144,7 +150,7 @@ const RestaurantOrders = () => {
 
   const getOrderDetails = async (orderId) => {
     const response = await fetch(
-      "http://10.0.0.8:8080/showRestaurantOrderDetails",
+      `http://${NODE_HOST}:${NODE_PORT}/showRestaurantOrderDetails`,
       {
         method: "POST",
         headers: {
@@ -160,15 +166,18 @@ const RestaurantOrders = () => {
   };
 
   const getCustomerDetails = async (customerId) => {
-    const response = await fetch("http://10.0.0.8:8080/showCustomerProfile", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        customerId: customerId,
-      }),
-    });
+    const response = await fetch(
+      `http://${NODE_HOST}:${NODE_PORT}/showCustomerProfile`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          customerId: customerId,
+        }),
+      }
+    );
     const data = await response.json();
     setCustomerDetails(data);
   };
@@ -200,9 +209,7 @@ const RestaurantOrders = () => {
             <ListGroup.Item>
               <Row>
                 <Col>
-                  <h4>
-                    {order.orderStatus}
-                  </h4>
+                  <h4>{order.orderStatus}</h4>
                 </Col>
                 <Col>
                   <Button

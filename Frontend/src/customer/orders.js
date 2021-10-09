@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import ListGroup from "react-bootstrap/ListGroup";
 import { getSessionCookie } from "../common/session";
 import ReceiptModal from "./receiptModal";
+import { NODE_HOST, NODE_PORT } from "../common/envConfig";
 
 const Orders = (props) => {
   const session = getSessionCookie();
@@ -15,15 +16,18 @@ const Orders = (props) => {
   const [receiptDetails, setReceiptDetails] = useState([]);
 
   const getReceiptDetails = async (orderId) => {
-    const response = await fetch("http://10.0.0.8:8080/getReceiptDetails", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        orderId: orderId,
-      }),
-    });
+    const response = await fetch(
+      `http://${NODE_HOST}:${NODE_PORT}/getReceiptDetails`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          orderId: orderId,
+        }),
+      }
+    );
     const data = await response.json();
     setReceiptDetails(data);
   };
@@ -36,7 +40,7 @@ const Orders = (props) => {
     "On the way",
     "Delivered",
     "Pick up Ready",
-    "Picked up"
+    "Picked up",
   ];
   const options = orderFilterOptions.map((item) => {
     return (
@@ -111,16 +115,19 @@ const Orders = (props) => {
   };
 
   const getPastOrders = async () => {
-    const response = await fetch("http://10.0.0.8:8080/getPastOrders", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        customerId: session.primaryID,
-        orderStatus: orderFilter,
-      }),
-    });
+    const response = await fetch(
+      `http://${NODE_HOST}:${NODE_PORT}/getPastOrders`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          customerId: session.primaryID,
+          orderStatus: orderFilter,
+        }),
+      }
+    );
     const data = await response.json();
     setOrdersList(data);
   };

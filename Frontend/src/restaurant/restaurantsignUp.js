@@ -6,6 +6,7 @@ import countryList from "react-select-country-list";
 import { setSessionCookie } from "../common/session";
 import { useHistory } from "react-router-dom";
 import { useDispatch } from "react-redux";
+import { NODE_HOST, NODE_PORT } from "../common/envConfig";
 import { alertActions } from "../actions/alertActions";
 import { reduxConstants } from "../constants/reduxConstants";
 import {
@@ -80,7 +81,7 @@ const RestaurantSignUp = (props) => {
 
     try {
       const response = await fetch(
-        "http://10.0.0.8:8080/restaurantSignUpInfo",
+        `http://${NODE_HOST}:${NODE_PORT}/restaurantSignUpInfo`,
         {
           method: "POST",
           headers: {
@@ -128,7 +129,7 @@ const RestaurantSignUp = (props) => {
         <Col xs={12} md={6}>
           <Form onSubmit={onSubmitHandler}>
             <Row className="mb-3">
-              <Form.Group as={Col} controlId="formGridRestaurantName">
+              <Form.Group as={Col}>
                 <Form.Label>Restaurant Name *</Form.Label>
                 <Form.Control
                   required
@@ -140,7 +141,7 @@ const RestaurantSignUp = (props) => {
             </Row>
 
             <Row className="mb-3">
-              <Form.Group as={Col} controlId="formGridEmail">
+              <Form.Group as={Col}>
                 <Form.Label>Email *</Form.Label>
                 <Form.Control
                   required
@@ -154,7 +155,7 @@ const RestaurantSignUp = (props) => {
                 </Form.Text>
               </Form.Group>
 
-              <Form.Group as={Col} controlId="formGridPassword">
+              <Form.Group as={Col}>
                 <Form.Label htmlFor="inputPassword5">Password *</Form.Label>
                 <Form.Control
                   required
@@ -172,7 +173,7 @@ const RestaurantSignUp = (props) => {
               </Form.Group>
             </Row>
 
-            <Form.Group className="mb-3" controlId="formGridAddress">
+            <Form.Group className="mb-3">
               <Form.Label>Address *</Form.Label>
               <Form.Control
                 required
@@ -183,12 +184,12 @@ const RestaurantSignUp = (props) => {
             </Form.Group>
 
             <Row className="mb-4">
-              <Form.Group as={Col} controlId="formGridCity">
+              <Form.Group as={Col}>
                 <Form.Label>City *</Form.Label>
                 <Form.Control required name="city" onChange={onChangeHandler} />
               </Form.Group>
 
-              <Form.Group as={Col} controlId="formGridState">
+              <Form.Group as={Col}>
                 <Form.Label>State *</Form.Label>
                 <Form.Control
                   required
@@ -197,7 +198,7 @@ const RestaurantSignUp = (props) => {
                 />
               </Form.Group>
 
-              <Form.Group as={Col} controlId="formGridZip">
+              <Form.Group as={Col}>
                 <Form.Label>Zip Code *</Form.Label>
                 <Form.Control
                   required
@@ -207,7 +208,7 @@ const RestaurantSignUp = (props) => {
               </Form.Group>
             </Row>
             <Row>
-              <Form.Group as={Col} controlId="formGridCountry">
+              <Form.Group as={Col}>
                 <Form.Label>Country *</Form.Label>
                 <Form.Control
                   name="country"
@@ -221,11 +222,7 @@ const RestaurantSignUp = (props) => {
                 </Form.Control>
               </Form.Group>
 
-              <Form.Group
-                as={Col}
-                className="mb-2"
-                controlId="formGridContactNumber"
-              >
+              <Form.Group as={Col} className="mb-2">
                 <Form.Label>Contact Number *</Form.Label>
                 <Form.Control
                   required

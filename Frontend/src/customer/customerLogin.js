@@ -7,7 +7,7 @@ import { setSessionCookie } from "../common/session";
 import { useHistory } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { reduxConstants } from "../constants/reduxConstants";
-import {NODE_HOST , NODE_PORT} from "../common/envConfig";
+import { NODE_HOST, NODE_PORT } from "../common/envConfig";
 
 function request(user) {
   return { type: reduxConstants.LOGIN_REQUEST, user };
@@ -43,16 +43,19 @@ const CustomerLogin = (props) => {
     dispatch(request({ userEmail }));
 
     try {
-      const response = await fetch(`http://${NODE_HOST}:${NODE_PORT}/customerSignIn`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          emailId: userEmail,
-          password: userPassword,
-        }),
-      });
+      const response = await fetch(
+        `http://${NODE_HOST}:${NODE_PORT}/customerSignIn`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            emailId: userEmail,
+            password: userPassword,
+          }),
+        }
+      );
       const data = await response.json();
 
       if (response.status === 200) {
@@ -91,7 +94,7 @@ const CustomerLogin = (props) => {
             <Form onSubmit={onSubmitHandler}>
               <Row className="mb-3">
                 <Row>
-                  <Form.Group as={Col} controlId="formGridEmailId">
+                  <Form.Group as={Col}>
                     <Form.Label>Email Id</Form.Label>
                     <Form.Control
                       name="emailId"
@@ -103,7 +106,7 @@ const CustomerLogin = (props) => {
                   </Form.Group>
                 </Row>
                 <Row>
-                  <Form.Group as={Col} controlId="formGridPassword">
+                  <Form.Group as={Col}>
                     <Form.Label>Password</Form.Label>
                     <Form.Control
                       name="password"
@@ -130,9 +133,7 @@ const CustomerLogin = (props) => {
               </Button>
             </Link>
             <Link className="my-3" to="/">
-              <Button variant="dark">
-                HomePage
-              </Button>
+              <Button variant="dark">HomePage</Button>
             </Link>
           </Card>
         </Col>

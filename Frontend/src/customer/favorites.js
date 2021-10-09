@@ -5,6 +5,7 @@ import Holder from "../images/holder.png";
 import React, { useState, useEffect } from "react";
 import { getSessionCookie } from "../common/session";
 import RestaurantList from "../customer/restaurantList.js";
+import { NODE_HOST, NODE_PORT } from "../common/envConfig";
 
 const Favorites = (props) => {
   const [favoriteList, setFavoriteList] = useState([]);
@@ -14,7 +15,7 @@ const Favorites = (props) => {
   const getFavoriteRestaurants = async () => {
     try {
       const response = await fetch(
-        "http://10.0.0.8:8080/getFavoriteRestaurants",
+        `http://${NODE_HOST}:${NODE_PORT}/getFavoriteRestaurants`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -31,7 +32,8 @@ const Favorites = (props) => {
           return {
             ...d,
             isLiked: true,
-            imagePreview: "http://10.0.0.8:8080/" + d.ProfilePicture,
+            imagePreview:
+              `http://${NODE_HOST}:${NODE_PORT}/` + d.ProfilePicture,
           };
         })
       );

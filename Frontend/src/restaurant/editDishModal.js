@@ -1,6 +1,7 @@
 import React from "react";
 import { Container, Row, Form, Col, Modal, Button } from "react-bootstrap";
 import { getSessionCookie } from "../common/session";
+import { NODE_HOST, NODE_PORT } from "../common/envConfig";
 
 const EditDishModal = (props) => {
   let onShowVal = props.dishItem.show;
@@ -67,10 +68,13 @@ const EditDishModal = (props) => {
     formData.append("cuisine", props.dishItem.cuisine);
 
     try {
-      const response = await fetch("http://10.0.0.8:8080/editFoodItems", {
-        method: "POST",
-        body: formData,
-      });
+      const response = await fetch(
+        `http://${NODE_HOST}:${NODE_PORT}/editFoodItems`,
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
 
       const data = await response.json();
 
@@ -84,9 +88,7 @@ const EditDishModal = (props) => {
     <Modal
       show={onShowVal}
       onHide={props.onHide}
-      // autoFocus="true"
       aria-labelledby="contained-modal-title-vcenter"
-      // backdrop="static"
     >
       <Form onSubmit={submitDishesHandler}>
         <Modal.Header closeButton>
@@ -134,7 +136,6 @@ const EditDishModal = (props) => {
 
             <Row className="mb-3">
               <Form.Group xs={12} md={12}>
-                {/* <Form.Label>Description</Form.Label> */}
                 <Form.Control
                   name="description"
                   placeholder="Enter dish description"

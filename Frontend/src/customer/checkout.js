@@ -11,6 +11,7 @@ import React, { useState, useEffect } from "react";
 import { getSessionCookie } from "../common/session";
 import useCartCheckoutModal from "../common/useCartCheckoutModal";
 import { useHistory } from "react-router-dom";
+import { NODE_HOST, NODE_PORT } from "../common/envConfig";
 
 const Checkout = () => {
   const [address, setAddress] = useState("");
@@ -22,8 +23,7 @@ const Checkout = () => {
   const [selectedAddress, setSelectedAddress] = useState("");
   const [newSelectedAddress, setNewSelectedAddress] = useState("");
 
-  
-  const [deliveryType, setDeliveryType] = useState ("delivery");
+  const [deliveryType, setDeliveryType] = useState("delivery");
 
   const history = useHistory();
   const handleClose = () => {
@@ -37,12 +37,11 @@ const Checkout = () => {
   const tax = 3.5;
   const { getCartDetails, displaySelectedItems, restaurantName } =
     useCartCheckoutModal();
- 
-  const getDeliveryType = async () => {
 
-    try{
+  const getDeliveryType = async () => {
+    try {
       const response = await fetch(
-        `http://10.0.0.8:8080/getDeliveryType?customerId=${session.primaryID}`,
+        `http://${NODE_HOST}:${NODE_PORT}/getDeliveryType?customerId=${session.primaryID}`,
         {
           method: "GET",
           headers: {
@@ -53,20 +52,19 @@ const Checkout = () => {
 
       const data = await response.json();
       setDeliveryType(data.deliveryType);
-      
-    }catch (error) {
+    } catch (error) {
       console.log(error);
     }
-  }
+  };
 
-  useEffect (()=> {
+  useEffect(() => {
     getDeliveryType();
   }, []);
 
   const getDeliveryAddress = async () => {
     try {
       const response = await fetch(
-        `http://10.0.0.8:8080/getDeliveryAddress?customerId=${session.primaryID}`,
+        `http://${NODE_HOST}:${NODE_PORT}/getDeliveryAddress?customerId=${session.primaryID}`,
         {
           method: "GET",
           headers: {
@@ -88,7 +86,7 @@ const Checkout = () => {
   const showOrderTotal = React.useCallback(async () => {
     try {
       const response = await fetch(
-        `http://10.0.0.8:8080/getOrderTotal?customerId=${session.primaryID}`,
+        `http://${NODE_HOST}:${NODE_PORT}/getOrderTotal?customerId=${session.primaryID}`,
         {
           method: "GET",
           headers: {
@@ -114,21 +112,26 @@ const Checkout = () => {
 
   const onSubmitHandler = async (event) => {
     event.preventDefault();
-    if ((selectedAddress.length>4 && deliveryType === "delivery") || deliveryType === "pickup"){
-
+    if (
+      (selectedAddress.length > 4 && deliveryType === "delivery") ||
+      deliveryType === "pickup"
+    ) {
       try {
-        const response = await fetch("http://10.0.0.8:8080/bookOrder", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            customerId: session.primaryID,
-            totalPrice: subTotal + tip + tax + deliveryFee,
-            totalItems: totalItems,
-          }),
-        });
-  
+        const response = await fetch(
+          `http://${NODE_HOST}:${NODE_PORT}/bookOrder`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              customerId: session.primaryID,
+              totalPrice: subTotal + tip + tax + deliveryFee,
+              totalItems: totalItems,
+            }),
+          }
+        );
+
         const data = await response.json();
         if (data.Message) {
           setShow(true);
@@ -137,11 +140,11 @@ const Checkout = () => {
       } catch (error) {
         console.log(error);
       }
-
-    }else {
-      alert ("Please enter valid delivery address and click confirm address button if you are adding a new delivery address to place your order");
+    } else {
+      alert(
+        "Please enter valid delivery address and click confirm address button if you are adding a new delivery address to place your order"
+      );
     }
-
   };
 
   const onAddressChangeHandler = (event) => {
@@ -162,16 +165,19 @@ const Checkout = () => {
     //API call to add delievry address to order table
 
     try {
-      const response = await fetch("http://10.0.0.8:8080/addDeliveryAddress", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          customerId: session.primaryID,
-          address: newSelectedAddress,
-        }),
-      });
+      const response = await fetch(
+        `http://${NODE_HOST}:${NODE_PORT}/addDeliveryAddress`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            customerId: session.primaryID,
+            address: newSelectedAddress,
+          }),
+        }
+      );
       const data = await response.json();
 
       setSelectedAddress(newSelectedAddress);

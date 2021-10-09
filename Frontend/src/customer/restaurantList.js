@@ -5,6 +5,7 @@ import { getSessionCookie } from "../common/session";
 import { FcLikePlaceholder } from "react-icons/fc";
 import { FcLike } from "react-icons/fc";
 import { useHistory } from "react-router-dom";
+import { NODE_HOST, NODE_PORT } from "../common/envConfig";
 
 const RestaurantList = (props) => {
   const history = useHistory();
@@ -12,13 +13,13 @@ const RestaurantList = (props) => {
   const viewImageHandler = (restaurant) => {
     if (restaurant.imagePreview) {
       return (
-        <Card style={{ width: "12rem" }}>
-          <Card.Img
-            variant="top"
-            src={restaurant.imagePreview}
-            height="200px"
-          />
-        </Card>
+        // <Card style={{ width: "12rem" }}>
+        <Card.Img
+          // variant="top"
+          src={restaurant.imagePreview}
+          // height="200px"
+        />
+        // </Card>
       );
     } else {
       return (
@@ -32,7 +33,7 @@ const RestaurantList = (props) => {
   const createFavouritesList = async (restaurantId) => {
     try {
       const response = await fetch(
-        "http://10.0.0.8:8080/createFavouritesList",
+        `http://${NODE_HOST}:${NODE_PORT}/createFavouritesList`,
         {
           method: "POST",
           headers: {
@@ -66,13 +67,18 @@ const RestaurantList = (props) => {
       {props.restaurantList.map((restaurant, key) => {
         return (
           <Col xs={12} md={3} className="mb-4">
-            <Card>
+            <Card
+            // style={{ width: "100%", height: "100%" }}
+            >
               <Button
                 variant="light"
                 onClick={(e) => linkToRestaurantPage(restaurant.RestaurantID)}
               >
                 {viewImageHandler(restaurant)}
-                <Card.Header>{restaurant.RestaurantName}</Card.Header>
+
+                <Card.Text style={{ fontSize: 20 }}>
+                  {restaurant.RestaurantName}
+                </Card.Text>
               </Button>
               <font size="2">
                 <Card.Footer>

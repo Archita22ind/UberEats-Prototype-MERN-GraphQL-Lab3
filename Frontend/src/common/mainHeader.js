@@ -11,7 +11,7 @@ import { Typeahead } from "react-bootstrap-typeahead";
 import * as Icon from "react-bootstrap-icons";
 import CustomerNavbar from "../customer/customerNavbar.js";
 import RestaurantNavbar from "../restaurant/restaurantNavbar.js";
-
+import { NODE_HOST, NODE_PORT } from "../common/envConfig";
 import { Link } from "react-router-dom";
 import useCartCheckoutModal from "./useCartCheckoutModal";
 import RestaurantSearch from "../customer/restaurantSearch";
@@ -27,29 +27,27 @@ import { useDispatch, useSelector } from "react-redux";
 import { reduxConstants } from "../constants/reduxConstants.js";
 
 const MainHeader = (props) => {
-  
   let showTabs = props.tab;
   const [modalShow, setModalShow] = useState(false);
   const [typeaheadOutput, setTypeaheadOutput] = useState([]);
   const [valueSelected, setValueSelected] = useState([{}]);
   const [foodFilter, setFoodFilter] = useState({});
   const [restaurantList, setRestaurantList] = useState([]);
-
   const [customerLocation, setCustomerLocation] = useState("");
-
-  const session = getSessionCookie();
-
-  let onHide = () => setModalShow(false);
-
-  const dispatch = useDispatch ();
+  const dispatch = useDispatch();
   const deliveryType = useSelector((state) => state.order.deliveryType);
-
   // Used custom hook
-  const { cartModal, getCartDetails, cartDetails } = useCartCheckoutModal(modalShow, onHide);
+  const onHide = () => setModalShow(false);
+  const { cartModal, getCartDetails, cartDetails } = useCartCheckoutModal(
+    modalShow,
+    onHide
+  );
 
   const history = useHistory();
 
-  useEffect( () => {
+  const session = getSessionCookie();
+
+  useEffect(() => {
     getCustomerLocation();
   }, []);
 
@@ -60,21 +58,22 @@ const MainHeader = (props) => {
   };
 
   const getCustomerLocation = async () => {
-
-    if (!session.restaurantFlag){
-      const response = await fetch("http://10.0.0.8:8080/getCustomerLocation", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          customerId: session.primaryID,
-        }),
-      });
+    if (!session.restaurantFlag) {
+      const response = await fetch(
+        `http://${NODE_HOST}:${NODE_PORT}/getCustomerLocation`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            customerId: session.primaryID,
+          }),
+        }
+      );
 
       const data = await response.json();
-      setCustomerLocation(data.city)
+      setCustomerLocation(data.city);
     }
-
-    }
+  };
 
   const onChangeHandler = (selected) => {
     setValueSelected(selected);
@@ -87,24 +86,28 @@ const MainHeader = (props) => {
   };
 
   const deliveryTypeChangeHandler = (event) => {
-
-    if (cartDetails && cartDetails.length >0){
-      alert (" This option cannot be changed as there is an existing order in your cart");
-    }else {
+    if (cartDetails && cartDetails.length > 0) {
+      alert(
+        " This option cannot be changed as there is an existing order in your cart"
+      );
+    } else {
       let value = event.currentTarget.value;
-      dispatch({type: reduxConstants.ORDER_DELIVERY_TYPE, value});
+      dispatch({ type: reduxConstants.ORDER_DELIVERY_TYPE, value });
     }
-  }
+  };
 
   const optionDislayHandler = async (typeaheadInput) => {
     try {
-      const response = await fetch("http://10.0.0.8:8080/getTypeaheadList", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          input: typeaheadInput,
-        }),
-      });
+      const response = await fetch(
+        `http://${NODE_HOST}:${NODE_PORT}/getTypeaheadList`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            input: typeaheadInput,
+          }),
+        }
+      );
 
       let data = await response.json();
 
@@ -153,18 +156,28 @@ const MainHeader = (props) => {
             {session.restaurantFlag ? (
               <Link
                 to="/restaurantDetails"
-                style={{ textDecoration: "none", color: "black" }}
+                style={{
+                  textDecoration: "none",
+                  color: "green",
+                  fontSize: 35,
+                  fontWeight: "bold",
+                }}
               >
                 {" "}
-                <h3>Uber Eats</h3>{" "}
+                <h3>UberEats</h3>{" "}
               </Link>
             ) : (
               <Link
                 to="/restaurantSearch"
-                style={{ textDecoration: "none", color: "black" }}
+                style={{
+                  textDecoration: "none",
+                  color: "green",
+                  fontSize: 35,
+                  fontWeight: "bold",
+                }}
               >
                 {" "}
-                <h3>Uber Eats</h3>{" "}
+                <h3>UberEats</h3>{" "}
               </Link>
             )}
           </Col>
@@ -174,37 +187,42 @@ const MainHeader = (props) => {
             <>
               <Col className="mt-3" xs={4} md={2}>
                 <ButtonGroup className="mb-2">
-                      <ToggleButton
-                          key={1}
-                          id={1}
-                          type="radio"
-                          variant="outline-dark"
-                          name="radio"
-                          value="delivery"
-                          checked={deliveryType === "delivery"}
-                          onChange={deliveryTypeChangeHandler}
-                        >
-                         <font size="2"> Delivery</font>
-                      </ToggleButton>
-                      <ToggleButton
-                          key={2}
-                          id={2}
-                          type="radio"
-                          variant="outline-dark"
-                          name="radio"
-                          value="pickup"
-                          checked={deliveryType === "pickup"}
-                          onChange={deliveryTypeChangeHandler}
-                        >
-                        <font size="2"> Pickup</font>
-                      </ToggleButton>
-                </ButtonGroup>      
+                  <ToggleButton
+                    key={1}
+                    id={1}
+                    type="radio"
+                    variant="outline-dark"
+                    name="radio"
+                    value="delivery"
+                    checked={deliveryType === "delivery"}
+                    onChange={deliveryTypeChangeHandler}
+                  >
+                    <font size="2"> Delivery</font>
+                  </ToggleButton>
+                  <ToggleButton
+                    key={2}
+                    id={2}
+                    type="radio"
+                    variant="outline-dark"
+                    name="radio"
+                    value="pickup"
+                    checked={deliveryType === "pickup"}
+                    onChange={deliveryTypeChangeHandler}
+                  >
+                    <font size="2"> Pickup</font>
+                  </ToggleButton>
+                </ButtonGroup>
               </Col>
-              {customerLocation === "" ? (<Col/>) : (<Col className="mt-3" xs={4} md={2}>
-                <Button variant="outline-dark">
-                  <Icon.GeoAltFill /> <font size="2"> {customerLocation}</font>
-                </Button>
-              </Col>)}
+              {customerLocation === "" ? (
+                <Col />
+              ) : (
+                <Col className="mt-3" xs={4} md={2}>
+                  <Button variant="outline-dark">
+                    <Icon.GeoAltFill />{" "}
+                    <font size="2"> {customerLocation}</font>
+                  </Button>
+                </Col>
+              )}
               <Col className="mt-3" xs={12} md={3}>
                 <Typeahead
                   id="id123"

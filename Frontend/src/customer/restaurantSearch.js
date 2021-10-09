@@ -3,6 +3,7 @@ import { Container, Row, Col, Form } from "react-bootstrap";
 import RestaurantList from "./restaurantList.js";
 import React, { useEffect } from "react";
 import { getSessionCookie } from "../common/session";
+import { NODE_HOST, NODE_PORT } from "../common/envConfig";
 
 const RestaurantSearch = (props) => {
   const session = getSessionCookie();
@@ -19,7 +20,7 @@ const RestaurantSearch = (props) => {
   const fetchFilteredRestaurants = React.useCallback(async () => {
     try {
       const response = await fetch(
-        "http://10.0.0.8:8080/getListOfRestaurants",
+        `http://${NODE_HOST}:${NODE_PORT}/getListOfRestaurants`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -42,7 +43,8 @@ const RestaurantSearch = (props) => {
         data.map((d) => {
           return {
             ...d,
-            imagePreview: "http://10.0.0.8:8080/" + d.ProfilePicture,
+            imagePreview:
+              `http://${NODE_HOST}:${NODE_PORT}/` + d.ProfilePicture,
           };
         })
       );
@@ -89,7 +91,7 @@ const RestaurantSearch = (props) => {
             </Row>
             <Row>
               <Col xs={12} md={12}>
-                <Form.Group className="mb-3" controlId="formBasicCheckboxV">
+                <Form.Group className="mb-3">
                   <Form.Check
                     name="Vegan"
                     type="checkbox"
@@ -99,7 +101,7 @@ const RestaurantSearch = (props) => {
                 </Form.Group>
               </Col>
               <Col xs={12} md={12}>
-                <Form.Group className="mb-3" controlId="formBasicCheckboxVeg">
+                <Form.Group className="mb-3">
                   <Form.Check
                     type="checkbox"
                     name="Vegetarian"
@@ -112,7 +114,7 @@ const RestaurantSearch = (props) => {
             <Row>
               <Col xs={12} md={12}>
                 {" "}
-                <Form.Group className="mb-3" controlId="formBasicCheckboxNV">
+                <Form.Group className="mb-3">
                   <Form.Check
                     name="Non-Vegetarian"
                     type="checkbox"
@@ -122,7 +124,7 @@ const RestaurantSearch = (props) => {
                 </Form.Group>
               </Col>
               <Col xs={12} md={12}>
-                <Form.Group className="mb-3" controlId="formBasicCheckboxH">
+                <Form.Group className="mb-3">
                   <Form.Check
                     name="Halal"
                     type="checkbox"
@@ -134,7 +136,7 @@ const RestaurantSearch = (props) => {
             </Row>
             <Row>
               <Col xs={12} md={12}>
-                <Form.Group className="mb-3" controlId="formBasicCheckboxGF">
+                <Form.Group className="mb-3">
                   <Form.Check
                     name="Gluten-Free"
                     type="checkbox"

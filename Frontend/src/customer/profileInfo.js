@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { getSessionCookie } from "../common/session";
 import { Button, Row, Col, Form, Card, Container } from "react-bootstrap";
 import Holder from "../images/holder.png";
+import { NODE_HOST, NODE_PORT } from "../common/envConfig";
 import countryList from "react-select-country-list";
 import {
   formatPhoneNumber,
@@ -24,7 +25,6 @@ const ProfileInfo = (props) => {
   const [customerDetails, setCustomerDetails] = useState({});
 
   const onChangeHandler = (event) => {
-    
     event.preventDefault();
 
     if (event.target.name === "contactNumber") {
@@ -103,10 +103,13 @@ const ProfileInfo = (props) => {
       formData.append("dateOfBirth", customerDetails.dateOfBirth);
 
     try {
-      const response = await fetch("http://10.0.0.8:8080/updateProfileInfo", {
-        method: "POST",
-        body: formData,
-      });
+      const response = await fetch(
+        `http://${NODE_HOST}:${NODE_PORT}/updateProfileInfo`,
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
 
       const data = await response.json();
     } catch (error) {
@@ -116,7 +119,7 @@ const ProfileInfo = (props) => {
 
   const getCustomerProfileInfo = async () => {
     const response = await fetch(
-      `http://10.0.0.8:8080/getProfileInfo?customerId=${session.primaryID}`,
+      `http://${NODE_HOST}:${NODE_PORT}/getProfileInfo?customerId=${session.primaryID}`,
       {
         method: "GET",
         headers: {
@@ -132,7 +135,7 @@ const ProfileInfo = (props) => {
       let customerImageObject;
       if (data.image) {
         customerImageObject = {
-          imagePreview: "http://10.0.0.8:8080/" + data.image,
+          imagePreview: `http://${NODE_HOST}:${NODE_PORT}/` + data.image,
         };
       } else {
         customerImageObject = {
@@ -173,7 +176,7 @@ const ProfileInfo = (props) => {
           <Row>
             <Col md={1}></Col>
             <Col xs={12} md={4} fluid className="mt-5">
-              <Form.Group as={Col} controlId="formGridImage" xs={12} md={7}>
+              <Form.Group as={Col} xs={12} md={7}>
                 <Card style={{ width: " 21rem" }}>
                   {viewImageHandler()}
                   <Form.Control
@@ -186,7 +189,7 @@ const ProfileInfo = (props) => {
                 </Card>
               </Form.Group>
 
-              <Form.Group as={Col} className="mt=3" controlId="formGridAbout">
+              <Form.Group as={Col} className="mt=3">
                 <Form.Label>About</Form.Label>
                 <Form.Control
                   style={{ height: "100px", width: " 340px" }}
@@ -202,7 +205,7 @@ const ProfileInfo = (props) => {
 
             <Col xs={12} md={6} fluid className="mt-5">
               <Row className="mb-1">
-                <Form.Group as={Col} controlId="formGridFirstName">
+                <Form.Group as={Col}>
                   <Form.Label>First Name</Form.Label>
                   <Form.Control
                     name="firstName"
@@ -213,7 +216,7 @@ const ProfileInfo = (props) => {
                   />
                 </Form.Group>
 
-                <Form.Group as={Col} controlId="formGridLastName">
+                <Form.Group as={Col}>
                   <Form.Label>Last Name</Form.Label>
                   <Form.Control
                     name="lastName"
@@ -225,7 +228,7 @@ const ProfileInfo = (props) => {
               </Row>
 
               <Row className="mb-1">
-                <Form.Group as={Col} controlId="formGridEmailId">
+                <Form.Group as={Col}>
                   <Form.Label>Email</Form.Label>
                   <Form.Control
                     name="emailId"
@@ -237,7 +240,7 @@ const ProfileInfo = (props) => {
                   />
                 </Form.Group>
 
-                <Form.Group as={Col} controlId="formGridContactNumber">
+                <Form.Group as={Col}>
                   <Form.Label>Contact Number</Form.Label>
                   <Form.Control
                     name="contactNumber"
@@ -262,7 +265,7 @@ const ProfileInfo = (props) => {
                   />
                 </Form.Group>
 
-                <Form.Group as={Col} controlId="formGriddob">
+                <Form.Group as={Col}>
                   <Form.Label>Date of birth</Form.Label>
                   <Form.Control
                     name="dateOfBirth"
@@ -273,7 +276,7 @@ const ProfileInfo = (props) => {
                 </Form.Group>
               </Row>
 
-              <Form.Group className="mb-1" controlId="formGridAddress1">
+              <Form.Group className="mb-1">
                 <Form.Label>Address</Form.Label>
                 <Form.Control
                   name="address1"
@@ -287,7 +290,7 @@ const ProfileInfo = (props) => {
                 />
               </Form.Group>
 
-              <Form.Group className="mb-3" controlId="formGridAddress2">
+              <Form.Group className="mb-3">
                 <Form.Control
                   name="address2"
                   placeholder="Apartment, studio, or floor"
@@ -301,7 +304,7 @@ const ProfileInfo = (props) => {
               </Form.Group>
 
               <Row className="mb-1">
-                <Form.Group as={Col} controlId="formGridCity">
+                <Form.Group as={Col}>
                   <Form.Label>City</Form.Label>
                   <Form.Control
                     name="city"
@@ -311,7 +314,7 @@ const ProfileInfo = (props) => {
                   />
                 </Form.Group>
 
-                <Form.Group as={Col} controlId="formGridState">
+                <Form.Group as={Col}>
                   <Form.Label>State</Form.Label>
                   <Form.Control
                     name="state"
@@ -321,7 +324,7 @@ const ProfileInfo = (props) => {
                   />
                 </Form.Group>
 
-                <Form.Group required as={Col} controlId="formGridCountry">
+                <Form.Group required as={Col}>
                   <Form.Label>Country</Form.Label>
                   <Form.Control
                     name="country"
@@ -334,7 +337,7 @@ const ProfileInfo = (props) => {
                   </Form.Control>
                 </Form.Group>
 
-                <Form.Group as={Col} controlId="formGridZipCode">
+                <Form.Group as={Col}>
                   <Form.Label>Zip Code</Form.Label>
                   <Form.Control
                     name="zipCode"

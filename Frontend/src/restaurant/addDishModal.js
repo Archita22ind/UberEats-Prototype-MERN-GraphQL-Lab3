@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Container, Row, Form, Col, Modal, Button } from "react-bootstrap";
 import { getSessionCookie } from "../common/session";
+import { NODE_HOST, NODE_PORT } from "../common/envConfig";
 
 const AddDishModal = (props) => {
   let onClickValue = props.show;
@@ -59,10 +60,13 @@ const AddDishModal = (props) => {
     formData.append("cuisine", addDishValues.cuisine);
 
     try {
-      const response = await fetch("http://10.0.0.8:8080/addFoodItems", {
-        method: "POST",
-        body: formData,
-      });
+      const response = await fetch(
+        `http://${NODE_HOST}:${NODE_PORT}/addFoodItems`,
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
 
       const data = await response.json();
 

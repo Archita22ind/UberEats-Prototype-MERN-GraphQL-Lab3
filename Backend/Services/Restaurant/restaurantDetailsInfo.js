@@ -16,6 +16,7 @@ const restaurantDetailsInfo = (req, res, err) => {
   con.query(sqlSelect, [id], (err, result) => {
     if (err) throw err;
     if (result) {
+      console.log("yahan", result);
       res.send({
         restaurantId: result[0].RestaurantID,
         restaurantName: result[0].RestaurantName,

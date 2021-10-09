@@ -8,6 +8,7 @@ import { useHistory } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { alertActions } from "../actions/alertActions";
 import { reduxConstants } from "../constants/reduxConstants";
+import { NODE_HOST, NODE_PORT } from "../common/envConfig";
 import {
   formatPhoneNumber,
   isValidEmail,
@@ -79,15 +80,18 @@ const CustomerSignUp = (props) => {
     dispatch(request(customerDetails.emailId));
 
     try {
-      const response = await fetch("http://10.0.0.8:8080/customerSignUpInfo", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          ...customerDetails,
-        }),
-      });
+      const response = await fetch(
+        `http://${NODE_HOST}:${NODE_PORT}/customerSignUpInfo`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            ...customerDetails,
+          }),
+        }
+      );
 
       const data = await response.json();
       setSessionCookie(
@@ -125,7 +129,7 @@ const CustomerSignUp = (props) => {
         <Col xs={12} md={6}>
           <Form onSubmit={onSubmitHandler}>
             <Row className="mb-3">
-              <Form.Group as={Col} controlId="formGridFirstName">
+              <Form.Group as={Col}>
                 <Form.Label>First Name *</Form.Label>
                 <Form.Control
                   required
@@ -135,7 +139,7 @@ const CustomerSignUp = (props) => {
                 />
               </Form.Group>
 
-              <Form.Group as={Col} controlId="formGridLastName">
+              <Form.Group as={Col}>
                 <Form.Label>Last Name *</Form.Label>
                 <Form.Control
                   required
@@ -147,7 +151,7 @@ const CustomerSignUp = (props) => {
             </Row>
 
             <Row className="mb-3">
-              <Form.Group as={Col} controlId="formGridEmail">
+              <Form.Group as={Col}>
                 <Form.Label>Email *</Form.Label>
                 <Form.Control
                   required
@@ -161,7 +165,7 @@ const CustomerSignUp = (props) => {
                 </Form.Text>
               </Form.Group>
 
-              <Form.Group as={Col} controlId="formGridPassword">
+              <Form.Group as={Col}>
                 <Form.Label>Password *</Form.Label>
                 <Form.Control
                   required
@@ -178,23 +182,23 @@ const CustomerSignUp = (props) => {
             </Row>
 
             <Row className="mb-4">
-              <Form.Group as={Col} controlId="formGridCity">
+              <Form.Group as={Col}>
                 <Form.Label>City</Form.Label>
                 <Form.Control name="city" onChange={onChangeHandler} />
               </Form.Group>
 
-              <Form.Group as={Col} controlId="formGridState">
+              <Form.Group as={Col}>
                 <Form.Label>State</Form.Label>
                 <Form.Control name="state" onChange={onChangeHandler} />
               </Form.Group>
 
-              <Form.Group as={Col} controlId="formGridZipCode">
+              <Form.Group as={Col}>
                 <Form.Label>Zip Code</Form.Label>
                 <Form.Control name="zipCode" onChange={onChangeHandler} />
               </Form.Group>
             </Row>
             <Row>
-              <Form.Group as={Col} controlId="formGridZip">
+              <Form.Group as={Col}>
                 <Form.Label>Country *</Form.Label>
                 <Form.Control
                   required
@@ -207,11 +211,7 @@ const CustomerSignUp = (props) => {
                   {options}
                 </Form.Control>
               </Form.Group>
-              <Form.Group
-                as={Col}
-                className="mb-2"
-                controlId="formGridContactNumber"
-              >
+              <Form.Group as={Col} className="mb-2">
                 <Form.Label>Contact Number *</Form.Label>
                 <Form.Control
                   required

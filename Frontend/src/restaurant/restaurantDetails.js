@@ -8,28 +8,22 @@ import RestaurantEditDetails from "./restaurantEditDetails.js";
 import { BsPencilSquare } from "react-icons/bs";
 import { getSessionCookie } from "../common/session";
 import { useDispatch, useSelector } from "react-redux";
-import { reduxConstants } from "../constants/reduxConstants";
+
 import { useHistory } from "react-router-dom";
-import * as Cookies from "js-cookie";
-import { alertActions } from "../actions/alertActions";
+import { NODE_HOST, NODE_PORT } from "../common/envConfig";
 import { useLocation } from "react-router-dom";
+import { BiFontFamily } from "react-icons/bi";
 
 const RestaurantDetails = (props) => {
   let imageUrl = Holder;
-
-  const dispatch = useDispatch();
-  const history = useHistory();
 
   const [modalShow, setModalShow] = useState(false);
   const [restaurantModalShow, setRestaurantModalShow] = useState(false);
   const [profilePicture, setProfilePicture] = useState({});
   const [restaurantDetails, setRestaurantDetails] = useState({});
-  // const [isFormReadOnly, setIsFormReadOnly] = useState(true);
   const [renderedList, setRenderedList] = useState([]);
-  // const [showOrderModal, setshowOrderModal] = useState(false);
-  const location = useLocation();
+
   const session = getSessionCookie();
-  const user = useSelector((state) => state.authentication.user);
 
   let restaurantId;
 
@@ -45,7 +39,7 @@ const RestaurantDetails = (props) => {
 
   const getRestaurantProfileInfo = async () => {
     const response = await fetch(
-      `http://10.0.0.8:8080/restaurantDetailsInfo?restaurantId=${restaurantId}`,
+      `http://${NODE_HOST}:${NODE_PORT}/restaurantDetailsInfo?restaurantId=${restaurantId}`,
       {
         method: "GET",
         headers: {
@@ -81,7 +75,7 @@ const RestaurantDetails = (props) => {
       setProfilePicture((prevState) => {
         return {
           ...prevState,
-          imagePreview: "http://10.0.0.8:8080/" + data.image,
+          imagePreview: `http://${NODE_HOST}:${NODE_PORT}/` + data.image,
         };
       });
     }
@@ -89,7 +83,7 @@ const RestaurantDetails = (props) => {
 
   const getDishesHandler = async (event) => {
     const response = await fetch(
-      `http://10.0.0.8:8080/foodItemsDisplay?restaurantId=${restaurantId}`,
+      `http://${NODE_HOST}:${NODE_PORT}/foodItemsDisplay?restaurantId=${restaurantId}`,
       {
         method: "GET",
         headers: {
@@ -105,7 +99,7 @@ const RestaurantDetails = (props) => {
       data.map((dataRow) => {
         return {
           ...dataRow,
-          imagePreview: "http://10.0.0.8:8080/" + dataRow.image,
+          imagePreview: `http://${NODE_HOST}:${NODE_PORT}/` + dataRow.image,
           show: false,
         };
       })
@@ -192,68 +186,93 @@ const RestaurantDetails = (props) => {
   const showEditbutton = () => {
     if (session.restaurantFlag)
       return (
-        <Col>
-          <Button onClick={() => setRestaurantModalShow(true)} variant="dark">
-            Edit
-            <BsPencilSquare />
-          </Button>
-        </Col>
+        <>
+          Edit
+          <BsPencilSquare
+            onClick={() => setRestaurantModalShow(true)}
+            variant="dark"
+          />
+        </>
       );
   };
   const addDishButton = () => {
     if (session.restaurantFlag)
       return (
-        <Row>
-          <Col md={9}></Col>
-          <Col>
-            <Button variant="dark" onClick={() => setModalShow(true)}>
-              Add Dishes
-            </Button>
-            <AddDishModal
-              show={modalShow}
-              onHide={() => setModalShow(false)}
-              getDishesHandler={getDishesHandler}
-            />
-          </Col>
-        </Row>
+        <>
+          <Button size="sm" variant="dark" onClick={() => setModalShow(true)}>
+            Add Dishes
+          </Button>
+          <AddDishModal
+            show={modalShow}
+            onHide={() => setModalShow(false)}
+            getDishesHandler={getDishesHandler}
+          />
+        </>
       );
   };
 
   return (
     <Container fluid>
-      <Row>
-        <Form>
-          <Row>
-            <Col>
-              <Card>
-                <Card.Img variant="top" src={imageUrl} height="300px" />
+      <Form>
+        <Row>
+          <Card>
+            <Card.Img variant="top" src={imageUrl} height="300px" />
 
-                <Card.Body>
-                  <Row>
-                    <Col md={11}>
-                      <RestaurantEditDetails
-                        // isFormReadOnly={isFormReadOnly}
-                        // setIsFormReadOnly={setIsFormReadOnly}
+            <Card.Body style={{ color: "grey" }}>
+              <Card.Text style={{ textAlign: "left" }}>
+                <h1
+                  style={
+                    ({ fontFamily: "Garamond" },
+                    { fontSize: 45 },
+                    { margin: "0" })
+                  }
+                >
+                  {restaurantDetails.restaurantName}
+                </h1>
+                <p>{restaurantDetails.about}</p>
+                <font size="2">
+                  <p style={{ margin: "0" }}>
+                    {restaurantDetails.address}, {restaurantDetails.city},{" "}
+                    {restaurantDetails.zipCode}, {restaurantDetails.state}
+                  </p>
+                </font>
+                <font size="2">
+                  <p style={{ margin: "0" }}>
+                    {restaurantDetails.emailId} •
+                    {restaurantDetails.contactNumber}
+                  </p>
+                  <p style={{ margin: "0" }}>
+                    Open Time : {restaurantDetails.openTime} • Close Time :{" "}
+                    {restaurantDetails.closeTime}
+                  </p>
+                </font>
+                <Col>{showEditbutton()}</Col>
+              </Card.Text>
+            </Card.Body>
+            <Card.Footer>
+              <Row>
+                <Col md={10} style={{ color: "grey" }}>
+                  <h4 style={{ textAlign: "left" }}>Restaurant Menu</h4>
+                </Col>
+                <Col>
+                  <RestaurantEditDetails
+                    show={restaurantModalShow}
+                    getRestaurantProfileInfo={getRestaurantProfileInfo}
+                    onHide={() => setRestaurantModalShow(false)}
+                    restaurantDetails={restaurantDetails}
+                    setRestaurantDetails={setRestaurantDetails}
+                    profilePicture={profilePicture}
+                    setProfilePicture={setProfilePicture}
+                  />
 
-                        show={restaurantModalShow}
-                        getRestaurantProfileInfo={getRestaurantProfileInfo}
-                        onHide={() => setRestaurantModalShow(false)}
-                        restaurantDetails={restaurantDetails}
-                        setRestaurantDetails={setRestaurantDetails}
-                        profilePicture={profilePicture}
-                        setProfilePicture={setProfilePicture}
-                      />
-                    </Col>
-                    {showEditbutton()}
-                  </Row>
-                </Card.Body>
+                  {addDishButton()}
+                </Col>
+              </Row>
+            </Card.Footer>
+          </Card>
+        </Row>
+      </Form>
 
-                {addDishButton()}
-              </Card>
-            </Col>
-          </Row>
-        </Form>
-      </Row>
       {displayList()}
     </Container>
   );

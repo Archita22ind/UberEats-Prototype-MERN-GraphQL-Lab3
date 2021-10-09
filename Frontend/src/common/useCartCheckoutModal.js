@@ -4,6 +4,7 @@ import { useHistory } from "react-router-dom";
 import { BiPlus } from "react-icons/bi";
 import { BiMinus } from "react-icons/bi";
 import { getSessionCookie } from "./session";
+import { NODE_HOST, NODE_PORT } from "../common/envConfig";
 
 const useCartCheckoutModal = (modalShow, onHide) => {
   const [cartDetails, setCartDetails] = useState([]);
@@ -38,7 +39,7 @@ const useCartCheckoutModal = (modalShow, onHide) => {
 
     try {
       const response = await fetch(
-        "http://10.0.0.8:8080/updateCartOrderDetails",
+        `http://${NODE_HOST}:${NODE_PORT}/updateCartOrderDetails`,
         {
           method: "POST",
           headers: {
@@ -108,15 +109,18 @@ const useCartCheckoutModal = (modalShow, onHide) => {
 
   const getCartDetails = async () => {
     try {
-      const response = await fetch("http://10.0.0.8:8080/showCartDetails", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          customerId: session.primaryID,
-        }),
-      });
+      const response = await fetch(
+        `http://${NODE_HOST}:${NODE_PORT}/showCartDetails`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            customerId: session.primaryID,
+          }),
+        }
+      );
       const data = await response.json();
       setCartDetails(data);
     } catch (error) {

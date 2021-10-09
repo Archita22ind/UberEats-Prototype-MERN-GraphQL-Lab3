@@ -1,5 +1,6 @@
 import React from "react";
 import { Container, Modal, Row, Col, Button, Form } from "react-bootstrap";
+import { NODE_HOST, NODE_PORT } from "../common/envConfig";
 
 const RestaurantEditDetails = (props) => {
   const onChangeHandler = (event) => {
@@ -57,7 +58,7 @@ const RestaurantEditDetails = (props) => {
 
     try {
       const response = await fetch(
-        "http://10.0.0.8:8080/restaurantDetailsInfoUpdate",
+        `http://${NODE_HOST}:${NODE_PORT}/restaurantDetailsInfoUpdate`,
         {
           method: "POST",
           body: formData,
