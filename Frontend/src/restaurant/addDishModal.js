@@ -142,7 +142,6 @@ const AddDishModal = (props) => {
             <Row>
               <Form.Group>
                 <Form.Control
-                  required
                   name="mainIngredients"
                   placeholder="Enter main ingredients"
                   onChange={onChangeHandler}
@@ -187,7 +186,7 @@ const AddDishModal = (props) => {
             </Row>
             <Row>
               <Form.Group xs={12} md={12}>
-                <Form.Select required name="cuisine" onChange={onChangeHandler}>
+                <Form.Select name="cuisine" onChange={onChangeHandler}>
                   <option>Select Cuisine</option>
                   <option value="Indian">Indian</option>
                   <option value="American">American</option>

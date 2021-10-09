@@ -1,10 +1,10 @@
 const con = require("../../Controller/Common/dbConnection");
 const sortListOfRestaurants = require("./sortListOfRestaurants");
-let selectSql;
-let columnsArray = [];
 
 const getListOfRestaurants = (req, res) => {
   let customerId = req.body.customerId;
+  let selectSql;
+  let columnsArray = [];
 
   let custSql = `SELECT City from CustomerDetails where CustomerID=?`;
   let receivedFlag = "No";
@@ -19,33 +19,34 @@ const getListOfRestaurants = (req, res) => {
   }
 
   if (req.body.filter.length === 0 && req.body.typeaheadValue.length === 0) {
-    selectSql = `SELECT RestaurantID, RestaurantName, City, State, Country, DeliveryFlag,PickupFlag, ProfilePicture , OpenTime, CloseTime
+    selectSql = `SELECT RestaurantID, RestaurantName, Address, City, State, Country, DeliveryFlag,PickupFlag, ProfilePicture , OpenTime, CloseTime
     from RestaurantDetails where ${Flag} = (?)`;
     columnsArray = [receivedFlag];
   } else if (
     req.body.filter.length > 0 &&
     req.body.typeaheadValue.length === 0
   ) {
-    selectSql = `SELECT RestaurantID, RestaurantName, City, State, Country, DeliveryFlag,PickupFlag, ProfilePicture , OpenTime, CloseTime from 
+    selectSql = `SELECT RestaurantID, RestaurantName, Address,City, State, Country, DeliveryFlag,PickupFlag, ProfilePicture , OpenTime, CloseTime from 
     RestaurantDetails where RestaurantID in (SELECT distinct RestaurantID from FoodItems where FoodType in  (?)) AND ${Flag} = (?) `;
-    columnsArray = [...req.body.filter, receivedFlag];
+    columnsArray = [req.body.filter, receivedFlag];
   } else if (req.body.filter.length > 0 && req.body.typeaheadValue.length > 0) {
-    selectSql = `SELECT RestaurantID, RestaurantName, City, State, Country, DeliveryFlag,PickupFlag, ProfilePicture ,OpenTime, CloseTime  
+    selectSql = `SELECT RestaurantID, RestaurantName, Address,City, State, Country, DeliveryFlag,PickupFlag, ProfilePicture ,OpenTime, CloseTime  
     from RestaurantDetails where RestaurantID in (SELECT distinct RestaurantID from FoodItems where FoodType in  (?)  and RestaurantID in  (?) ) AND ${Flag} = (?)`;
-    columnsArray.push(...req.body.filter, ...req.body.typeaheadValue);
+    columnsArray.push(req.body.filter);
+    columnsArray.push(req.body.typeaheadValue);
     columnsArray.push(receivedFlag);
   } else if (
     req.body.filter.length === 0 &&
     req.body.typeaheadValue.length > 0
   ) {
-    selectSql = `SELECT RestaurantID, RestaurantName, City, State, Country, DeliveryFlag,PickupFlag, ProfilePicture ,OpenTime, CloseTime  from 
+    selectSql = `SELECT RestaurantID, RestaurantName, Address,City, State, Country, DeliveryFlag,PickupFlag, ProfilePicture ,OpenTime, CloseTime  from 
     RestaurantDetails where RestaurantID in (?) AND ${Flag} = (?)`;
-    columnsArray = req.body.typeaheadValue;
+    columnsArray.push(req.body.typeaheadValue);
     columnsArray.push(receivedFlag);
   }
 
   let customerLocation;
-
+  console.log("column array", columnsArray);
   con.query(custSql, [customerId], (err, result) => {
     if (err) throw err;
     if (result) {

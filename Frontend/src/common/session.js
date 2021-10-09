@@ -18,7 +18,7 @@ export const getSessionCookie = () => {
 
 export const setSessionCookie = (session) => {
   Cookies.remove("session");
-  Cookies.set("session", session, { expires: 1/48 });
+  Cookies.set("session", session, { expires: 1 / 6 });
 };
 
 // export const SessionContext = React.createContext(getSessionCookie());

@@ -114,7 +114,7 @@ const RestaurantEditDetails = (props) => {
                 {viewImageHandler()}
                 <Form.Control
                   name="image"
-                  hidden={props.show}
+                  // hidden={props.show}
                   type="file"
                   accept="image/*"
                   onChange={onImageChangeHandler}

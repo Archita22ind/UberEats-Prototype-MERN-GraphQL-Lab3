@@ -6,9 +6,11 @@ import countryList from "react-select-country-list";
 import { setSessionCookie } from "../common/session";
 import { useHistory } from "react-router-dom";
 import { useDispatch } from "react-redux";
+import { Link } from "react-router-dom";
 import { alertActions } from "../actions/alertActions";
 import { reduxConstants } from "../constants/reduxConstants";
 import { NODE_HOST, NODE_PORT } from "../common/envConfig";
+import UberEatsIcon from "../images/UberEatsIcon.png";
 import {
   formatPhoneNumber,
   isValidEmail,
@@ -114,17 +116,27 @@ const CustomerSignUp = (props) => {
 
   return (
     <Container
+      fluid
+      className="mt-4"
       style={{
         backgroundColor: "lightgrey",
       }}
     >
-      <Row className="m-3" style={{ backgroundColor: "grey" }}>
-        <h1>Uber Eats for Customers</h1>
+      <Row>
+        <Col md={2}>
+          <Link to="/">
+            <Image src={UberEatsIcon} />
+          </Link>
+        </Col>
+        <Col md={5}></Col>
+        <Col>
+          <h2> Customer Sign Up</h2>
+        </Col>
       </Row>
 
       <Row>
         <Col xs={12} md={6}>
-          <Image src={Background} height="75%" width="92%" />
+          <Image src={Background} height="66%%" width="80%" />
         </Col>
         <Col xs={12} md={6}>
           <Form onSubmit={onSubmitHandler}>

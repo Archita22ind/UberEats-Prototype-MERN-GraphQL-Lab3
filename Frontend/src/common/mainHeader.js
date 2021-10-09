@@ -79,7 +79,7 @@ const MainHeader = (props) => {
 
   const onChangeHandler = (selected) => {
     setValueSelected(selected);
-    if (selected[0].isRestaurant) {
+    if (selected[0]?.isRestaurant) {
       window.sessionStorage.setItem("restaurantId", selected[0].id);
       history.push("/restaurantDetails");
     } else {
@@ -107,6 +107,7 @@ const MainHeader = (props) => {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             input: typeaheadInput,
+            deliveryType: deliveryType,
           }),
         }
       );

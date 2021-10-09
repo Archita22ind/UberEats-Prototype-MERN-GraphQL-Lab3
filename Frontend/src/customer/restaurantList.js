@@ -13,11 +13,7 @@ const RestaurantList = (props) => {
   const viewImageHandler = (restaurant) => {
     if (restaurant.imagePreview) {
       return (
-        <Card.Img
-          variant="top"
-          src={restaurant.imagePreview}
-          height="150px"
-        />
+        <Card.Img variant="top" src={restaurant.imagePreview} height="130px" />
       );
     } else {
       return (
@@ -31,7 +27,7 @@ const RestaurantList = (props) => {
   const onClickHandler = (restaurantId) => {
     window.sessionStorage.setItem("restaurantId", restaurantId);
     history.push("/restaurantDetails");
-  }
+  };
 
   const createFavouritesList = async (restaurantId) => {
     try {
@@ -61,18 +57,30 @@ const RestaurantList = (props) => {
   };
 
   return (
+    // style={{ width: "90%", height: "80%" }}
     <Row>
       {props.restaurantList.map((restaurant, key) => {
         return (
           <Col xs={12} md={3} className="mb-4">
             <Card>
-            <Card.Body style = {{cursor: 'pointer'}} onClick={() => onClickHandler(restaurant.RestaurantID)}>
-            {viewImageHandler(restaurant)}
-                <Card.Text style={{ fontSize: 20 }}>
-                  {restaurant.RestaurantName}
-                </Card.Text>
+              <Card.Body
+                style={{ cursor: "pointer" }}
+                onClick={() => onClickHandler(restaurant.RestaurantID)}
+              >
+                {viewImageHandler(restaurant)}
+                <div>
+                  {/* style={{ fontFamily: "Garamond" }}> */}
+                  <font size="4" color="grey">
+                    <Card.Text style={{ margin: "0" }}>
+                      {restaurant.RestaurantName}
+                    </Card.Text>
+                  </font>
+                  <Card.Text style={{ fontSize: 12 }}>
+                    {restaurant.Address}
+                  </Card.Text>
+                </div>
               </Card.Body>
-              <font size="2">
+              <font size="1">
                 <Card.Footer>
                   {restaurant.City}, {restaurant.State} {"                  "}
                   {restaurant.isLiked ? (

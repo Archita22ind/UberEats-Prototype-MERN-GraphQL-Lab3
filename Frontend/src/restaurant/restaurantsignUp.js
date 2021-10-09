@@ -2,11 +2,13 @@ import { useState } from "react";
 import { Button, Row, Col, Form, Container } from "react-bootstrap";
 import Image from "react-bootstrap/Image";
 import Background from "../images/restaurantSignUp.jpeg";
+import { Link } from "react-router-dom";
 import countryList from "react-select-country-list";
 import { setSessionCookie } from "../common/session";
 import { useHistory } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { NODE_HOST, NODE_PORT } from "../common/envConfig";
+import UberEatsIcon from "../images/UberEatsIcon.png";
 import { alertActions } from "../actions/alertActions";
 import { reduxConstants } from "../constants/reduxConstants";
 import {
@@ -115,16 +117,26 @@ const RestaurantSignUp = (props) => {
 
   return (
     <Container
+      fluid
+      className="mt-4"
       style={{
         backgroundColor: "lightgrey",
       }}
     >
-      <Row className="m-3" style={{ backgroundColor: "grey" }}>
-        <h1>Uber Eats for Restaurants</h1>
-      </Row>
       <Row>
+        <Col md={2}>
+          <Link to="/">
+            <Image src={UberEatsIcon} />
+          </Link>
+        </Col>
+        <Col md={5}></Col>
+        <Col>
+          <h2> Restaurant Sign Up</h2>
+        </Col>
+      </Row>
+      <Row className="mt-4">
         <Col xs={12} md={6}>
-          <Image src={Background} height="75%" width="92%" />
+          <Image src={Background} height="66%" width="80%" />
         </Col>
         <Col xs={12} md={6}>
           <Form onSubmit={onSubmitHandler}>

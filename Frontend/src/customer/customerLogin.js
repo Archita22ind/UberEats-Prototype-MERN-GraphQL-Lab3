@@ -8,6 +8,7 @@ import { useHistory } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { reduxConstants } from "../constants/reduxConstants";
 import { NODE_HOST, NODE_PORT } from "../common/envConfig";
+import UberEatsIcon from "../images/UberEatsIcon.png";
 
 function request(user) {
   return { type: reduxConstants.LOGIN_REQUEST, user };
@@ -79,10 +80,15 @@ const CustomerLogin = (props) => {
   };
 
   return (
-    <Container>
-      <Row fuild className="mt=10">
+    <Container fuild className="mt-4">
+      <Row>
+        <Row>
+          <Col md={1}>
+            <Image src={UberEatsIcon} />
+          </Col>
+        </Row>
         <Col md={7}>
-          <Image src={Background} />
+          <Image src={Background} height="75%" width="76%" />
         </Col>
 
         <Col>
@@ -125,7 +131,7 @@ const CustomerLogin = (props) => {
           </Card>
           <p></p>
 
-          <Card fuild className="mt=5">
+          <Card fuild className="mt-5">
             <Form.Label>New User?</Form.Label>
             <Link to="/customerSignUp">
               <Button variant="dark" type="submit">

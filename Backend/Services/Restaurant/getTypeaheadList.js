@@ -2,9 +2,18 @@ const con = require("../../Controller/Common/dbConnection");
 
 const getTypeaheadList = (req, res) => {
   let listOfTypeahead = [];
-  let selectSql1 = `SELECT * FROM RestaurantDetails where RestaurantName like '%${req.body.input}%'`;
 
-  con.query(selectSql1, (err, result1) => {
+  let flag;
+
+  if (req.body.deliveryType === "delivery") {
+    flag = "DeliveryFlag";
+  } else {
+    flag = "PickupFlag";
+  }
+
+  let selectSql1 = `SELECT * FROM RestaurantDetails where RestaurantName like '%${req.body.input}%' and   ${flag} = ?`;
+
+  con.query(selectSql1, ["Yes"], (err, result1) => {
     if (err) throw err;
 
     if (result1) {
@@ -17,10 +26,10 @@ const getTypeaheadList = (req, res) => {
       });
     }
   });
-  let selectSql2 = `SELECT FoodName , RestaurantID from  FoodItems where FoodName
-   like '%${req.body.input}%'  or CuisineType like '%${req.body.input}%'`;
+  let selectSql2 = `SELECT F.FoodName , R.RestaurantID from  FoodItems F, RestaurantDetails  R where F.RestaurantID = R.RestaurantID and  FoodName
+   like '%${req.body.input}%'  or CuisineType like '%${req.body.input}%' AND   R.${flag} = ?`;
 
-  con.query(selectSql2, (err, result2) => {
+  con.query(selectSql2, ["Yes"], (err, result2) => {
     if (err) throw err;
 
     if (result2) {

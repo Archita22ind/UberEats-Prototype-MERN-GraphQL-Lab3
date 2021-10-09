@@ -8,6 +8,7 @@ import { reduxConstants } from "../constants/reduxConstants";
 import { useHistory } from "react-router-dom";
 import { setSessionCookie } from "../common/session";
 import { NODE_HOST, NODE_PORT } from "../common/envConfig";
+import UberEatsIcon from "../images/UberEatsIcon.png";
 
 function request(user) {
   return { type: reduxConstants.LOGIN_REQUEST, user };
@@ -23,7 +24,6 @@ const RestaurantLogin = (props) => {
   const history = useHistory();
   const [userEmail, setUserEmail] = useState("");
   const [userPassword, setUserPassword] = useState("");
-  // const loggingIn = useSelector((state) => state.authentication.loggingIn);
 
   const dispatch = useDispatch();
 
@@ -79,10 +79,15 @@ const RestaurantLogin = (props) => {
   };
 
   return (
-    <Container className="mt-3">
+    <Container fluid className="mt-4">
       <Row>
+        <Row>
+          <Col md={1}>
+            <Image src={UberEatsIcon} />
+          </Col>
+        </Row>
         <Col md={7}>
-          <Image src={Background} height="75%" width="76%" />
+          <Image src={Background} height="70%" width="70%" />
         </Col>
 
         <Col>
@@ -125,7 +130,7 @@ const RestaurantLogin = (props) => {
           </Card>
           <p></p>
 
-          <Card fuild className="mt=5">
+          <Card fuild className="mt-5">
             <Form.Label>New User?</Form.Label>
             <Link to="/restaurantSignUp">
               <Button variant="dark" type="submit">
