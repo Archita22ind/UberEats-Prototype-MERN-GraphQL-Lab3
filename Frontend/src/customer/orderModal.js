@@ -63,7 +63,6 @@ const OrderModal = (props) => {
         }
       );
       const data = await response.json();
-      console.log("Show Cart Details", data);
       if (data.length > 0) {
         setCartRestaurantDetails([
           data[0].RestaurantID,
@@ -193,11 +192,15 @@ const OrderModal = (props) => {
   };
 
   const buttonDisplay = () => {
-    if (quanity === 0) setbuttonDisabled(true);
-    else setbuttonDisabled(false);
+    if (quanity == 0) {
+      setbuttonDisabled(true);
+    } else setbuttonDisabled(false);
   };
 
-  useEffect(() => buttonDisplay(), [quanity]);
+  useEffect(() => {
+    buttonDisplay();
+  }, [quanity]);
+
   return (
     <>
       <Modal

@@ -15,13 +15,22 @@ var con = mysql.createConnection({
 // });
 
 // var con = mysql.createPool({
-//   connectionLimit: 100,
 //   host: "localhost",
 //   user: "root",
 //   password: "pikutuku",
 //   database: "mydb",
 //   debug: false,
 // });
+
+// var con = mysql.createPool({
+//   connectionLimit: 100,
+//   host: "cmpe273.cue0nkfbl9xm.us-east-2.rds.amazonaws.com",
+//   user: "admin",
+//   password: "archita22",
+//   database: "UberEats",
+//   debug: false,
+// });
+
 try {
   con.connect(function (err) {
     // if (err) throw err;

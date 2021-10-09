@@ -8,6 +8,7 @@ const customerSignIn = (req, res) => {
       if (err) throw err;
 
       if (result[0]?.PasswordValue === req.body.password) {
+        console.log("Logged in");
         res.send({
           successFlag: true,
           customerID: result[0].CustomerID,

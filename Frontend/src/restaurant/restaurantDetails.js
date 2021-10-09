@@ -3,16 +3,17 @@ import { Container, Row, Col, Button, Card, Form } from "react-bootstrap";
 import AddDishModal from "./addDishModal.js";
 import EditDishModal from "./editDishModal.js";
 import OrderModal from "../customer/orderModal.js";
+import * as IoIcons from "react-icons/io";
 import Holder from "../images/holder.png";
 import RestaurantEditDetails from "./restaurantEditDetails.js";
 import { BsPencilSquare } from "react-icons/bs";
 import { getSessionCookie } from "../common/session";
 import { useDispatch, useSelector } from "react-redux";
-
+import * as FaIcons from "react-icons/fa";
 import { useHistory } from "react-router-dom";
 import { NODE_HOST, NODE_PORT } from "../common/envConfig";
 import { useLocation } from "react-router-dom";
-import { BiFontFamily } from "react-icons/bi";
+import { IoLocation } from "react-icons/io5";
 
 const RestaurantDetails = (props) => {
   let imageUrl = Holder;
@@ -232,14 +233,17 @@ const RestaurantDetails = (props) => {
                 <p>{restaurantDetails.about}</p>
                 <font size="2">
                   <p style={{ margin: "0" }}>
-                    {restaurantDetails.address}, {restaurantDetails.city},{" "}
+                    <IoLocation />
+                    {" " + restaurantDetails.address}, {restaurantDetails.city},{" "}
                     {restaurantDetails.zipCode}, {restaurantDetails.state}
                   </p>
                 </font>
                 <font size="2">
                   <p style={{ margin: "0" }}>
-                    {restaurantDetails.emailId} •
-                    {restaurantDetails.contactNumber}
+                    <IoIcons.IoMdMail />
+                    {" " + restaurantDetails.emailId + " "}{" "}
+                    <FaIcons.FaPhoneAlt />
+                    {" " + restaurantDetails.contactNumber}
                   </p>
                   <p style={{ margin: "0" }}>
                     Open Time : {restaurantDetails.openTime} • Close Time :{" "}

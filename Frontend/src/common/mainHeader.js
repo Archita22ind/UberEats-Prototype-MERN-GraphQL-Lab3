@@ -8,6 +8,7 @@ import {
   Button,
 } from "react-bootstrap";
 import { Typeahead } from "react-bootstrap-typeahead";
+import Image from "react-bootstrap/Image";
 import * as Icon from "react-bootstrap-icons";
 import CustomerNavbar from "../customer/customerNavbar.js";
 import RestaurantNavbar from "../restaurant/restaurantNavbar.js";
@@ -25,6 +26,7 @@ import { getSessionCookie } from "../common/session";
 import RestaurantOrders from "../restaurant/restaurantOrders";
 import { useDispatch, useSelector } from "react-redux";
 import { reduxConstants } from "../constants/reduxConstants.js";
+import UberEatsIcon from "../images/UberEatsIcon.png";
 
 const MainHeader = (props) => {
   let showTabs = props.tab;
@@ -154,30 +156,12 @@ const MainHeader = (props) => {
           </Col>
           <Col className="mt-3" xs={4} md={2}>
             {session.restaurantFlag ? (
-              <Link
-                to="/restaurantDetails"
-                style={{
-                  textDecoration: "none",
-                  color: "green",
-                  fontSize: 35,
-                  fontWeight: "bold",
-                }}
-              >
-                {" "}
-                <h3>UberEats</h3>{" "}
+              <Link to="/restaurantDetails">
+                <Image src={UberEatsIcon} />
               </Link>
             ) : (
-              <Link
-                to="/restaurantSearch"
-                style={{
-                  textDecoration: "none",
-                  color: "green",
-                  fontSize: 35,
-                  fontWeight: "bold",
-                }}
-              >
-                {" "}
-                <h3>UberEats</h3>{" "}
+              <Link to="/restaurantSearch">
+                <Image src={UberEatsIcon} />
               </Link>
             )}
           </Col>
