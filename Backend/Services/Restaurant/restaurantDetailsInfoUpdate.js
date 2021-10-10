@@ -46,7 +46,6 @@ const restaurantDetailsInfoUpdate = (req, res, err) => {
         con.query(updateSql, data, (err, result1) => {
           if (err) throw err;
 
-          // console.log("Result print", result1);
           return res.status(200).send({
             responseFlag: "Success",
           });

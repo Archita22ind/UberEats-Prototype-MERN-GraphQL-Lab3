@@ -113,7 +113,7 @@ const MainHeader = (props) => {
       );
 
       let data = await response.json();
-      console.log("huama", data);
+
       setTypeaheadOutput(() => {
         return data;
       });

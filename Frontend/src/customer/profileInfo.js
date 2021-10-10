@@ -41,8 +41,6 @@ const ProfileInfo = (props) => {
 
   const onImageChangeHandler = (event) => {
     if (event.target.files && event.target.files[0]) {
-      console.log("did i come here?");
-
       setCustomerDetails((prevState) => {
         return {
           ...prevState,
@@ -54,9 +52,7 @@ const ProfileInfo = (props) => {
   };
 
   const viewImageHandler = () => {
-    console.log("cust details", customerDetails);
     if (customerDetails.imagePreview) {
-      console.log("Yahan", customerDetails.imagePreview);
       return (
         <Card.Img
           variant="top"
@@ -131,14 +127,12 @@ const ProfileInfo = (props) => {
 
     setCustomerDetails((prevState) => {
       let customerImageObject;
-      console.log("data image", data.image);
+
       if (data.image) {
         customerImageObject = {
           imagePreview: `http://${NODE_HOST}:${NODE_PORT}/` + data.image,
         };
       } else {
-        console.log("here?");
-        console.log("holder", Holder);
         customerImageObject = {
           imagePreview: Holder,
         };
@@ -191,7 +185,6 @@ const ProfileInfo = (props) => {
               </Form.Group>
 
               <Form.Group as={Col} className="mt-2">
-                {/* <Form.Label>About</Form.Label> */}
                 <Form.Control
                   style={{ height: "100px", width: " 340px" }}
                   name="about"

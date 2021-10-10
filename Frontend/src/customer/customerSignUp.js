@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-import { Button, Row, Col, Form, Container, Alert } from "react-bootstrap";
+import { useState } from "react";
+import { Button, Row, Col, Form, Container } from "react-bootstrap";
 import Image from "react-bootstrap/Image";
 import Background from "../images/restaurantSignUp.jpeg";
 import countryList from "react-select-country-list";
@@ -233,11 +233,9 @@ const CustomerSignUp = (props) => {
                 />
               </Form.Group>
             </Row>
-            {/* <Link to="/restaurantSearch"> */}
             <Button variant="dark" type="submit">
               Sign Up
             </Button>
-            {/* </Link> */}
           </Form>
         </Col>
       </Row>

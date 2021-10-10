@@ -1,4 +1,4 @@
-import { Row, Col, Button } from "react-bootstrap";
+import { Row, Col } from "react-bootstrap";
 import Card from "react-bootstrap/Card";
 import Holder from "../images/holder.png";
 import { getSessionCookie } from "../common/session";

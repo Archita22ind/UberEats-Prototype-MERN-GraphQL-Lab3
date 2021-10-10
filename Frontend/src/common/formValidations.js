@@ -32,7 +32,7 @@ export const isValidEmail = (value) => {
  */
 export const validatePassword = (password) => {
   var re = {
-    full: /[A-Za-z0-9!@#$%^&*.]{7,20}$/,
+    full: /[A-Za-z0-9!@#$%^&*.]{8,20}$/,
   };
   return re.full.test(password);
 };

@@ -40,12 +40,12 @@ const updateProfileInfo = (req, res, err) => {
             updateImage,
             req.body.customerId,
           ];
-          console.log("hi", currentValues.AddressLine1);
+
           console.log(data);
 
           con.query(updateSql, data, (err, result) => {
             // if (err) throw err;
-            console.log("jjj", err);
+
             if (result) {
               res.status(200).send({
                 responseFlag: "Success",

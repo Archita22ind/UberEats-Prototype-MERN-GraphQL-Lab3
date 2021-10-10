@@ -8,7 +8,6 @@ const getRestaurantOrders = (req, res) => {
     sqlSelect = `SELECT   OrderID,TotalPrice, TotalQuantity, DeliveryAddress, DateOrdered ,FinalStatus ,CustomerID , DeliveryOrPickup FROM Orders where RestaurantID = (?) AND FinalStatus = (?) ORDER BY DateOrdered DESC`;
     columnArray = [req.body.restaurantId, req.body.orderStatus];
   } else {
-    console.log("else", req.body);
     sqlSelect = `SELECT   OrderID,TotalPrice, TotalQuantity, DeliveryAddress, DateOrdered , FinalStatus, CustomerID , DeliveryOrPickup FROM Orders where RestaurantID = ? AND FinalStatus <> "${"New"}" ORDER BY DateOrdered DESC`;
     columnArray = [req.body.restaurantId];
   }

@@ -1,15 +1,10 @@
-import { Row, Col, Button, ToggleButton, Container } from "react-bootstrap";
-import Card from "react-bootstrap/Card";
-import { Link } from "react-router-dom";
-import Holder from "../images/holder.png";
-import React, { useState, useEffect } from "react";
+import { Container } from "react-bootstrap";
+import React, { useEffect } from "react";
 import { getSessionCookie } from "../common/session";
 import RestaurantList from "../customer/restaurantList.js";
 import { NODE_HOST, NODE_PORT } from "../common/envConfig";
 
 const Favorites = (props) => {
-  const [favoriteList, setFavoriteList] = useState([]);
-
   const session = getSessionCookie();
 
   const getFavoriteRestaurants = async () => {

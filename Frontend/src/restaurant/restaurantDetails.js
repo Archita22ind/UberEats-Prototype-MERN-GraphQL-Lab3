@@ -8,11 +8,8 @@ import Holder from "../images/holder.png";
 import RestaurantEditDetails from "./restaurantEditDetails.js";
 import { BsPencilSquare } from "react-icons/bs";
 import { getSessionCookie } from "../common/session";
-import { useDispatch, useSelector } from "react-redux";
 import * as FaIcons from "react-icons/fa";
-import { useHistory } from "react-router-dom";
 import { NODE_HOST, NODE_PORT } from "../common/envConfig";
-import { useLocation } from "react-router-dom";
 import { IoLocation } from "react-icons/io5";
 
 const RestaurantDetails = (props) => {
