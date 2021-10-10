@@ -147,15 +147,13 @@ const Checkout = () => {
     }
   };
 
-  const onAddressChangeHandler = (event) => {
-    event.preventDefault();
-
-    setSelectedAddress(event.target.value);
-  };
+  // const onAddressChangeHandler = (event) => {
+  //   event.preventDefault();
+  //   setSelectedAddress(event.target.value);
+  // };
 
   const onNewAddressChangeHandler = (event) => {
     event.preventDefault();
-
     setNewSelectedAddress(event.target.value);
   };
 
@@ -178,13 +176,15 @@ const Checkout = () => {
           }),
         }
       );
-      const data = await response.json();
 
+      const data = await response.json();
       setSelectedAddress(newSelectedAddress);
     } catch (error) {
       console.log(error);
     }
   };
+
+  //
 
   const showOrderBookedModal = () => {
     return show ? (
@@ -232,7 +232,7 @@ const Checkout = () => {
                     name="deliveryAddress"
                     as="select"
                     custom
-                    onChange={onAddressChangeHandler}
+                    onChange={onNewAddressChangeHandler}
                   >
                     <option>..</option>
                     <option>{address}</option>
