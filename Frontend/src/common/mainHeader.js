@@ -113,7 +113,7 @@ const MainHeader = (props) => {
       );
 
       let data = await response.json();
-
+      console.log("huama", data);
       setTypeaheadOutput(() => {
         return data;
       });
@@ -212,8 +212,7 @@ const MainHeader = (props) => {
                 <Typeahead
                   id="id123"
                   labelKey={(option) => `${option.name}`}
-                  // labelKey="label"
-                  maxResults={8}
+                  maxResults={10}
                   paginate={false}
                   placeholder="What are you craving for?"
                   onChange={onChangeHandler}

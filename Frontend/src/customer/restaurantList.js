@@ -13,12 +13,12 @@ const RestaurantList = (props) => {
   const viewImageHandler = (restaurant) => {
     if (restaurant.imagePreview) {
       return (
-        <Card.Img variant="top" src={restaurant.imagePreview} height="130px" />
+        <Card.Img variant="top" src={restaurant.imagePreview} height="115px" />
       );
     } else {
       return (
         <Card style={{ width: "15rem" }}>
-          <Card.Img variant="top" src={Holder} height="200px" />
+          <Card.Img variant="top" src={Holder} height="115px" />
         </Card>
       );
     }
@@ -69,7 +69,6 @@ const RestaurantList = (props) => {
               >
                 {viewImageHandler(restaurant)}
                 <div>
-                  {/* style={{ fontFamily: "Garamond" }}> */}
                   <font size="4" color="grey">
                     <Card.Text style={{ margin: "0" }}>
                       {restaurant.RestaurantName}

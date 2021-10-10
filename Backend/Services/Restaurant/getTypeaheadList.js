@@ -11,7 +11,31 @@ const getTypeaheadList = (req, res) => {
     flag = "PickupFlag";
   }
 
-  let selectSql1 = `SELECT * FROM RestaurantDetails where RestaurantName like '%${req.body.input}%' and   ${flag} = ?`;
+  let selectSql0 = `SELECT RestaurantID, City FROM RestaurantDetails where City like '%${req.body.input}%'  and   ${flag} = ?`;
+
+  con.query(selectSql0, ["Yes"], (err, result0) => {
+    if (err) throw err;
+
+    if (result0) {
+      let tempObject = {};
+
+      result0.forEach((v) => {
+        tempObject[v.City]
+          ? tempObject[v.City].push(v.RestaurantID)
+          : (tempObject[v.City] = [v.RestaurantID]);
+      });
+
+      Object.keys(tempObject).forEach((keyValue) => {
+        listOfTypeahead.push({
+          name: keyValue,
+          id: tempObject[keyValue],
+          isRestaurant: false,
+        });
+      });
+    }
+  });
+
+  let selectSql1 = `SELECT * FROM RestaurantDetails where RestaurantName like '%${req.body.input}%'  and   ${flag} = ?`;
 
   con.query(selectSql1, ["Yes"], (err, result1) => {
     if (err) throw err;
@@ -26,14 +50,13 @@ const getTypeaheadList = (req, res) => {
       });
     }
   });
-  let selectSql2 = `SELECT F.FoodName , R.RestaurantID from  FoodItems F, RestaurantDetails  R where F.RestaurantID = R.RestaurantID and  FoodName
-   like '%${req.body.input}%'  or CuisineType like '%${req.body.input}%' AND   R.${flag} = ?`;
+  let selectSql2 = `SELECT F.FoodName , R.RestaurantID , R.City from  FoodItems F, RestaurantDetails  R where F.RestaurantID = R.RestaurantID and  (FoodName
+   like '%${req.body.input}%'  or CuisineType like '%${req.body.input}%'   ) AND   R.${flag} = ?`;
 
   con.query(selectSql2, ["Yes"], (err, result2) => {
     if (err) throw err;
 
     if (result2) {
-      let tempList = [];
       let tempObject = {};
 
       result2.forEach((value) => {

@@ -4,6 +4,9 @@ import RestaurantList from "./restaurantList.js";
 import React, { useEffect } from "react";
 import { getSessionCookie } from "../common/session";
 import { NODE_HOST, NODE_PORT } from "../common/envConfig";
+import ImageDisplay from "../images/restSearchpage.jpeg";
+import ImageDisplay1 from "../images/restSearchpage2.jpeg";
+import Image from "react-bootstrap/Image";
 
 const RestaurantSearch = (props) => {
   const session = getSessionCookie();
@@ -65,6 +68,24 @@ const RestaurantSearch = (props) => {
   return (
     <>
       <Container fluid className="mt-5">
+        <Row>
+          <Col xs={12} md={6}>
+            <Image
+              src={ImageDisplay}
+              height="60%"
+              width="75%"
+              style={{ marginLeft: "0" }}
+            />
+          </Col>
+          <Col xs={12} md={6}>
+            <Image
+              src={ImageDisplay1}
+              height="60%"
+              width="75%"
+              style={{ marginLeft: "0" }}
+            />
+          </Col>
+        </Row>
         <Row>
           <Col xs={12} md={2}>
             <Row>

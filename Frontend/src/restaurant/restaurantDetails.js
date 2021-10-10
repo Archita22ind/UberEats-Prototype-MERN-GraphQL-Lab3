@@ -249,6 +249,10 @@ const RestaurantDetails = (props) => {
                     Open Time : {restaurantDetails.openTime} • Close Time :{" "}
                     {restaurantDetails.closeTime}
                   </p>
+                  <p style={{ margin: "0" }}>
+                    Delivery Available : {restaurantDetails.deliveryFlag} •
+                    Pickup Available : {restaurantDetails.pickupFlag}
+                  </p>
                 </font>
                 <Col>{showEditbutton()}</Col>
               </Card.Text>

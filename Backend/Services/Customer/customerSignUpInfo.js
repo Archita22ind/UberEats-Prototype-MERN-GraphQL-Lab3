@@ -11,7 +11,7 @@ const customerSignUpInfo = (req, res) => {
     } else {
       let sql =
         "INSERT INTO CustomerDetails (LastName, FirstName, PasswordValue,City, State,ZipCode, Country,ContactNumber,EmailID) VALUES (?,?,?,?,?,?,?,?,?)";
-
+      console.log("here", req.body);
       con.query(
         sql,
         [
