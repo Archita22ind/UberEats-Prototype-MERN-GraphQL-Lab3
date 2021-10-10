@@ -1,10 +1,11 @@
+import { useState, useEffect } from "react";
 import {
   BrowserRouter as Router,
   Route,
   Switch,
   useHistory,
 } from "react-router-dom";
-
+import { SessionContext, getSessionCookie } from "./session";
 import RestaurantSignUp from "../restaurant/restaurantsignUp";
 import RestaurantLogin from "../restaurant/restaurantLogin";
 import CustomerLogin from "../customer/customerLogin";

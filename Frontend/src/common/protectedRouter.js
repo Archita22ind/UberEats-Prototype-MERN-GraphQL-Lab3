@@ -1,6 +1,12 @@
-import { BrowserRouter as Route } from "react-router-dom";
-import React from "react";
-import { getSessionCookie } from "./session";
+import RestaurantSearch from "../customer/restaurantSearch";
+import RestaurantDetails from "../restaurant/restaurantDetails";
+import ProfileInfo from "../customer/profileInfo";
+import Orders from "../customer/orders";
+import Favorites from "../customer/favorites";
+import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
+import React, { useContext } from "react";
+import Checkout from "../customer/checkout";
+import { SessionContext, getSessionCookie } from "./session";
 import MainHeader from "./mainHeader";
 
 const ProtectedRouter = ({ history }) => {
