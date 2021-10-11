@@ -5,7 +5,7 @@ describe("POST /customerSignIn", function () {
       .post("/customerSignIn")
       .set("Accept", "application/json")
       .set("Content-Type", "application/json")
-      .send({ emailId: "archi123@gmail.com", password: "archi123@gmail.com" })
+      .send({ emailId: "user1@gmail.com", password: "Archita22" })
       .expect(200)
       .expect("Content-Type", /json/)
       .expect(function (response) {
@@ -25,7 +25,7 @@ describe("POST /customerSignIn", function () {
       .post("/customerSignIn")
       .set("Accept", "application/json")
       .set("Content-Type", "application/json")
-      .send({ emailId: "archi12@gmail.com", password: "archi123@gmail.com" })
+      .send({ emailId: "usergmail.com", password: "Archita22" })
       .expect(401)
       .end(done);
   });
@@ -39,7 +39,7 @@ describe("POST /customerSignIn", function () {
       .post("/customerSignIn")
       .set("Accept", "application/json")
       .set("Content-Type", "application/json")
-      .send({ emailId: "archi12@gmail.com", password: "archi" })
+      .send({ emailId: "user1gmail.com", password: "archi" })
       .expect(401)
       .expect(function (response) {
         expect(response.body).to.be.an("object");

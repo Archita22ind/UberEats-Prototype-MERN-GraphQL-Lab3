@@ -5,13 +5,13 @@ describe("POST /createFavouritesList", function () {
       .post("/createFavouritesList")
       .set("Accept", "application/json")
       .set("Content-Type", "application/json")
-      .send({ customerId: 1, restaurantId: 15 })
+      .send({ customerId: 1, restaurantId: 6 })
       .expect(200)
       .expect("Content-Type", /json/)
       .expect(function (response) {
         expect(response.body).not.to.be.empty;
         expect(response.body).to.be.an("object");
-        assert.strictEqual(response.body.restaurantID, 15);
+        assert.strictEqual(response.body.restaurantID, 6);
       })
       .end(done);
   });

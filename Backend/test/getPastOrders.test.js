@@ -25,13 +25,13 @@ describe("POST /getPastOrders", function () {
       .post("/getPastOrders")
       .set("Accept", "application/json")
       .set("Content-Type", "application/json")
-      .send({ customerId: 1, orderStatus: "Ordered" })
+      .send({ customerId: 1, orderStatus: "New Order" })
       .expect(200)
       .expect("Content-Type", /json/)
       .expect(function (response) {
         expect(response.body).not.to.be.empty;
         let responseArray = response.body.filter((element) => {
-          if (element.orderStatus !== "Ordered") return element;
+          if (element.orderStatus !== "New Order") return element;
         });
         assert.strictEqual(responseArray.length, 0);
       })
