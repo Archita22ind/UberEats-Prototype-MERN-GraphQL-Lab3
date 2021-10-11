@@ -1,4 +1,4 @@
-#**UberEats prototype with React JS, Node JS and SQL database**
+# **UberEats prototype with React JS, Node JS and SQL database**
 
 ## **CMPE273-UberEats-Lab-1**
 
