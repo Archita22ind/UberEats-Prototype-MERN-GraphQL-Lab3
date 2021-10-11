@@ -1,29 +1,16 @@
-import { Container } from "react-bootstrap";
-import React, { useEffect } from "react";
-import { getSessionCookie } from "../common/session";
+import {Container } from "react-bootstrap";
+import React, {useEffect } from "react";
 import RestaurantList from "../customer/restaurantList.js";
 import { NODE_HOST, NODE_PORT } from "../common/envConfig";
+import {getFavoriteRestaurants} from "./favoritesRequests";
 
 const Favorites = (props) => {
-  const session = getSessionCookie();
 
-  const getFavoriteRestaurants = async () => {
-    try {
-      const response = await fetch(
-        `http://${NODE_HOST}:${NODE_PORT}/getFavoriteRestaurants`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            customerId: session.primaryID,
-          }),
-        }
-      );
+  const populateFavoriteRestaurants = async () => {
 
-      let data = await response.json();
-
+    const favoritesData =  await getFavoriteRestaurants ();
       props.setRestaurantList(
-        data.map((d) => {
+        favoritesData.map((d) => {
           return {
             ...d,
             isLiked: true,
@@ -32,13 +19,11 @@ const Favorites = (props) => {
           };
         })
       );
-    } catch (error) {
-      console.log(error);
-    }
+  
   };
 
   useEffect(() => {
-    getFavoriteRestaurants();
+    populateFavoriteRestaurants();
   }, []);
 
   return (

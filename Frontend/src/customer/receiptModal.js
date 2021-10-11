@@ -3,9 +3,9 @@ import React from "react";
 
 const ReceiptModal = (props) => {
   const displayReceiptDetails = () => {
-    return props.receiptDetails.map((dishItem) => {
+    return props.receiptDetails.map((dishItem, key) => {
       return (
-        <Row>
+        <Row key = {key}>
           <Col>{dishItem.quantity}</Col>
           <Col>{dishItem.foodName}</Col>
           <Col>${dishItem.price}</Col>

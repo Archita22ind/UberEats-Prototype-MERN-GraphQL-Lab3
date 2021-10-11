@@ -29,12 +29,10 @@ const CustomerLogin = (props) => {
   const dispatch = useDispatch();
 
   const onEmailChangeHandler = (event) => {
-    event.preventDefault();
     setUserEmail(event.target.value);
   };
 
   const onPasswordChangeHandler = (event) => {
-    event.preventDefault();
     setUserPassword(event.target.value);
   };
 

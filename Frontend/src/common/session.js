@@ -1,5 +1,5 @@
-import React from "react";
-import * as Cookies from "js-cookie";
+
+import Cookies from "js-cookie";
 
 export const getSessionCookie = () => {
   const sessionCookie = Cookies.get("session");
@@ -20,5 +20,3 @@ export const setSessionCookie = (session) => {
   Cookies.remove("session");
   Cookies.set("session", session, { expires: 1 / 6 });
 };
-
-// export const SessionContext = React.createContext(getSessionCookie());
