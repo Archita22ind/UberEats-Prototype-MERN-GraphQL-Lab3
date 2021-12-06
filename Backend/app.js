@@ -1,4 +1,5 @@
 const express = require("express");
+const { graphqlHTTP } = require("express-graphql");
 const cors = require("cors");
 const multer = require("multer");
 const path = require("path");
@@ -35,6 +36,9 @@ const updateOrderStatus = require("./Services/Restaurant/updateOrderStatus");
 const getCustomerLocation = require("./Services/Customer/getCustomerLocation");
 const getDeliveryType = require("./Services/Customer/getDeliveryType");
 const createNewOrder = require("./Services/Customer/createNewOrder");
+const fileUpload = require("./fileUpload");
+
+const schema = require("./schema/schema");
 
 const app = express();
 app.use(express.json());
@@ -52,7 +56,18 @@ const storage = multer.diskStorage({
   },
 });
 
+app.use(
+  "/graphql",
+  graphqlHTTP({
+    schema,
+    graphiql: true,
+  })
+);
+
 var upload = multer({ storage: storage });
+
+//Important for GraphQl
+app.post("/fileUpload", upload.single("file"), fileUpload);
 
 app.post("/restaurantLoginInfo", restaurantLoginInfo);
 
@@ -119,5 +134,9 @@ app.post("/createNewOrder", createNewOrder);
 
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, console.log(`Server started on port ${PORT}`));
+
+app.listen(3001, () => {
+  console.log("GraphQL server started on port 3001");
+});
 
 module.exports = app;

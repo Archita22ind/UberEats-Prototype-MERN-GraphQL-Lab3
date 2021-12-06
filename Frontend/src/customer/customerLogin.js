@@ -9,6 +9,8 @@ import { useDispatch } from "react-redux";
 import { reduxConstants } from "../constants/reduxConstants";
 import { NODE_HOST, NODE_PORT } from "../common/envConfig";
 import UberEatsIcon from "../images/UberEatsIcon.png";
+import { graphql, compose, withApollo } from "react-apollo";
+import { UserLoginQuery } from "../queries/queries";
 
 function request(user) {
   return { type: reduxConstants.LOGIN_REQUEST, user };
@@ -42,35 +44,46 @@ const CustomerLogin = (props) => {
     dispatch(request({ userEmail }));
 
     try {
-      const response = await fetch(
-        `http://${NODE_HOST}:${NODE_PORT}/customerSignIn`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            emailId: userEmail,
-            password: userPassword,
-          }),
-        }
-      );
-      const data = await response.json();
+      // const response = await fetch(
+      //   `http://${NODE_HOST}:${NODE_PORT}/customerSignIn`,
+      //   {
+      //     method: "POST",
+      //     headers: {
+      //       "Content-Type": "application/json",
+      //     },
+      //     body: JSON.stringify({
+      //       emailId: userEmail,
+      //       password: userPassword,
+      //     }),
+      //   }
+      // );
+      // const data = await response.json();
 
-      if (response.status === 200) {
-        setSessionCookie(
-          JSON.stringify({
-            primaryID: data.customerID,
-            restaurantFlag: false,
-          })
-        );
-        dispatch(success({ userEmail }));
-        history.push("/restaurantSearch");
-      } else if (response.status === 401) {
-        alert("Incorrect Email Id or Password. Please try again !");
-      } else {
-        throw new Error(response);
-      }
+      props.client
+        .query({
+          query: UserLoginQuery,
+          variables: {
+            email: userEmail,
+            password: userPassword,
+          },
+        })
+        .then((res) => {
+          console.log("*******", res.data);
+          if (res.data) {
+            setSessionCookie(
+              JSON.stringify({
+                primaryID: res.data.loginCustomer.customerID,
+                restaurantFlag: false,
+              })
+            );
+            dispatch(success({ userEmail }));
+            history.push("/restaurantSearch");
+          } else if (res.data.status === 401) {
+            alert("Incorrect Email Id or Password. Please try again !");
+          } else {
+            throw new Error(res);
+          }
+        });
     } catch (error) {
       alert("Internal Server Error!!");
       dispatch(failure(error.toString()));
@@ -146,4 +159,11 @@ const CustomerLogin = (props) => {
   );
 };
 
-export default CustomerLogin;
+// export default CustomerLogin;
+
+export default compose(
+  withApollo,
+  graphql(UserLoginQuery, { name: "UserLoginQuery" })
+)(CustomerLogin);
+
+// export default graphql(UserLoginQuery)(CustomerLogin);

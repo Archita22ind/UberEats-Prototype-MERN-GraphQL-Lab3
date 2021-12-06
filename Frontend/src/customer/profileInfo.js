@@ -4,6 +4,8 @@ import { Button, Row, Col, Form, Card, Container } from "react-bootstrap";
 import Holder from "../images/profileHolder.png";
 import { NODE_HOST, NODE_PORT } from "../common/envConfig";
 import countryList from "react-select-country-list";
+import { UpdateCustomerMutation } from "../mutations/mutations";
+import { graphql, compose, withApollo } from "react-apollo";
 import {
   formatPhoneNumber,
   isValidEmail,
@@ -39,18 +41,33 @@ const ProfileInfo = (props) => {
     });
   };
 
-  const onImageChangeHandler = (event) => {
+  const onImageChangeHandler = async (event) => {
     if (event.target.files && event.target.files[0]) {
+      console.log("************", event.target.files[0], "************");
+
+      const formData = new FormData();
+      formData.append("file", event.target.files[0]);
+
+      const response = await fetch(
+        `http://${NODE_HOST}:${NODE_PORT}/fileUpload`,
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
+
+      const data = await response.json();
+
+      console.log("aya kya h file name _--------", data);
+
       setCustomerDetails((prevState) => {
         return {
           ...prevState,
-          imagePreview: URL.createObjectURL(event.target.files[0]),
-          [event.target.name]: event.target.files[0],
+          imagePreview: `http://${NODE_HOST}:${NODE_PORT}/` + data.image,
         };
       });
     }
   };
-
   const viewImageHandler = () => {
     if (customerDetails.imagePreview) {
       return (
@@ -78,38 +95,41 @@ const ProfileInfo = (props) => {
       return;
     }
 
-    const formData = new FormData();
-    formData.append("file", customerDetails.image);
-    formData.append("customerId", session.primaryID);
-    formData.append("lastName", customerDetails.lastName);
-    formData.append("firstName", customerDetails.firstName);
-    formData.append("address1", customerDetails.address1);
-    formData.append("address2", customerDetails.address2);
-    formData.append("city", customerDetails.city);
-    formData.append("state", customerDetails.state);
-    formData.append("country", customerDetails.country);
-    formData.append("zipCode", customerDetails.zipCode);
-    formData.append("nickname", customerDetails.nickname);
-    formData.append("contactNumber", customerDetails.contactNumber);
-    formData.append("emailId", customerDetails.emailId);
-    formData.append("about", customerDetails.about);
-    if (customerDetails.dateOfBirth)
-      formData.append("dateOfBirth", customerDetails.dateOfBirth);
-
-    try {
-      const response = await fetch(
-        `http://${NODE_HOST}:${NODE_PORT}/updateProfileInfo`,
+    props
+      .UpdateCustomerMutation(
         {
-          method: "POST",
-          body: formData,
+          variables: {
+            profilePicture: customerDetails.imagePreview,
+            customerId: session.primaryID,
+            lastName: customerDetails.lastName,
+            firstName: customerDetails.firstName,
+            address1: customerDetails.address1,
+            address2: customerDetails.address2,
+            city: customerDetails.city,
+            state: customerDetails.state,
+            country: customerDetails.country,
+            zipCode: customerDetails.zipCode,
+            nickname: customerDetails.nickname,
+            contactNumber: customerDetails.contactNumber,
+            emailId: customerDetails.emailId,
+            about: customerDetails.about,
+            dateOfBirth: customerDetails.dateOfBirth,
+          },
+        },
+        console.log("inside mutation -------", customerDetails)
+      )
+      .then((res) => {
+        if (res.data) {
+          console.log("data received upon register ---------", res.data);
+          alert("Profile Updated!!");
         }
-      );
-
-      const data = await response.json();
-    } catch (error) {
-      console.log(error);
-    }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
+
+  //*********************/
 
   const getCustomerProfileInfo = async () => {
     const response = await fetch(
@@ -130,7 +150,8 @@ const ProfileInfo = (props) => {
 
       if (data.image) {
         customerImageObject = {
-          imagePreview: `http://${NODE_HOST}:${NODE_PORT}/` + data.image,
+          // imagePreview: `http://${NODE_HOST}:${NODE_PORT}/` + data.image,
+          imagePreview: data.image,
         };
       } else {
         customerImageObject = {
@@ -356,4 +377,9 @@ const ProfileInfo = (props) => {
   );
 };
 
-export default ProfileInfo;
+// export default ProfileInfo;
+
+export default compose(
+  withApollo,
+  graphql(UpdateCustomerMutation, { name: "UpdateCustomerMutation" })
+)(ProfileInfo);

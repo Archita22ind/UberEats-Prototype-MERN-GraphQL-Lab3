@@ -11,6 +11,8 @@ import { alertActions } from "../actions/alertActions";
 import { reduxConstants } from "../constants/reduxConstants";
 import { NODE_HOST, NODE_PORT } from "../common/envConfig";
 import UberEatsIcon from "../images/UberEatsIcon.png";
+import { AddUserMutation } from "../mutations/mutations";
+import { graphql, compose, withApollo } from "react-apollo";
 import {
   formatPhoneNumber,
   isValidEmail,
@@ -81,39 +83,57 @@ const CustomerSignUp = (props) => {
 
     dispatch(request(customerDetails.emailId));
 
-    try {
-      const response = await fetch(
-        `http://${NODE_HOST}:${NODE_PORT}/customerSignUpInfo`,
+    // const response = await fetch(
+    //   `http://${NODE_HOST}:${NODE_PORT}/customerSignUpInfo`,
+    //   {
+    //     method: "POST",
+    //     headers: {
+    //       "Content-Type": "application/json",
+    //     },
+    //     body: JSON.stringify({
+    //       ...customerDetails,
+    //     }),
+    //   }
+    // );
+
+    await props
+      .AddUserMutation(
         {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
+          variables: {
+            firstName: customerDetails.firstName,
+            lastName: customerDetails.lastName,
+            password: customerDetails.password,
+            country: customerDetails.country,
+            contactNumber: customerDetails.contactNumber,
+            emailId: customerDetails.emailId,
           },
-          body: JSON.stringify({
-            ...customerDetails,
-          }),
+        },
+        console.log("inside mutation -------", customerDetails)
+      )
+      .then((res) => {
+        if (res.data) {
+          console.log("data received upon register ---------", res.data);
+
+          setSessionCookie(
+            JSON.stringify({
+              primaryID: res.data.createUser.customerID,
+              restaurantFlag: false,
+            })
+          );
+
+          dispatch(success(customerDetails.emailId));
+          dispatch(alertActions.success("Registration successful"));
+          history.push("/restaurantSearch");
         }
-      );
-
-      const data = await response.json();
-      setSessionCookie(
-        JSON.stringify({
-          primaryID: data.customerId,
-          restaurantFlag: false,
-        })
-      );
-      dispatch(success(customerDetails.emailId));
-      dispatch(alertActions.success("Registration successful"));
-      history.push("/restaurantSearch");
-    } catch (error) {
-      alert(
-        "User email already exists, try a new one, or login using the existing!!"
-      );
-      dispatch(failure(error.toString()));
-      console.log(error);
-    }
+      })
+      .catch((err) => {
+        alert(
+          "User email already exists, try a new one, or login using the existing!!"
+        );
+        dispatch(failure(err.toString()));
+        console.log(err);
+      });
   };
-
   return (
     <Container
       fluid
@@ -242,5 +262,7 @@ const CustomerSignUp = (props) => {
     </Container>
   );
 };
-
-export default CustomerSignUp;
+export default compose(
+  withApollo,
+  graphql(AddUserMutation, { name: "AddUserMutation" })
+)(CustomerSignUp);
