@@ -11,6 +11,8 @@ import { NODE_HOST, NODE_PORT } from "../common/envConfig";
 import UberEatsIcon from "../images/UberEatsIcon.png";
 import { alertActions } from "../actions/alertActions";
 import { reduxConstants } from "../constants/reduxConstants";
+import { AddRestaurantMutation } from "../mutations/mutations";
+import { graphql, compose, withApollo } from "react-apollo";
 import {
   formatPhoneNumber,
   isValidEmail,
@@ -74,45 +76,62 @@ const RestaurantSignUp = (props) => {
       return;
     }
 
-    if (!validateZipcode(restaurantDetails.zipCode)) {
+    if (!validateZipcode(restaurantDetails.zipcode)) {
       alert("Enter a valid Zip Code!");
       return;
     }
 
     dispatch(request(restaurantDetails.emailId));
 
-    try {
-      const response = await fetch(
-        `http://${NODE_HOST}:${NODE_PORT}/restaurantSignUpInfo`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            ...restaurantDetails,
-          }),
+    // const response = await fetch(
+    //   `http://${NODE_HOST}:${NODE_PORT}/restaurantSignUpInfo`,
+    //   {
+    //     method: "POST",
+    //     headers: {
+    //       "Content-Type": "application/json",
+    //     },
+    //     body: JSON.stringify({
+    //       ...restaurantDetails,
+    //     }),
+    //   }
+    // );
+
+    await props
+      .AddRestaurantMutation({
+        variables: {
+          restaurantName: restaurantDetails.restaurantName,
+          address: restaurantDetails.address,
+          password: restaurantDetails.password,
+          country: restaurantDetails.country,
+          city: restaurantDetails.city,
+          state: restaurantDetails.state,
+          zipcode: parseInt(restaurantDetails.zipcode),
+          contactNumber: restaurantDetails.contactNumber,
+          emailId: restaurantDetails.emailId,
+        },
+      })
+      .then((res) => {
+        if (res.data) {
+          console.log("data received upon register ---------", res.data);
+
+          setSessionCookie(
+            JSON.stringify({
+              primaryID: res.data.createRestaurant.restaurantId,
+              restaurantFlag: true,
+            })
+          );
+
+          dispatch(success(restaurantDetails.emailId));
+          dispatch(alertActions.success("Registration successful"));
+          history.push("/restaurantDetails");
         }
-      );
-
-      const data = await response.json();
-
-      setSessionCookie(
-        JSON.stringify({
-          primaryID: data.restaurantId,
-          restaurantFlag: true,
-        })
-      );
-
-      dispatch(success(restaurantDetails.emailId));
-      dispatch(alertActions.success("Registration successful"));
-      history.push("/restaurantDetails");
-    } catch (error) {
-      alert(
-        "User email already exists, try a new one, or login using the existing!!"
-      );
-      dispatch(failure(error.toString()));
-    }
+      })
+      .catch((err) => {
+        alert(
+          "User email already exists, try a new one, or login using the existing!!"
+        );
+        dispatch(failure(err.toString()));
+      });
   };
 
   return (
@@ -214,7 +233,7 @@ const RestaurantSignUp = (props) => {
                 <Form.Label>Zip Code *</Form.Label>
                 <Form.Control
                   required
-                  name="zipCode"
+                  name="zipcode"
                   onChange={onChangeHandler}
                 />
               </Form.Group>
@@ -255,4 +274,9 @@ const RestaurantSignUp = (props) => {
   );
 };
 
-export default RestaurantSignUp;
+// export default RestaurantSignUp;
+
+export default compose(
+  withApollo,
+  graphql(AddRestaurantMutation, { name: "AddRestaurantMutation" })
+)(RestaurantSignUp);

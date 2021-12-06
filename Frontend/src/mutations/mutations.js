@@ -1,6 +1,34 @@
 import { gql } from "apollo-boost";
 
 // user mutations
+const AddRestaurantMutation = gql`
+  mutation (
+    $restaurantName: String
+    $address: String
+    $password: String
+    $city: String
+    $country: String
+    $state: String
+    $zipcode: Int
+    $contactNumber: String
+    $emailId: String
+  ) {
+    createRestaurant(
+      restaurantName: $restaurantName
+      address: $address
+      password: $password
+      country: $country
+      city: $city
+      state: $state
+      zipcode: $zipcode
+      contactNumber: $contactNumber
+      emailId: $emailId
+    ) {
+      restaurantId
+    }
+  }
+`;
+
 const AddUserMutation = gql`
   mutation (
     $firstName: String
@@ -63,4 +91,4 @@ const UpdateCustomerMutation = gql`
   }
 `;
 
-export { AddUserMutation, UpdateCustomerMutation };
+export { AddUserMutation, UpdateCustomerMutation, AddRestaurantMutation };

@@ -9,6 +9,7 @@ const {
   GraphQLInt,
   GraphQLList,
   GraphQLNonNull,
+  GraphQL,
 } = graphql;
 
 // user types
@@ -31,6 +32,29 @@ const CustomerProfile = new GraphQLObjectType({
     about: { type: GraphQLString },
     profilePicture: { type: GraphQLString },
     password: { type: GraphQLString },
+    successFlag: { type: GraphQLString },
+  }),
+});
+
+const RestaurantProfile = new GraphQLObjectType({
+  name: "Restaurant",
+  fields: () => ({
+    restaurantId: { type: GraphQLInt },
+    restaurantName: { type: GraphQLString },
+    emailId: { type: GraphQLString },
+    address: { type: GraphQLString },
+    city: { type: GraphQLString },
+    state: { type: GraphQLString },
+    zipcode: { type: GraphQLInt },
+    country: { type: GraphQLString },
+    contactNumber: { type: GraphQLString },
+    password: { type: GraphQLString },
+    about: { type: GraphQLString },
+    image: { type: GraphQLString },
+    openTime: { type: GraphQLInt },
+    closeTime: { type: GraphQLInt },
+    deliveryFlag: { type: GraphQLInt },
+    pickupFlag: { type: GraphQLInt },
     successFlag: { type: GraphQLString },
   }),
 });
@@ -69,14 +93,40 @@ const RootQuery = new GraphQLObjectType({
               }
             });
           } catch (exception) {
-            res.sendStatus(500);
+            reject({ error: exception });
           }
         });
       },
     },
-    // reject() {
-    //   console.log("in reject login");
-    // },
+
+    loginRestaurant: {
+      type: RestaurantProfile,
+      args: {
+        email: { type: GraphQLString },
+        password: { type: GraphQLString },
+      },
+      resolve(_, args) {
+        return new Promise((resolve, reject) => {
+          let sqlSelect = `SELECT PasswordValue, RestaurantID  from RestaurantDetails where EmailID = ?`;
+          try {
+            con.query(sqlSelect, [args.email], (err, result) => {
+              if (err) throw err;
+
+              if (result[0]?.PasswordValue == args.password) {
+                resolve({
+                  successFlag: true,
+                  restaurantId: result[0]?.RestaurantID,
+                });
+              } else {
+                reject({ error: "Incorrect Email ID or Password Login!" });
+              }
+            });
+          } catch (exception) {
+            reject({ error: exception });
+          }
+        });
+      },
+    },
   },
 });
 
@@ -123,6 +173,61 @@ const Mutation = new GraphQLObjectType({
 
                   resolve({
                     customerID: result.insertId,
+                  });
+                }
+              );
+            }
+          });
+        });
+      },
+    },
+
+    createRestaurant: {
+      type: RestaurantProfile,
+      args: {
+        restaurantName: { type: GraphQLString },
+        emailId: { type: GraphQLString },
+        address: { type: GraphQLString },
+        city: { type: GraphQLString },
+        state: { type: GraphQLString },
+        zipcode: { type: GraphQLInt },
+        country: { type: GraphQLString },
+        contactNumber: { type: GraphQLString },
+        password: { type: GraphQLString },
+      },
+
+      resolve(_, args) {
+        // args.password = passwordHash.generate( args.password );
+        return new Promise((resolve, reject) => {
+          let checkSql = `SELECT * FROM RestaurantDetails where EmailID = ?`;
+
+          con.query(checkSql, [args.emailId], (err, result1) => {
+            if (err) throw err;
+            if (result1.length > 0) {
+              // res.sendStatus(409);
+              reject({ status: 409 });
+            } else {
+              let sql =
+                "INSERT INTO  RestaurantDetails (RestaurantName,Passwordvalue,Address,City,State,ZipCode,Country,ContactNumber,EmailID) VALUES (?,?,?,?,?,?,?,?,?)";
+
+              con.query(
+                sql,
+                [
+                  args.restaurantName,
+                  args.password,
+                  args.address,
+                  args.city,
+                  args.state,
+                  args.zipcode,
+                  args.country,
+                  args.contactNumber,
+                  args.emailId,
+                ],
+                (err, result) => {
+                  if (err) throw err;
+
+                  resolve({
+                    restaurantId: result.insertId,
                   });
                 }
               );

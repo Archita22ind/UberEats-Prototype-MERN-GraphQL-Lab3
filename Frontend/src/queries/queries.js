@@ -10,4 +10,13 @@ const UserLoginQuery = gql`
   }
 `;
 
-export { UserLoginQuery };
+const RestaurantLoginQuery = gql`
+  query RestaurantLoginQuery($email: String, $password: String) {
+    loginRestaurant(email: $email, password: $password) {
+      successFlag
+      restaurantId
+    }
+  }
+`;
+
+export { UserLoginQuery, RestaurantLoginQuery };

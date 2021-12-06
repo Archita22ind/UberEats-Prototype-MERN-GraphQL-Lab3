@@ -9,6 +9,8 @@ import { useHistory } from "react-router-dom";
 import { setSessionCookie } from "../common/session";
 import { NODE_HOST, NODE_PORT } from "../common/envConfig";
 import UberEatsIcon from "../images/UberEatsIcon.png";
+import { graphql, compose, withApollo } from "react-apollo";
+import { RestaurantLoginQuery } from "../queries/queries";
 
 function request(user) {
   return { type: reduxConstants.LOGIN_REQUEST, user };
@@ -42,36 +44,48 @@ const RestaurantLogin = (props) => {
 
     dispatch(request({ userEmail }));
     try {
-      const response = await fetch(
-        `http://${NODE_HOST}:${NODE_PORT}/restaurantLoginInfo`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            emailId: userEmail,
+      // const response = await fetch(
+      //   `http://${NODE_HOST}:${NODE_PORT}/restaurantLoginInfo`,
+      //   {
+      //     method: "POST",
+      //     headers: {
+      //       "Content-Type": "application/json",
+      //     },
+      //     body: JSON.stringify({
+      //       emailId: userEmail,
+      //       password: userPassword,
+      //     }),
+      //   }
+      // );
+
+      // const data = await response.json();
+
+      props.client
+        .query({
+          query: RestaurantLoginQuery,
+          variables: {
+            email: userEmail,
             password: userPassword,
-          }),
-        }
-      );
+          },
+        })
+        .then((res) => {
+          console.log("*******", res.data);
+          if (res.data) {
+            setSessionCookie(
+              JSON.stringify({
+                primaryID: res.data.loginRestaurant.restaurantId,
+                restaurantFlag: true,
+              })
+            );
 
-      const data = await response.json();
-
-      if (response.status === 200) {
-        setSessionCookie(
-          JSON.stringify({
-            primaryID: data.restaurantId,
-            restaurantFlag: true,
-          })
-        );
-        dispatch(success({ userEmail }));
-        history.replace("/restaurantDetails");
-      } else if (response.status === 401) {
-        alert("Incorrect Email Id or Password. Please try again !");
-      } else {
-        throw new Error(response);
-      }
+            dispatch(success({ userEmail }));
+            history.replace("/restaurantDetails");
+          } else if (res.data.status === 401) {
+            alert("Incorrect Email Id or Password. Please try again !");
+          } else {
+            throw new Error(res);
+          }
+        });
     } catch (error) {
       alert("Internal Server Error!!");
       dispatch(failure(error.toString()));
@@ -147,4 +161,9 @@ const RestaurantLogin = (props) => {
   );
 };
 
-export default RestaurantLogin;
+// export default RestaurantLogin;
+
+export default compose(
+  withApollo,
+  graphql(RestaurantLoginQuery, { name: "RestaurantLoginQuery" })
+)(RestaurantLogin);
