@@ -116,7 +116,7 @@ const CustomerSignUp = (props) => {
 
           setSessionCookie(
             JSON.stringify({
-              primaryID: res.data.createUser.customerID,
+              primaryID: res.data.createUser.customerId,
               restaurantFlag: false,
             })
           );

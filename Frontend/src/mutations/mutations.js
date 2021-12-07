@@ -1,6 +1,6 @@
 import { gql } from "apollo-boost";
 
-// user mutations
+// restaurant sign up mutation
 const AddRestaurantMutation = gql`
   mutation (
     $restaurantName: String
@@ -29,6 +29,7 @@ const AddRestaurantMutation = gql`
   }
 `;
 
+// customer sign up mutation
 const AddUserMutation = gql`
   mutation (
     $firstName: String
@@ -46,11 +47,12 @@ const AddUserMutation = gql`
       contactNumber: $contactNumber
       emailId: $emailId
     ) {
-      customerID
+      customerId
     }
   }
 `;
 
+// update customer profile mutation
 const UpdateCustomerMutation = gql`
   mutation UpdateCustomerMutation(
     $customerId: Int
@@ -86,9 +88,55 @@ const UpdateCustomerMutation = gql`
       about: $about
       profilePicture: $profilePicture
     ) {
-      customerID
+      customerId
     }
   }
 `;
 
-export { AddUserMutation, UpdateCustomerMutation, AddRestaurantMutation };
+// update restaurant profile mutation
+const UpdateRestaurantMutation = gql`
+  mutation (
+    $restaurantName: String
+    $address: String
+    $password: String
+    $city: String
+    $country: String
+    $state: String
+    $zipcode: Int
+    $contactNumber: String
+    $emailId: String
+    $profilePicture: String
+    $about: String
+    $openTime: String
+    $closeTime: String
+    $deliveryFlag: String
+    $pickupFlag: String
+  ) {
+    updateRestaurant(
+      restaurantName: $restaurantName
+      address: $address
+      password: $password
+      country: $country
+      city: $city
+      state: $state
+      zipcode: $zipcode
+      contactNumber: $contactNumber
+      emailId: $emailId
+      profilePicture: $profilePicture
+      about: $about
+      openTime: $openTime
+      closeTime: $closeTime
+      deliveryFlag: $deliveryFlag
+      pickupFlag: $pickupFlag
+    ) {
+      restaurantId
+    }
+  }
+`;
+
+export {
+  AddUserMutation,
+  UpdateCustomerMutation,
+  AddRestaurantMutation,
+  UpdateRestaurantMutation,
+};

@@ -6,6 +6,7 @@ import { NODE_HOST, NODE_PORT } from "../common/envConfig";
 import countryList from "react-select-country-list";
 import { UpdateCustomerMutation } from "../mutations/mutations";
 import { graphql, compose, withApollo } from "react-apollo";
+import { GetCustomerQuery } from "../queries/queries";
 import {
   formatPhoneNumber,
   isValidEmail,
@@ -43,8 +44,6 @@ const ProfileInfo = (props) => {
 
   const onImageChangeHandler = async (event) => {
     if (event.target.files && event.target.files[0]) {
-      console.log("************", event.target.files[0], "************");
-
       const formData = new FormData();
       formData.append("file", event.target.files[0]);
 
@@ -57,8 +56,6 @@ const ProfileInfo = (props) => {
       );
 
       const data = await response.json();
-
-      console.log("aya kya h file name _--------", data);
 
       setCustomerDetails((prevState) => {
         return {
@@ -99,7 +96,7 @@ const ProfileInfo = (props) => {
       .UpdateCustomerMutation(
         {
           variables: {
-            profilePicture: customerDetails.imagePreview,
+            image: customerDetails.imagePreview,
             customerId: session.primaryID,
             lastName: customerDetails.lastName,
             firstName: customerDetails.firstName,
@@ -108,7 +105,7 @@ const ProfileInfo = (props) => {
             city: customerDetails.city,
             state: customerDetails.state,
             country: customerDetails.country,
-            zipCode: customerDetails.zipCode,
+            zipcode: customerDetails.zipCode,
             nickname: customerDetails.nickname,
             contactNumber: customerDetails.contactNumber,
             emailId: customerDetails.emailId,
@@ -132,52 +129,61 @@ const ProfileInfo = (props) => {
   //*********************/
 
   const getCustomerProfileInfo = async () => {
-    const response = await fetch(
-      `http://${NODE_HOST}:${NODE_PORT}/getProfileInfo?customerId=${session.primaryID}`,
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json, charset= UTF-8",
-          Accept: "application/json, text/html, image/png",
+    // const response = await fetch(
+    //   `http://${NODE_HOST}:${NODE_PORT}/getProfileInfo?customerId=${session.primaryID}`,
+    //   {
+    //     method: "GET",
+    //     headers: {
+    //       "Content-Type": "application/json, charset= UTF-8",
+    //       Accept: "application/json, text/html, image/png",
+    //     },
+    //   }
+    // );
+
+    props.client
+      .query({
+        query: GetCustomerQuery,
+        variables: {
+          customerId: session.primaryID,
         },
-      }
-    );
+      })
+      .then((res) => {
+        setCustomerDetails((prevState) => {
+          let customerImageObject;
 
-    const data = await response.json();
-
-    setCustomerDetails((prevState) => {
-      let customerImageObject;
-
-      if (data.image) {
-        customerImageObject = {
-          // imagePreview: `http://${NODE_HOST}:${NODE_PORT}/` + data.image,
-          imagePreview: data.image,
-        };
-      } else {
-        customerImageObject = {
-          imagePreview: Holder,
-        };
-      }
-      let dateArray = data.dateOfBirth?.split("T");
-      return {
-        ...prevState,
-        ...customerImageObject,
-        lastName: data.lastName,
-        firstName: data.firstName,
-        password: data.password,
-        address1: data.address1,
-        address2: data.address2,
-        city: data.city,
-        state: data.state,
-        country: data.country,
-        zipCode: data.zipCode,
-        nickname: data.nickname,
-        contactNumber: data.contactNumber,
-        emailId: data.emailId,
-        dateOfBirth: dateArray ? dateArray[0] : data.dateOfBirth,
-        about: data.about,
-      };
-    });
+          if (res.data.getCustomer.image) {
+            customerImageObject = {
+              // imagePreview: `http://${NODE_HOST}:${NODE_PORT}/` + data.image,
+              imagePreview: res.data.getCustomer.image,
+            };
+          } else {
+            customerImageObject = {
+              imagePreview: Holder,
+            };
+          }
+          let dateArray = res.data.getCustomer.dateOfBirth?.split("T");
+          return {
+            ...prevState,
+            ...customerImageObject,
+            lastName: res.data.getCustomer.lastName,
+            firstName: res.data.getCustomer.firstName,
+            password: res.data.getCustomer.password,
+            addressLine1: res.data.getCustomer.address1,
+            addressLine2: res.data.getCustomer.address2,
+            city: res.data.getCustomer.city,
+            state: res.data.getCustomer.state,
+            country: res.data.getCustomer.country,
+            zipCode: res.data.getCustomer.zipCode,
+            nickname: res.data.getCustomer.nickname,
+            contactNumber: res.data.getCustomer.contactNumber,
+            emailId: res.data.getCustomer.emailId,
+            dateOfBirth: dateArray
+              ? dateArray[0]
+              : res.data.getCustomer.dateOfBirth,
+            about: res.data.getCustomer.about,
+          };
+        });
+      });
   };
 
   useEffect(() => {
@@ -381,5 +387,10 @@ const ProfileInfo = (props) => {
 
 export default compose(
   withApollo,
-  graphql(UpdateCustomerMutation, { name: "UpdateCustomerMutation" })
+  graphql(
+    UpdateCustomerMutation,
+    { name: "UpdateCustomerMutation" },
+    GetCustomerQuery,
+    { name: "GetCustomerQuery" }
+  )
 )(ProfileInfo);

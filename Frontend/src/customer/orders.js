@@ -4,6 +4,8 @@ import ListGroup from "react-bootstrap/ListGroup";
 import { getSessionCookie } from "../common/session";
 import ReceiptModal from "./receiptModal";
 import { NODE_HOST, NODE_PORT } from "../common/envConfig";
+import { GetReceiptDetailsQuery, GetPastOrdersQuery } from "../queries/queries";
+import { graphql, compose, withApollo } from "react-apollo";
 
 const Orders = (props) => {
   const session = getSessionCookie();
@@ -16,20 +18,31 @@ const Orders = (props) => {
   const [receiptDetails, setReceiptDetails] = useState([]);
 
   const getReceiptDetails = async (orderId) => {
-    const response = await fetch(
-      `http://${NODE_HOST}:${NODE_PORT}/getReceiptDetails`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
+    // const response = await fetch(
+    //   `http://${NODE_HOST}:${NODE_PORT}/getReceiptDetails`,
+    //   {
+    //     method: "POST",
+    //     headers: {
+    //       "Content-Type": "application/json",
+    //     },
+    //     body: JSON.stringify({
+    //       orderId: orderId,
+    //     }),
+    //   }
+    // );
+    // const data = await response.json();
+    // setReceiptDetails(data);
+
+    props.client
+      .query({
+        query: GetReceiptDetailsQuery,
+        variables: {
           orderId: orderId,
-        }),
-      }
-    );
-    const data = await response.json();
-    setReceiptDetails(data);
+        },
+      })
+      .then((res) => {
+        setReceiptDetails(res.data.getReceiptDetails);
+      });
   };
 
   let orderFilterOptions = [
@@ -115,21 +128,33 @@ const Orders = (props) => {
   };
 
   const getPastOrders = async () => {
-    const response = await fetch(
-      `http://${NODE_HOST}:${NODE_PORT}/getPastOrders`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
+    // const response = await fetch(
+    //   `http://${NODE_HOST}:${NODE_PORT}/getPastOrders`,
+    //   {
+    //     method: "POST",
+    //     headers: {
+    //       "Content-Type": "application/json",
+    //     },
+    //     body: JSON.stringify({
+    //       customerId: session.primaryID,
+    //       orderStatus: orderFilter,
+    //     }),
+    //   }
+    // );
+    // const data = await response.json();
+    // setOrdersList(data);
+
+    props.client
+      .query({
+        query: GetPastOrdersQuery,
+        variables: {
           customerId: session.primaryID,
           orderStatus: orderFilter,
-        }),
-      }
-    );
-    const data = await response.json();
-    setOrdersList(data);
+        },
+      })
+      .then((res) => {
+        setOrdersList(res.data.getPastOrders);
+      });
   };
 
   useEffect(() => {
@@ -161,4 +186,14 @@ const Orders = (props) => {
   );
 };
 
-export default Orders;
+// export default Orders;
+
+export default compose(
+  withApollo,
+  graphql(
+    GetReceiptDetailsQuery,
+    { name: "GetReceiptDetailsQuery" },
+    GetPastOrdersQuery,
+    { name: "GetPastOrdersQuery" }
+  )
+)(Orders);

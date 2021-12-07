@@ -64,7 +64,7 @@ const RestaurantLogin = (props) => {
         .query({
           query: RestaurantLoginQuery,
           variables: {
-            email: userEmail,
+            emailId: userEmail,
             password: userPassword,
           },
         })

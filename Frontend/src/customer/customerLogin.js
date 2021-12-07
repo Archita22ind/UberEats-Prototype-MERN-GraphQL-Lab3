@@ -63,7 +63,7 @@ const CustomerLogin = (props) => {
         .query({
           query: UserLoginQuery,
           variables: {
-            email: userEmail,
+            emailId: userEmail,
             password: userPassword,
           },
         })
@@ -72,7 +72,7 @@ const CustomerLogin = (props) => {
           if (res.data) {
             setSessionCookie(
               JSON.stringify({
-                primaryID: res.data.loginCustomer.customerID,
+                primaryID: res.data.loginCustomer.customerId,
                 restaurantFlag: false,
               })
             );

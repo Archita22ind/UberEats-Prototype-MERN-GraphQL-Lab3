@@ -27,6 +27,8 @@ import RestaurantOrders from "../restaurant/restaurantOrders";
 import { useDispatch, useSelector } from "react-redux";
 import { reduxConstants } from "../constants/reduxConstants.js";
 import UberEatsIcon from "../images/UberEatsIcon.png";
+import { graphql, compose, withApollo } from "react-apollo";
+import { GetCustomerLocationQuery } from "../queries/queries";
 
 const MainHeader = (props) => {
   let showTabs = props.tab;
@@ -61,19 +63,30 @@ const MainHeader = (props) => {
 
   const getCustomerLocation = async () => {
     if (!session.restaurantFlag) {
-      const response = await fetch(
-        `http://${NODE_HOST}:${NODE_PORT}/getCustomerLocation`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            customerId: session.primaryID,
-          }),
-        }
-      );
+      // const response = await fetch(
+      //   `http://${NODE_HOST}:${NODE_PORT}/getCustomerLocation`,
+      //   {
+      //     method: "POST",
+      //     headers: { "Content-Type": "application/json" },
+      //     body: JSON.stringify({
+      //       customerId: session.primaryID,
+      //     }),
+      //   }
+      // );
 
-      const data = await response.json();
-      setCustomerLocation(data.city);
+      // const data = await response.json();
+      // setCustomerLocation(data.city);
+
+      props.client
+        .query({
+          query: GetCustomerLocationQuery,
+          variables: {
+            customerId: session.primaryID,
+          },
+        })
+        .then((res) => {
+          setCustomerLocation(res.data.getCustomerLocation.city);
+        });
     }
   };
 
@@ -244,4 +257,9 @@ const MainHeader = (props) => {
   );
 };
 
-export default MainHeader;
+// export default MainHeader;
+
+export default compose(
+  withApollo,
+  graphql(GetCustomerLocationQuery, { name: "GetCustomerLocationQuery" })
+)(MainHeader);
