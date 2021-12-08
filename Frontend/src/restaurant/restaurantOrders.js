@@ -5,6 +5,8 @@ import { getSessionCookie } from "../common/session";
 import ReceiptModal from "../customer/receiptModal";
 import CustomerModal from "./customerModal";
 import { NODE_HOST, NODE_PORT } from "../common/envConfig";
+import { UpdateOrderStatusMutation } from "../mutations/mutations";
+import { graphql, compose, withApollo } from "react-apollo";
 const deliveryTypeOptions = [
   "",
   "Order Received",
@@ -40,7 +42,7 @@ export const checkDeliveryStatusOptions = (deliveryType) => {
       });
 };
 
-const RestaurantOrders = () => {
+const RestaurantOrders = (props) => {
   const session = getSessionCookie();
   const [restaurantOrdersList, setRestaurantOrdersList] = useState([]);
   const [orderFilter, setOrderFilter] = useState("");
@@ -120,29 +122,57 @@ const RestaurantOrders = () => {
     let updatedOrderStatus = updatedOrderStatusList?.[0]?.orderStatus;
 
     if (updatedOrderStatus) {
-      const response = await fetch(
-        `http://${NODE_HOST}:${NODE_PORT}/updateOrderStatus`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
+      // const response = await fetch(
+      //   `http://${NODE_HOST}:${NODE_PORT}/updateOrderStatus`,
+      //   {
+      //     method: "POST",
+      //     headers: {
+      //       "Content-Type": "application/json",
+      //     },
+      //     body: JSON.stringify({
+      //       orderId: orderId,
+      //       orderStatus: updatedOrderStatus,
+      //     }),
+      //   }
+      // );
+
+      // const data = await response.json();
+
+      // setRestaurantOrdersList((prevState) => {
+      //   return prevState.map((prevOrder) => {
+      //     return prevOrder.orderId === data.orderId ? { ...data } : prevOrder;
+      //   });
+      // });
+      // setOrderStatus([]);
+      // alert("Order status updated succesfully");
+
+      props
+        .UpdateOrderStatusMutation({
+          operationName: "UpdateOrderStatusMutation",
+          variables: {
             orderId: orderId,
             orderStatus: updatedOrderStatus,
-          }),
-        }
-      );
+          },
+        })
+        .then((res) => {
+          if (res.data) {
+            console.log("Response received after update status -----", res);
 
-      const data = await response.json();
+            setRestaurantOrdersList((prevState) => {
+              return prevState.map((prevOrder) => {
+                return prevOrder.orderId === res.data.updateOrderStatus.orderId
+                  ? { ...res.data.updateOrderStatus }
+                  : prevOrder;
+              });
+            });
 
-      setRestaurantOrdersList((prevState) => {
-        return prevState.map((prevOrder) => {
-          return prevOrder.orderId === data.orderId ? { ...data } : prevOrder;
+            setOrderStatus([]);
+            alert("Order status updated succesfully");
+          }
+        })
+        .catch((err) => {
+          console.log(err);
         });
-      });
-      setOrderStatus([]);
-      alert("Order status updated succesfully");
     } else {
       alert("Please Select Delivery Status to Update");
     }
@@ -307,4 +337,9 @@ const RestaurantOrders = () => {
   );
 };
 
-export default RestaurantOrders;
+// export default RestaurantOrders;
+
+export default compose(
+  withApollo,
+  graphql(UpdateOrderStatusMutation, { name: "UpdateOrderStatusMutation" })
+)(RestaurantOrders);

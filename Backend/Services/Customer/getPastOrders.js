@@ -24,7 +24,7 @@ const getPastOrders = (req, res) => {
             orderId: element.OrderId,
             totalPrice: element.TotalPrice,
             dateOrdered: element.DateOrdered,
-            totalItems: element.TotalQuantity,
+            totalQuantity: element.TotalQuantity,
             orderStatus: element.FinalStatus,
           };
         })

@@ -97,7 +97,7 @@ const Orders = (props) => {
               <Col>
                 {formatTextForOrders(
                   pastOrder.dateOrdered,
-                  pastOrder.totalItems,
+                  pastOrder.totalQuantity,
                   pastOrder.totalPrice
                 )}
               </Col>

@@ -1,5 +1,4 @@
 const graphql = require("graphql");
-
 const con = require("../Controller/Common/dbConnection");
 
 const {
@@ -73,6 +72,7 @@ const FoodItems = new GraphQLObjectType({
     mainIngredients: { type: GraphQLString },
     cuisineType: { type: GraphQLString },
     image: { type: GraphQLString },
+    restaurantName: { type: GraphQLString },
   }),
 });
 
@@ -84,7 +84,7 @@ const OrderHistory = new GraphQLObjectType({
     restaurantName: { type: GraphQLString },
     customerId: { type: GraphQLInt },
     totalPrice: { type: GraphQLFloat },
-    totalItems: { type: GraphQLInt },
+    totalQuantity: { type: GraphQLInt },
     deliveryAddress: { type: GraphQLString },
     dateOrdered: { type: GraphQLString },
     deliveryOrPickup: { type: GraphQLString },
@@ -310,7 +310,7 @@ const RootQuery = new GraphQLObjectType({
                     orderId: element.OrderId,
                     totalPrice: element.TotalPrice,
                     dateOrdered: element.DateOrdered,
-                    totalItems: element.TotalQuantity,
+                    totalQuantity: element.TotalQuantity,
                     orderStatus: element.FinalStatus,
                   };
                 })
@@ -367,6 +367,104 @@ const RootQuery = new GraphQLObjectType({
       },
     },
 
+    getRestaurantsList: {
+      type: new GraphQLList(RestaurantProfile),
+      args: {
+        customerId: { type: GraphQLInt },
+        deliveryType: { type: GraphQLString },
+        typeaheadValue: { type: GraphQLString },
+        filter: { type: GraphQLString },
+      },
+      resolve(_, args) {
+        let customerId = args.customerId;
+        let selectSql;
+        let columnsArray = [];
+
+        let custSql = `SELECT City from CustomerDetails where CustomerID=?`;
+        let receivedFlag = "No";
+        let Flag;
+
+        if (args.deliveryType === "delivery") {
+          receivedFlag = "Yes";
+          Flag = "DeliveryFlag";
+        } else {
+          receivedFlag = "Yes";
+          Flag = "PickupFlag";
+        }
+
+        if (args.filter.length === 0 && args.typeaheadValue.length === 0) {
+          selectSql = `SELECT RestaurantID, RestaurantName, Address, City, State, Country, DeliveryFlag,PickupFlag, ProfilePicture , OpenTime, CloseTime
+            from RestaurantDetails where ${Flag} = (?)`;
+          columnsArray = [receivedFlag];
+        } else if (args.filter.length > 0 && args.typeaheadValue.length === 0) {
+          selectSql = `SELECT RestaurantID, RestaurantName, Address,City, State, Country, DeliveryFlag,PickupFlag, ProfilePicture , OpenTime, CloseTime from
+            RestaurantDetails where RestaurantID in (SELECT distinct RestaurantID from FoodItems where FoodType in  (?)) AND ${Flag} = (?) `;
+          columnsArray = [args.filter, receivedFlag];
+        } else if (args.filter.length > 0 && args.typeaheadValue.length > 0) {
+          selectSql = `SELECT RestaurantID, RestaurantName, Address,City, State, Country, DeliveryFlag,PickupFlag, ProfilePicture ,OpenTime, CloseTime
+            from RestaurantDetails where RestaurantID in (SELECT distinct RestaurantID from FoodItems where FoodType in  (?)  and RestaurantID in  (?) ) AND ${Flag} = (?)`;
+          columnsArray.push(args.filter);
+          columnsArray.push(args.typeaheadValue);
+          columnsArray.push(receivedFlag);
+        } else if (args.filter.length === 0 && args.typeaheadValue.length > 0) {
+          selectSql = `SELECT RestaurantID, RestaurantName, Address,City, State, Country, DeliveryFlag,PickupFlag, ProfilePicture ,OpenTime, CloseTime  from
+            RestaurantDetails where RestaurantID in (?) AND ${Flag} = (?)`;
+          columnsArray.push(args.typeaheadValue);
+          columnsArray.push(receivedFlag);
+        }
+
+        let customerLocation;
+        console.log("column array", columnsArray);
+        con.query(custSql, [customerId], (err, result) => {
+          if (err) throw err;
+          if (result) {
+            result = JSON.parse(JSON.stringify(result));
+            customerLocation = result[0].City;
+          }
+
+          let orderOfRestaurants;
+          con.query(selectSql, columnsArray, (err, resultLast) => {
+            if (err) throw err;
+
+            if (resultLast) {
+              con.query(
+                "SELECT RestaurantID FROM CustomerFavorites where CustomerID = (?)",
+                [customerId],
+                (err, resultFavRest) => {
+                  if (err) throw err;
+
+                  let restaurantFavIds = resultFavRest.map((restau) => {
+                    return restau.RestaurantID;
+                  });
+
+                  if (resultFavRest) {
+                    orderOfRestaurants = sortListOfRestaurants(
+                      resultLast.map((restuarant) => {
+                        let isLiked = false;
+
+                        if (
+                          restaurantFavIds.includes(restuarant.RestaurantID)
+                        ) {
+                          isLiked = true;
+                        }
+                        return {
+                          ...restuarant,
+                          isLiked: isLiked,
+                        };
+                      }),
+                      customerLocation
+                    );
+
+                    resolve(orderOfRestaurants);
+                  }
+                }
+              );
+            }
+          });
+        });
+      },
+    },
+
     getDeliveryType: {
       type: OrderHistory,
       args: {
@@ -390,6 +488,47 @@ const RootQuery = new GraphQLObjectType({
       },
     },
 
+    getRestaurantOrders: {
+      type: new GraphQLList(OrderHistory),
+      args: {
+        restaurantId: { type: GraphQLInt },
+        orderStatus: { type: GraphQLString },
+      },
+      resolve(_, args) {
+        let sqlSelect;
+        let columnArray;
+
+        if (args.orderStatus.length > 0) {
+          sqlSelect = `SELECT   OrderID,TotalPrice, TotalQuantity, DeliveryAddress, DateOrdered ,FinalStatus ,CustomerID , DeliveryOrPickup FROM Orders where RestaurantID = (?) AND FinalStatus = (?) ORDER BY DateOrdered DESC`;
+          columnArray = [args.restaurantId, args.orderStatus];
+        } else {
+          sqlSelect = `SELECT   OrderID,TotalPrice, TotalQuantity, DeliveryAddress, DateOrdered , FinalStatus, CustomerID , DeliveryOrPickup FROM Orders where RestaurantID = ? AND FinalStatus <> "${"New"}" ORDER BY DateOrdered DESC`;
+          columnArray = [args.restaurantId];
+        }
+
+        con.query(sqlSelect, columnArray, (err, result) => {
+          if (err) reject({ error: err });
+
+          if (result) {
+            resolve(
+              result.map((element) => {
+                return {
+                  orderId: element.OrderID,
+                  totalPrice: element.TotalPrice,
+                  totalQuantity: element.TotalQuantity,
+                  deliveryAddress: element.DeliveryAddress,
+                  dateOrdered: element.DateOrdered,
+                  orderStatus: element.FinalStatus,
+                  customerId: element.CustomerID,
+                  deliveryType: element.DeliveryOrPickup,
+                };
+              })
+            );
+          }
+        });
+      },
+    },
+
     getCartDetails: {
       type: OrderHistoryDetails,
       args: {
@@ -402,7 +541,7 @@ const RootQuery = new GraphQLObjectType({
           con.query(sqlSelOrderID, [args.customerId, "New"], (err, result) => {
             if (result.length > 0) {
               let sqlSelect = `SELECT O.*, R.RestaurantName FROM OrderDetails  O , RestaurantDetails  R
-              WHERE  O.RestaurantID = R.RestaurantID AND O.OrderId= (?) AND  O.CustomerID= (?) `;
+                WHERE  O.RestaurantID = R.RestaurantID AND O.OrderId= (?) AND  O.CustomerID= (?) `;
               con.query(
                 sqlSelect,
                 [result[0].OrderID, args.customerId],
@@ -440,7 +579,7 @@ const RootQuery = new GraphQLObjectType({
     resolve(_, args) {
       return new Promise((resolve, reject) => {
         let totalPrice = 0;
-        let totalItems = 0;
+        let totalQuantity = 0;
 
         let sqlSelOrderID = `SELECT OrderID from Orders where CustomerID= (?) and FinalStatus =(?)`;
 
@@ -457,12 +596,51 @@ const RootQuery = new GraphQLObjectType({
                 if (result1) {
                   result1.forEach((element) => (totalPrice += element.Amount));
                   result1.forEach(
-                    (element) => (totalItems += element.Quantity)
+                    (element) => (totalQuantity += element.Quantity)
                   );
-                  resolve({ totalPrice: totalPrice, totalItems: totalItems });
+                  resolve({
+                    totalPrice: totalPrice,
+                    totalQuantity: totalQuantity,
+                  });
                 }
               }
             );
+          }
+        });
+      });
+    },
+  },
+
+  GetFoodItemsQuery: {
+    type: new GraphQLList(FoodItems),
+    args: {
+      restaurantId: { type: GraphQLInt },
+    },
+    resolve(_, args) {
+      return new Promise((resolve, reject) => {
+        let sqlSelect = `SELECT  F.FoodID,F.RestaurantID, F.FoodName, F.Price, F.Description, F.FoodType, F.FoodCategory, F.MainIngredients, F.CuisineType, F.FoodImage, R.RestaurantName
+          from FoodItems F, RestaurantDetails R where F.RestaurantID  =R.RestaurantID and F.RestaurantID = ?`;
+
+        con.query(sqlSelect, [args.restaurantId], (err, result) => {
+          let responseList = result.map((row) => {
+            return {
+              foodId: row.FoodID,
+              restaurantId: row.RestaurantID,
+              dishName: row.FoodName,
+              price: row.Price,
+              description: row.Description,
+              dishType: row.FoodType,
+              dishCategory: row.FoodCategory,
+              mainIngredients: row.MainIngredients,
+              cuisine: row.CuisineType,
+              image: row.FoodImage,
+              restaurantName: row.RestaurantName,
+            };
+          });
+
+          if (err) reject({ error: err });
+          if (result) {
+            resolve(responseList);
           }
         });
       });
@@ -522,6 +700,46 @@ const Mutation = new GraphQLObjectType({
         });
       },
     },
+
+    updateOrderStatus: {
+      type: OrderHistory,
+      args: {
+        orderId: { type: GraphQLInt },
+        orderStatus: { type: GraphQLString },
+      },
+
+      resolve(_, args) {
+        return new Promise((resolve, reject) => {
+          let updateSql = `UPDATE Orders SET FinalStatus = "${args.orderStatus}" WHERE  OrderId = ?`;
+
+          con.query(updateSql, [args.orderId], (err, result) => {
+            if (err) reject({ error: err });
+
+            if (result) {
+              let sql = "SELECT * FROM Orders where OrderId =(?)";
+              con.query(sql, [args.orderId], (err, result1) => {
+                if (err) reject({ error: err });
+
+                if (result1) {
+                  resolve({
+                    orderId: result1[0].OrderId,
+                    totalPrice: result1[0].TotalPrice,
+                    totalQuantity: result1[0].TotalQuantity,
+                    deliveryAddress: result1[0].DeliveryAddress,
+                    dateOrdered: result1[0].DateOrdered,
+                    orderStatus: result1[0].FinalStatus,
+                    customerId: result1[0].CustomerID,
+                    deliveryOrPickup: result1[0].DeliveryOrPickup,
+                  });
+                }
+              });
+            }
+          });
+        });
+      },
+    },
+
+    // /_______
 
     createRestaurant: {
       type: RestaurantProfile,
@@ -652,74 +870,72 @@ const Mutation = new GraphQLObjectType({
 
     //update restaurant
 
-    updateRestaurant: {
-      type: RestaurantProfile,
-      args: {
-        restaurantName: { type: GraphQLString },
-        emailId: { type: GraphQLString },
-        address: { type: GraphQLString },
-        city: { type: GraphQLString },
-        state: { type: GraphQLString },
-        zipcode: { type: GraphQLInt },
-        country: { type: GraphQLString },
-        contactNumber: { type: GraphQLString },
-        password: { type: GraphQLString },
-        about: { type: GraphQLString },
-        image: { type: GraphQLString },
-        openTime: { type: GraphQLString },
-        closeTime: { type: GraphQLString },
-        deliveryFlag: { type: GraphQLString },
-        pickupFlag: { type: GraphQLString },
-      },
-      resolve(_, args) {
-        return new Promise((resolve, reject) => {
-          con.query(
-            `SELECT * FROM RestaurantDetails WHERE RestaurantID = ?`,
-            [args.restaurantId],
-            (err, result) => {
-              // if (err) throw err;
+    // // updateRestaurant: {
+    // //   type: RestaurantProfile,
+    // //   args: {
+    // //     restaurantName: { type: GraphQLString },
+    // //     emailId: { type: GraphQLString },
+    // //     address: { type: GraphQLString },
+    // //     city: { type: GraphQLString },
+    // //     state: { type: GraphQLString },
+    // //     zipcode: { type: GraphQLInt },
+    // //     country: { type: GraphQLString },
+    // //     contactNumber: { type: GraphQLString },
+    // //     password: { type: GraphQLString },
+    // //     about: { type: GraphQLString },
+    // //     image: { type: GraphQLString },
+    // //     openTime: { type: GraphQLString },
+    // //     closeTime: { type: GraphQLString },
+    // //     deliveryFlag: { type: GraphQLString },
+    // //     pickupFlag: { type: GraphQLString },
+    // //   },
+    // //   resolve(_, args) {
+    // //     return new Promise((resolve, reject) => {
+    // //       con.query(
+    // //         `SELECT * FROM RestaurantDetails WHERE RestaurantID = ?`,
+    // //         [args.restaurantId],
+    // //         (err, result) => {
+    // //           // if (err) throw err;
 
-              if (result.length == 1) {
-                let currentValues = result[0];
-                let updateSql;
-                // let updateImage;
-                let updateSql = `UPDATE RestaurantDetails SET  RestaurantName = ?, Address= ?, City=?,State=? , 
-                ZipCode =?, Country=?, About=? , ContactNumber=? , EmailID=? , OpenTime=?, CloseTime= ? ,
-                DeliveryFlag =? , PickupFlag=?, ProfilePicture=? WHERE   RestaurantID = ?`;
+    // //           if (result.length == 1) {
+    // //             let currentValues = result[0];
+    // //             let updateSql;
+    // //             // let updateImage;
+    // //             updateSql = `UPDATE RestaurantDetails SET  RestaurantName = ?, Address= ?, City=?,State=? , ZipCode =?, Country=?, About=? , ContactNumber=? , EmailID=? , OpenTime=?, CloseTime= ? , DeliveryFlag =? , PickupFlag=?, ProfilePicture=? WHERE   RestaurantID = ?`;
 
-                let data = [
-                  args.restaurantName || currentValues.RestaurantName,
-                  args.address || currentValues.Address,
-                  args.city || currentValues.City,
-                  args.state || currentValues.State,
-                  args.zipCode || currentValues.ZipCode,
-                  args.country || currentValues.Country,
-                  args.about || currentValues.About,
-                  args.contactNumber || currentValues.ContactNumber,
-                  args.emailId || currentValues.EmailID,
-                  args.openTime || currentValues.OpenTime,
-                  args.closeTime || currentValues.CloseTime,
-                  args.deliveryFlag || currentValues.DeliveryFlag,
-                  args.pickupFlag || currentValues.PickupFlag,
-                  args.image || currentValues.image,
-                  restaurantId,
-                ];
+    // //             let data = [
+    // //               args.restaurantName || currentValues.RestaurantName,
+    // //               args.address || currentValues.Address,
+    // //               args.city || currentValues.City,
+    // //               args.state || currentValues.State,
+    // //               args.zipCode || currentValues.ZipCode,
+    // //               args.country || currentValues.Country,
+    // //               args.about || currentValues.About,
+    // //               args.contactNumber || currentValues.ContactNumber,
+    // //               args.emailId || currentValues.EmailID,
+    // //               args.openTime || currentValues.OpenTime,
+    // //               args.closeTime || currentValues.CloseTime,
+    // //               args.deliveryFlag || currentValues.DeliveryFlag,
+    // //               args.pickupFlag || currentValues.PickupFlag,
+    // //               args.image || currentValues.image,
+    // //               restaurantId,
+    // //             ];
 
-                console.log(data);
+    // //             console.log(data);
 
-                con.query(updateSql, data, (err, result) => {
-                  if (err) throw err;
+    // //             con.query(updateSql, data, (err, result) => {
+    // //               if (err) throw err;
 
-                  if (result) {
-                    resolve({ restaurantId: result.restaurantId });
-                  }
-                });
-              }
-            }
-          );
-        });
-      },
-    },
+    // //               if (result) {
+    // //                 resolve({ restaurantId: result.restaurantId });
+    // //               }
+    // //             });
+    // //           }
+    // //         }
+    // //       );
+    // //     });
+    // //   },
+    // },
   },
 });
 
