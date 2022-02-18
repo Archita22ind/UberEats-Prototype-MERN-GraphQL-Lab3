@@ -1,6 +1,6 @@
 # **WEB APPLICATION : UberEats prototype with MERN Stack using GraphQL**
 
-## **CMPE273 Project : UberEats-Lab-1**
+## **CMPE273 Project : UberEats-Lab-3-GraphQL**
 
 ### Few screen captures of the application:
 
